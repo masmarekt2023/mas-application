@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import {
   SafeAreaView,
   View,
@@ -14,6 +14,7 @@ import {
   MaterialCommunityIcons,
   MaterialIcons,
   AntDesign,
+  Entypo,
 } from "@expo/vector-icons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as yup from "yup";
@@ -25,6 +26,20 @@ import useLoginData from "../../Data/useLoginData";
 import useLocalData from "../../Data/localData/useLocalData";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
+import { BottomSheet } from "@rneui/themed";
+
+const convertToFileType = (uri, name) => {
+  if (uri !== "") {
+    const type = uri.split(".")[uri.split(".").length - 1];
+    return {
+      name: `${name}.${type}`,
+      uri: uri,
+      type: `application/${type}`,
+    };
+  } else {
+    return { uri: "" };
+  }
+};
 
 const AddScreen = ({ navigation }) => {
   // Get Colors from the Global state
@@ -88,10 +103,25 @@ const AddScreen = ({ navigation }) => {
     },
     picker: {
       backgroundColor: Colors.inputBgColor,
-      marginTop: Sizes.fixPadding
+      marginTop: Sizes.fixPadding,
+      color: Colors.whiteColor,
     },
     pickerItem: {
-      color: "red",
+      color: Colors.whiteColor,
+    },
+    changeProfilePicBottomSheetStyle: {
+      backgroundColor: Colors.bodyBackColor,
+      paddingHorizontal: Sizes.fixPadding * 2.0,
+      paddingTop: Sizes.fixPadding + 10.0,
+      borderTopLeftRadius: Sizes.fixPadding * 3.0,
+      borderTopRightRadius: Sizes.fixPadding * 3.0,
+    },
+    changeProfilePicOptionsIconWrapStyle: {
+      width: 40.0,
+      height: 40.0,
+      borderRadius: 20.0,
+      alignItems: "center",
+      justifyContent: "center",
     },
   });
 
@@ -138,6 +168,7 @@ const AddScreen = ({ navigation }) => {
 
   // Select File
   const selectFile = async () => {
+    updateState({ showBottomSheet: false });
     try {
       let res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -146,27 +177,42 @@ const AddScreen = ({ navigation }) => {
         quality: 1,
       });
       const type = res.uri.split(".")[res.uri.split(".").length - 1];
-      setValue('file', {
+      setValue("file", {
         name: `${res.type}.${type}`,
         uri: res.uri,
-        type:
-            `application/${type}`,
+        type: `application/${type}`,
       });
     } catch (err) {
       console.log("Error in upload file : addScreen.js");
     }
   };
 
+  // Access to camera and handle the photo
+  const cameraPicUrl = useLocalData((state) => state.cameraPicUrl);
+  const setCameraPicUrl = useLocalData((state) => state.setCameraPicUrl);
+  const takePic = () => {
+    updateState({ showBottomSheet: false });
+    navigation.push("LocalCamera");
+  };
+
+  useLayoutEffect(() => {
+    if (cameraPicUrl !== "") {
+      setValue("file", convertToFileType(cameraPicUrl, "camera"));
+      setCameraPicUrl("");
+    }
+  }, [cameraPicUrl]);
+
   // post the bundles data to the global state
   const createBundle = useBundlesData((state) => state.createBundle);
 
   const [state, setState] = useState({
     showCalender: false,
+    showBottomSheet: false,
   });
 
   const updateState = (data) => setState((state) => ({ ...state, ...data }));
 
-  const { showCalender } = state;
+  const { showCalender, showBottomSheet } = state;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bodyBackColor }}>
@@ -185,8 +231,93 @@ const AddScreen = ({ navigation }) => {
       </View>
       {createButton()}
       {calender()}
+      {changeProfilePicOptionsSheet()}
     </SafeAreaView>
   );
+
+  function changeProfilePicOptionsSheet() {
+    return (
+      <BottomSheet
+        isVisible={showBottomSheet}
+        containerStyle={{ backgroundColor: "rgba(0.5, 0.50, 0, 0.50)" }}
+        onBackdropPress={() => updateState({ showBottomSheet: false })}
+      >
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={() => updateState({ showBottomSheet: false })}
+          style={styles.changeProfilePicBottomSheetStyle}
+        >
+          <Text style={{ textAlign: "center", ...Fonts.whiteColor20SemiBold }}>
+            Choose Option
+          </Text>
+          <View
+            style={{
+              marginTop: Sizes.fixPadding + 10.0,
+              marginBottom: Sizes.fixPadding,
+            }}
+          >
+            {changeProfilePicOptionsSort({
+              bgColor: "#009688",
+              icon: (
+                <Entypo
+                  name="camera"
+                  size={18}
+                  color={Colors.buttonTextColor}
+                />
+              ),
+              option: "Camera",
+            })}
+            {changeProfilePicOptionsSort({
+              bgColor: "#00A7F7",
+              icon: (
+                <MaterialCommunityIcons
+                  name="image"
+                  size={20}
+                  color={Colors.buttonTextColor}
+                />
+              ),
+              option: "Gallery",
+            })}
+          </View>
+        </TouchableOpacity>
+      </BottomSheet>
+    );
+  }
+
+  function changeProfilePicOptionsSort({ bgColor, icon, option }) {
+    const onPress = () => {
+      option === "Camera" ? takePic() : null;
+      option === "Gallery" ? selectFile() : null;
+    };
+    return (
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={onPress}
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          marginBottom: Sizes.fixPadding * 2.0,
+        }}
+      >
+        <View
+          style={{
+            ...styles.changeProfilePicOptionsIconWrapStyle,
+            backgroundColor: bgColor,
+          }}
+        >
+          {icon}
+        </View>
+        <Text
+          style={{
+            marginLeft: Sizes.fixPadding + 5.0,
+            ...Fonts.whiteColor14Medium,
+          }}
+        >
+          {option}
+        </Text>
+      </TouchableOpacity>
+    );
+  }
 
   function createButton() {
     const onSubmit = handleSubmit(
@@ -284,21 +415,27 @@ const AddScreen = ({ navigation }) => {
   }
 
   function coinName() {
-    return <View style={{marginTop: Sizes.fixPadding,
-      marginHorizontal: Sizes.fixPadding * 2.0}}>
-      <Text style={{ ...Fonts.whiteColor14Regular }}>Coin Name</Text>
-      <Picker
+    return (
+      <View
+        style={{
+          marginTop: Sizes.fixPadding,
+          marginHorizontal: Sizes.fixPadding * 2.0,
+        }}
+      >
+        <Text style={{ ...Fonts.whiteColor14Regular }}>Coin Name</Text>
+        <Picker
           style={styles.picker}
           itemStyle={styles.pickerItem}
           selectedValue={watch("coinName")}
           onValueChange={(itemValue) => setValue("coinName", itemValue)}
-      >
-        <Picker.Item label="MAS" value="MAS" />
-        <Picker.Item label="USDT" value="USDT" />
-        <Picker.Item label="BUSD" value="BUSD" />
-        <Picker.Item label="BNB" value="BNB" />
-      </Picker>
-    </View>
+        >
+          <Picker.Item label="MAS" value="MAS" />
+          <Picker.Item label="USDT" value="USDT" />
+          <Picker.Item label="BUSD" value="BUSD" />
+          <Picker.Item label="BNB" value="BNB" />
+        </Picker>
+      </View>
+    );
   }
 
   function descriptionInput({ name, control }) {
@@ -477,7 +614,7 @@ const AddScreen = ({ navigation }) => {
       <>
         <TouchableOpacity
           activeOpacity={0.9}
-          onPress={selectFile}
+          onPress={() => updateState({ showBottomSheet: true })}
           style={{
             ...styles.uploadFileInfoWrapStyle,
             borderColor: errors?.file ? Colors.errorColor : Colors.whiteColor,

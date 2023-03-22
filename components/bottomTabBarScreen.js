@@ -19,6 +19,7 @@ import useChatData from "../Data/useChatData";
 import io from "socket.io-client";
 import { baseURL } from "../Data/Apiconfigs";
 import useLocalData from "../Data/localData/useLocalData";
+import useWithdrawData from "../Data/useWithdrawData";
 
 const Tab = createBottomTabNavigator();
 
@@ -88,13 +89,15 @@ const TabNavigator = () => {
   const allUsersLoading = useGetAllUsersData((state) => state.isLoading);
   const notificationsLoading = useNotificationData((state) => state.isLoading);
   const chatLoading = useChatData((state) => state.isLoading);
+  const withdrawLoading = useWithdrawData((state) => state.isLoading);
   const isLoading =
     profileLoading ||
     creatorsLoading ||
     bundlesLoading ||
     allUsersLoading ||
     notificationsLoading ||
-    chatLoading;
+    chatLoading ||
+    withdrawLoading;
 
   useEffect(() => {
     getProfile(token);

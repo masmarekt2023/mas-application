@@ -4,6 +4,7 @@ import axios from "axios";
 import {showMessage} from "react-native-flash-message";
 
 const useWithdrawData = create((set,get) => ({
+  isLoading: false,
   txId: "",
   withdraw: async (token, data, navigation, withdrawData) => {
     try {
@@ -28,10 +29,10 @@ const useWithdrawData = create((set,get) => ({
       }
     } catch (e) {
       console.log("Error in useWithdrawData / withdraw");
-      console.log(e);
     }
   },
   verificationWithdraw: async (code, navigation, token, data) => {
+    set({ isLoading: true });
     try {
       const res = await axios({
         method: "POST",
@@ -59,6 +60,7 @@ const useWithdrawData = create((set,get) => ({
     } catch (err) {
       console.log("Error in useVerificationData / verificationOtp");
     }
+    set({ isLoading: false });
   }
 }));
 

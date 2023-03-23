@@ -109,7 +109,7 @@ const TabNavigator = () => {
     });
 
     notifySocket.on("notification", (notifications) => {
-      setNotificationsArr(notifications.reverse());
+      if(!isLoading) setNotificationsArr(notifications.reverse());
     });
 
     const socket = io(baseURL, {

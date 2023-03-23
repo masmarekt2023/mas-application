@@ -63,7 +63,7 @@ const EditBundle = ({ navigation, route }) => {
     },
     textFieldStyle: {
       marginTop: Sizes.fixPadding,
-      ...Fonts.grayColor12Regular,
+      ...Fonts.whiteColor14Medium,
       backgroundColor: Colors.inputBgColor,
       paddingHorizontal: Sizes.fixPadding,
       paddingVertical: Sizes.fixPadding + 5.0,

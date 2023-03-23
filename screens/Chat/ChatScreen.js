@@ -17,7 +17,7 @@ import useLocalData from "../../Data/localData/useLocalData";
 
 const ChatScreen = ({ navigation }) => {
   // Get Colors from the Global state
-    const { Colors, Fonts, Sizes } = useLocalData((state) => state.styles);
+  const { Colors, Fonts, Sizes } = useLocalData((state) => state.styles);
 
   // The style Object
   const styles = StyleSheet.create({
@@ -181,7 +181,14 @@ const ChatScreen = ({ navigation }) => {
                 alignItems: "center",
               }}
             >
-              <Text style={Fonts.whiteColor12Medium}>{unreadUserMessages}</Text>
+              <Text
+                style={{
+                  ...Fonts.whiteColor12Medium,
+                  color: Colors.buttonTextColor,
+                }}
+              >
+                {unreadUserMessages}
+              </Text>
             </View>
           )}
         </TouchableOpacity>

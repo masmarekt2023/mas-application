@@ -26,6 +26,14 @@ const WithdrawScreen = ({ navigation, route }) => {
 
   // The style Object
   const styles = StyleSheet.create({
+    backArrowWrapStyle: {
+      width: 40.0,
+      height: 40.0,
+      borderRadius: 20.0,
+      backgroundColor: Colors.tabIconBgColor,
+      alignItems: "center",
+      justifyContent: "center",
+    },
     coinsContainerStyle: {
       flexDirection: "row",
       justifyContent: "space-around",
@@ -118,10 +126,7 @@ const WithdrawScreen = ({ navigation, route }) => {
       }}
     >
       <ScrollView style={{ flex: 1, marginTop: Sizes.fixPadding * 2 }}>
-        <Text style={{ textAlign: "center", ...Fonts.whiteColor20Bold }}>
-          Withdraw
-        </Text>
-
+          {header()}
         <View style={styles.coinInfoWrapStyle}>
           <TouchableOpacity
             activeOpacity={0.9}
@@ -206,9 +211,12 @@ const WithdrawScreen = ({ navigation, route }) => {
             selectionColor={Colors.primaryColor}
           />
         </View>
-        <Text style={{marginTop: Sizes.fixPadding, color: Colors.whiteColor}}>
+        <Text style={{ marginTop: Sizes.fixPadding, color: Colors.whiteColor }}>
           Please make sure your wallet address is correct and it is work in{" "}
-          <Text style={{color: Colors.errorColor}}>bnb smart chain (BEP20)</Text> Network
+          <Text style={{ color: Colors.errorColor }}>
+            bnb smart chain (BEP20)
+          </Text>{" "}
+          Network
         </Text>
       </ScrollView>
       <View>
@@ -270,31 +278,34 @@ const WithdrawScreen = ({ navigation, route }) => {
         <TouchableOpacity
           activeOpacity={0.9}
           disabled={coinAmount > selectedCoinAmount || coinAmount <= 0}
-          onPress={() => walletAddress.length > 0 ?
-            withdraw(
-              token,
-              {
-                recipientAddress: walletAddress,
-                withdrawAmount: +coinAmount + withdrawFess,
-                coin: selectedCoin,
-              },
-              navigation,
-                {
+          onPress={() =>
+            walletAddress.length > 0
+              ? withdraw(
+                  token,
+                  {
+                    recipientAddress: walletAddress,
+                    withdrawAmount: +coinAmount + withdrawFess,
+                    coin: selectedCoin,
+                  },
+                  navigation,
+                  {
                     amount: coinAmount,
                     coinName: selectedCoin,
                     network: "BEP20",
                     address: walletAddress,
-                    feed: `${((+coinAmount * 3) / 100)}`
-                }
-            ) : showMessage({
+                    feed: `${(+coinAmount * 3) / 100}`,
+                  }
+                )
+              : showMessage({
                   message: "wallet address should not be empty",
                   type: "warning",
-                  titleStyle: {fontWeight: 'bold', fontSize: 16}
-              })
+                  titleStyle: { fontWeight: "bold", fontSize: 16 },
+                })
           }
           style={{
             ...styles.placeBidButtonStyle,
-            opacity: (coinAmount > selectedCoinAmount || coinAmount <= 0) ? 0.7 : 1,
+            opacity:
+              coinAmount > selectedCoinAmount || coinAmount <= 0 ? 0.7 : 1,
           }}
         >
           <Text
@@ -310,6 +321,37 @@ const WithdrawScreen = ({ navigation, route }) => {
       {openWarning && WarningMessage()}
     </View>
   );
+
+  function header() {
+    return (
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <View style={styles.backArrowWrapStyle}>
+          <MaterialIcons
+            name="chevron-left"
+            color={Colors.primaryColor}
+            size={26}
+            onPress={() => navigation.pop()}
+          />
+        </View>
+        <Text
+          numberOfLines={1}
+          style={{
+            marginLeft: Sizes.fixPadding * 2.0,
+            flex: 1,
+            ...Fonts.whiteColor22Bold,
+              textAlign: 'left'
+          }}
+        >
+          Withdraw
+        </Text>
+      </View>
+    );
+  }
 
   function WarningMessage() {
     return (

@@ -75,9 +75,6 @@ const TabNavigator = () => {
       return i + j;
     });
   const getTotalEarnings = useProfileData((state) => state.getTotalEarnings);
-  const setIsUnreadNot = useNotificationData(
-    (state) => state.setIsUnreadMessage
-  );
   const setNotificationsArr = useNotificationData(
     (state) => state.setNotificationsArr
   );
@@ -112,7 +109,6 @@ const TabNavigator = () => {
     });
 
     notifySocket.on("notification", (notifications) => {
-      setIsUnreadNot(true);
       setNotificationsArr(notifications.reverse());
     });
 
@@ -262,7 +258,7 @@ const TabNavigator = () => {
                       alignItems: "center",
                     }}
                   >
-                    <Text style={Fonts.whiteColor12Medium}>
+                    <Text style={{...Fonts.whiteColor12Medium, color: Colors.buttonTextColor}}>
                       {unreadMessagesCount}
                     </Text>
                   </View>

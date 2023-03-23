@@ -13,11 +13,9 @@ import {
   Image,
 } from "react-native";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
-import * as DocumentPicker from "expo-document-picker";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useController, useForm } from "react-hook-form";
-import { showMessage } from "react-native-flash-message";
 import useBundlesData from "../../../Data/useBundlesData";
 import useLoginData from "../../../Data/useLoginData";
 import moment from "moment/moment";
@@ -36,12 +34,12 @@ const ShareForAudienceScreen = ({ navigation }) => {
       width: 40.0,
       height: 40.0,
       borderRadius: 20.0,
-      backgroundColor: "rgba(255,255,255,0.05)",
+      backgroundColor: Colors.tabIconBgColor,
       alignItems: "center",
       justifyContent: "center",
     },
     uploadFileInfoWrapStyle: {
-      backgroundColor: "rgba(255,255,255,0.05)",
+      backgroundColor: Colors.inputBgColor,
       borderRadius: Sizes.fixPadding + 5.0,
       borderStyle: "dashed",
       borderColor: Colors.whiteColor,
@@ -55,15 +53,17 @@ const ShareForAudienceScreen = ({ navigation }) => {
       width: 60.0,
       height: 60.0,
       borderRadius: 30.0,
-      backgroundColor: "rgba(255,255,255,0.05)",
+      backgroundColor: Colors.inputBgColor,
       alignItems: "center",
       justifyContent: "center",
       marginBottom: Sizes.fixPadding + 5.0,
+      borderWidth: 1,
+      borderColor: Colors.primaryColor,
     },
     textFieldStyle: {
       marginTop: Sizes.fixPadding,
-      ...Fonts.grayColor12Regular,
-      backgroundColor: "rgba(255,255,255,0.05)",
+      ...Fonts.whiteColor14Medium,
+      backgroundColor: Colors.inputBgColor,
       paddingHorizontal: Sizes.fixPadding,
       paddingVertical: Sizes.fixPadding + 5.0,
       borderRadius: Sizes.fixPadding - 5.0,
@@ -81,7 +81,7 @@ const ShareForAudienceScreen = ({ navigation }) => {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      backgroundColor: "rgba(255,255,255,0.05)",
+      backgroundColor: Colors.inputBgColor,
       paddingHorizontal: Sizes.fixPadding,
       paddingVertical: Sizes.fixPadding + 8.0,
       borderRadius: Sizes.fixPadding - 5.0,
@@ -134,25 +134,19 @@ const ShareForAudienceScreen = ({ navigation }) => {
   // Select File
   const selectFile = async () => {
     try {
-        let res = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-        const type = res.uri.split(".")[res.uri.split(".").length - 1];
-        setValue('file', {
-            name: `${res.type}.${type}`,
-            uri: res.uri,
-            type:
-                `application/${type}`,
-        });
-    } catch (err) {
-      showMessage({
-        message: "Something Wrong",
-        type: "warning",
-        titleStyle: { fontWeight: "bold", fontSize: 16 },
+      let res = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
       });
+      const type = res.uri.split(".")[res.uri.split(".").length - 1];
+      setValue("file", {
+        name: `${res.type}.${type}`,
+        uri: res.uri,
+        type: `application/${type}`,
+      });
+    } catch (err) {
       console.log("Error in upload file : addScreen.js");
     }
   };
@@ -186,7 +180,7 @@ const ShareForAudienceScreen = ({ navigation }) => {
         onPress={onSubmit}
         style={styles.continueButtonStyle}
       >
-        <Text style={{ ...Fonts.whiteColor20SemiBold }}>Share</Text>
+        <Text style={{ ...Fonts.whiteColor20SemiBold, color: Colors.buttonTextColor }}>Share</Text>
       </TouchableOpacity>
     );
   }
@@ -298,7 +292,17 @@ const ShareForAudienceScreen = ({ navigation }) => {
             activeOpacity={0.9}
             onPress={() => setValue("type", "PUBLIC")}
           >
-            <Text style={Fonts.whiteColor14SemiBold}>Public</Text>
+            <Text
+              style={{
+                ...Fonts.whiteColor14SemiBold,
+                color:
+                  watch("type") === "PUBLIC"
+                    ? Colors.bodyBackColor
+                    : Colors.whiteColor,
+              }}
+            >
+              Public
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={{
@@ -316,7 +320,17 @@ const ShareForAudienceScreen = ({ navigation }) => {
             activeOpacity={0.9}
             onPress={() => setValue("type", "PRIVATE")}
           >
-            <Text style={Fonts.whiteColor14SemiBold}>Private</Text>
+            <Text
+              style={{
+                ...Fonts.whiteColor14SemiBold,
+                color:
+                  watch("type") === "PRIVATE"
+                    ? Colors.bodyBackColor
+                    : Colors.whiteColor,
+              }}
+            >
+              Private
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -465,7 +479,7 @@ const ShareForAudienceScreen = ({ navigation }) => {
             <MaterialIcons
               name="cloud-upload"
               size={24}
-              color={Colors.whiteColor}
+              color={Colors.primaryColor}
             />
           </View>
           <Text style={{ ...Fonts.whiteColor14Regular }}>Upload your file</Text>
@@ -505,7 +519,7 @@ const ShareForAudienceScreen = ({ navigation }) => {
         <View style={styles.backArrowWrapStyle}>
           <MaterialIcons
             name="chevron-left"
-            color={Colors.whiteColor}
+            color={Colors.primaryColor}
             size={26}
             onPress={() => navigation.goBack()}
           />

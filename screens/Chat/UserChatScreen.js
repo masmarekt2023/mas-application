@@ -129,6 +129,7 @@ const UserChatScreen = ({ navigation, route }) => {
   // Upload Image
   const uploadImage = useChatData((state) => state.uploadImage);
   const imageUrl = useChatData((state) => state.chatImageUrl);
+  const setChatImageUrl = useChatData((state) => state.setChatImageUrl);
 
   // Handle Variables
   const [state, setState] = useState({
@@ -163,15 +164,21 @@ const UserChatScreen = ({ navigation, route }) => {
 
     const datesOfChat = [
       ...new Set([
-        today.toISOString().slice(0, 10),
-        ...userChat.map((i) => i?.createdAt.slice(0, 10)),
+        today.toLocaleDateString().slice(0, 10),
+        ...userChat.map((i) => {
+          const date = new Date(i?.createdAt);
+          return date.toLocaleDateString().slice(0, 10);
+        }),
       ]),
     ];
 
     const newDataArr = datesOfChat.map((date) => ({
       title: handleDate(date),
       item: userChat
-        .filter((item) => item?.createdAt.slice(0, 10) === date)
+        .filter((item) => {
+          const date2 = new Date(item?.createdAt);
+          return date2.toLocaleDateString().slice(0, 10) === date;
+        })
         .reverse(),
     }));
 
@@ -216,6 +223,12 @@ const UserChatScreen = ({ navigation, route }) => {
       message: imageUrl,
       mediaType: "image",
     });
+    if (imageUrl) {
+      setChatImageUrl("");
+    }
+    if (cameraPicUrl) {
+      setCameraPicUrl("");
+    }
   };
 
   // listen to the new messages and handle its
@@ -258,6 +271,7 @@ const UserChatScreen = ({ navigation, route }) => {
 
   // Access to camera and handle the photo
   const cameraPicUrl = useLocalData((state) => state.cameraPicUrl);
+  const setCameraPicUrl = useLocalData((state) => state.setCameraPicUrl);
   const takePic = () => {
     updateState({ cameraOpen: true });
     navigation.push("LocalCamera");
@@ -632,7 +646,6 @@ export default UserChatScreen;
 
 function handleDate(text) {
   const date = new Date(text);
-
   // Today
   const today = new Date();
   today.setHours(0);
@@ -653,7 +666,7 @@ function handleDate(text) {
   week.setMinutes(0);
   week.setSeconds(0);
 
-  if (date.getTime() >= today.getTime()) {
+  if (date.toLocaleDateString() === today.toLocaleDateString()) {
     return "Today";
   } else if (date.getTime() >= yesterday.getTime()) {
     return "Yesterday";

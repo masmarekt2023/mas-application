@@ -18,7 +18,7 @@ const { width } = Dimensions.get("screen");
 
 const WithdrawSuccessScreen = ({ navigation, route }) => {
   // Get Colors from the Global state
-  const { Colors, Fonts, Sizes, darkMode } = useLocalData(
+  const { Colors, Fonts, Sizes } = useLocalData(
     (state) => state.styles
   );
 
@@ -38,7 +38,7 @@ const WithdrawSuccessScreen = ({ navigation, route }) => {
     },
   });
 
-  const {amount, address, txid, coinName, netWork, feed} = route.params;
+  const {amount, address, txid, coinName, network, feed} = route.params;
 
   const backAction = () => {
     navigation.push("BottomTabBar");
@@ -123,7 +123,7 @@ const WithdrawSuccessScreen = ({ navigation, route }) => {
       >
         <View style={styles.infoContainer}>
           <Text style={styles.info}>Network</Text>
-          <Text style={Fonts.whiteColor16Medium}>{netWork}</Text>
+          <Text style={Fonts.whiteColor16Medium}>{network}</Text>
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.info}>Address</Text>

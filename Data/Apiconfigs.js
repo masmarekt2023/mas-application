@@ -4,6 +4,7 @@ const { manifest } = Constants;
 //export let socketURL = "wss://node.masplatform.net";
 
 export let baseURL = "https://mas-server-l32v.onrender.com";
+export let pageUrl = "https://mas2023-lhqo.onrender.com";
 /*if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
   baseURL = `http://${manifest.debuggerHost.split(':').shift()}:1865`;
   //socketURL = "ws://192.168.1.255:1865";

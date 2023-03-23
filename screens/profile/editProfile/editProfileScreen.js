@@ -26,10 +26,10 @@ import { useController, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import useProfileData from "../../../Data/useProfileData";
 import useLocalData from "../../../Data/localData/useLocalData";
-import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from 'expo-image-picker';
 import { showMessage } from "react-native-flash-message";
 import { Camera, CameraType } from "expo-camera";
+import {pageUrl} from "../../../Data/Apiconfigs";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -536,7 +536,7 @@ const EditProfileScreen = ({ navigation }) => {
               opacity: 0.7,
             }}
           >
-            https://masplatform.net/user-profile/{userName}
+              {pageUrl}/user-profile/{userName}
           </Text>
           <TouchableOpacity
             activeOpacity={0.9}

@@ -12,6 +12,7 @@ const useNotificationData = create((set) => ({
       notificationsArr: [
         ...new Set([...notifications, ...state.notificationsArr]),
       ],
+      isUnreadMessage: true
     })),
   getNotifications: async (token) => {
     set({ isLoading: true });

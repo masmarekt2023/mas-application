@@ -19,14 +19,14 @@ const useLocalData = create((set) => ({
     bodyBackColor: "#ffffff",
     blackColor: "#ffffff",
     whiteColor: "#000000",
-    primaryColor: "rgba(255, 163, 78, 1)",
+    primaryColor: "rgba(128,15,47,1)",
     inputBgColor: "#eeeeee",
-    tabIconBgColor: "rgba(255, 163, 78, 0.2)",
+    tabIconBgColor: "rgba(128,15,47,0.2)",
     iconColor: "#ffffff",
     buttonTextColor: "#ffffff",
-    customAlertColor: "#ffa34e",
+    customAlertColor: "rgba(128,15,47,1)",
     customAlertTextColor: "#ffffff",
-    grayColor: "#949494",
+    grayColor: "#777777",
     greenColor: "#30b983",
     errorColor: "#ef4444",
     facebook: "#4267B2",
@@ -289,30 +289,35 @@ const useLocalData = create((set) => ({
             color: colors.grayColor,
             fontSize: 12,
             fontFamily: "SF_Compact_Display_Regular",
+            fontWeight: '600',
           },
 
           grayColor13Regular: {
             color: colors.grayColor,
             fontSize: 13,
             fontFamily: "SF_Compact_Display_Regular",
+            fontWeight: '600',
           },
 
           grayColor14Regular: {
             color: colors.grayColor,
             fontSize: 14,
             fontFamily: "SF_Compact_Display_Regular",
+            fontWeight: '600',
           },
 
           grayColor12Medium: {
             color: colors.grayColor,
             fontSize: 12,
             fontFamily: "SF_Compact_Display_Medium",
+            fontWeight: '600',
           },
 
           grayColor13Medium: {
             color: colors.grayColor,
             fontSize: 13,
             fontFamily: "SF_Compact_Display_Medium",
+            fontWeight: '600',
           },
 
           primaryColor14Regular: {

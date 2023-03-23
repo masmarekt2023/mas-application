@@ -143,6 +143,7 @@ const useChatData = create((set, get) => ({
 
   // Upload Image
   chatImageUrl: "",
+  setChatImageUrl: () => set({chatImageUrl: ""}),
   uploadImage: async (token, img) => {
     const formData = new FormData();
     formData.append("path", img );

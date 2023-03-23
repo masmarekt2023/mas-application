@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import {
   SafeAreaView,
   View,
@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import BottomSheet from "react-native-simple-bottom-sheet";
+import { BottomSheet } from "@rneui/themed";
 import DashedLine from "react-native-dashed-line";
 import useLoginData from "../../Data/useLoginData";
 import useBundlesData from "../../Data/useBundlesData";
@@ -201,6 +201,7 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
   const onTransfer = () => {
     if (!subscribed) {
       subscribeToBundle(token, item._id);
+      setShowDialog(false);
     }
   };
 
@@ -227,7 +228,7 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
     }
   };
 
-  const panelRef = useRef(null);
+  const [showDialog, setShowDialog]  = useState(route.params.showPayDialog);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bodyBackColor }}>
@@ -254,104 +255,101 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
   function subscribeBottomSheet() {
     return (
       <BottomSheet
-        ref={(ref) => (panelRef.current = ref)}
-        isOpen={route.params.showPayDialog}
-        sliderMinHeight={0}
-        sliderMaxHeight={Dimensions.get("window").height - 100}
-        lineContainerStyle={{ width: 0.0, height: 0.0 }}
-        lineStyle={{ width: 0.0, height: 0.0 }}
-        wrapperStyle={styles.bottomSheetWrapStyle}
-        innerContentStyle={{ borderRadius: 0.0 }}
+        isVisible={showDialog}
+        onBackdropPress={() => setShowDialog(false)}
+        containerStyle={{ backgroundColor: "rgba(0.5, 0.50, 0, 0.50)" }}
       >
-        <Text style={{ textAlign: "center", ...Fonts.whiteColor20Bold }}>
-          Transfer
-        </Text>
-        <Text style={{ marginTop: Sizes.fixPadding + 5.0 }}>
-          <Text style={{ ...Fonts.grayColor14Regular }}>
-            You are about to subscribe for {}
-          </Text>
-          <Text style={{ ...Fonts.whiteColor14SemiBold }}>
-            {item.bundleTitle}
-          </Text>
-          <Text style={{ ...Fonts.grayColor14Regular }}>
-            {} by {}
-          </Text>
-          <Text style={{ ...Fonts.whiteColor14SemiBold }}>
-            @{owner.userName}
-          </Text>
-        </Text>
-        <DashedLine
-          dashLength={5}
-          dashColor={"rgba(255,255,255,0.2)"}
-          dashGap={5}
-          style={{ marginVertical: Sizes.fixPadding * 2.0 }}
-        />
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text style={{ ...Fonts.grayColor14Regular }}>Your Total Coins</Text>
-          <Text style={{ ...Fonts.whiteColor14SemiBold }}>
-            {currentCoin.toFixed(2)}
-          </Text>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text style={{ ...Fonts.grayColor14Regular }}>You will pay</Text>
-          <Text style={{ ...Fonts.whiteColor14SemiBold }}>
-            {item.donationAmount} {item.coinName}
-          </Text>
-        </View>
-        <View
-          style={{
-            marginVertical: Sizes.fixPadding - 6.0,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text style={{ ...Fonts.grayColor14Regular }}>Service fees</Text>
-          <Text style={{ ...Fonts.whiteColor14SemiBold }}>
-            0 {item.coinName}
-          </Text>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text style={{ ...Fonts.grayColor14Regular }}>Total payment</Text>
-          <Text style={{ ...Fonts.primaryColor14SemiBold }}>
-            {item.donationAmount} {item.coinName}
-          </Text>
-        </View>
-        <TouchableOpacity
-          activeOpacity={0.9}
-          onPress={onTransfer}
-          style={{
-            ...styles.placeBidButtonStyle,
-            opacity: currentCoin < item.donationAmount ? 0.7 : 1,
-          }}
-        >
-          <Text
-            style={{
-              ...Fonts.whiteColor20SemiBold,
-              color: Colors.buttonTextColor,
-            }}
-          >
+        <View style={styles.bottomSheetWrapStyle}>
+          <Text style={{ textAlign: "center", ...Fonts.whiteColor20Bold }}>
             Transfer
           </Text>
-        </TouchableOpacity>
+          <Text style={{ marginTop: Sizes.fixPadding + 5.0 }}>
+            <Text style={{ ...Fonts.grayColor14Regular }}>
+              You are about to subscribe for {}
+            </Text>
+            <Text style={{ ...Fonts.whiteColor14SemiBold }}>
+              {item.bundleTitle}
+            </Text>
+            <Text style={{ ...Fonts.grayColor14Regular }}>
+              {} by {}
+            </Text>
+            <Text style={{ ...Fonts.whiteColor14SemiBold }}>
+              @{owner.userName}
+            </Text>
+          </Text>
+          <DashedLine
+              dashLength={5}
+              dashColor={"rgba(255,255,255,0.2)"}
+              dashGap={5}
+              style={{ marginVertical: Sizes.fixPadding * 2.0 }}
+          />
+          <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+          >
+            <Text style={{ ...Fonts.grayColor14Regular }}>Your Total Coins</Text>
+            <Text style={{ ...Fonts.whiteColor14SemiBold }}>
+              {currentCoin.toFixed(2)}
+            </Text>
+          </View>
+          <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+          >
+            <Text style={{ ...Fonts.grayColor14Regular }}>You will pay</Text>
+            <Text style={{ ...Fonts.whiteColor14SemiBold }}>
+              {item.donationAmount} {item.coinName}
+            </Text>
+          </View>
+          <View
+              style={{
+                marginVertical: Sizes.fixPadding - 6.0,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+          >
+            <Text style={{ ...Fonts.grayColor14Regular }}>Service fees</Text>
+            <Text style={{ ...Fonts.whiteColor14SemiBold }}>
+              0 {item.coinName}
+            </Text>
+          </View>
+          <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+          >
+            <Text style={{ ...Fonts.grayColor14Regular }}>Total payment</Text>
+            <Text style={{ ...Fonts.primaryColor14SemiBold }}>
+              {item.donationAmount} {item.coinName}
+            </Text>
+          </View>
+          <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={onTransfer}
+              style={{
+                ...styles.placeBidButtonStyle,
+                opacity: currentCoin < item.donationAmount ? 0.7 : 1,
+              }}
+          >
+            <Text
+                style={{
+                  ...Fonts.whiteColor20SemiBold,
+                  color: Colors.buttonTextColor,
+                }}
+            >
+              Transfer
+            </Text>
+          </TouchableOpacity>
+        </View>
       </BottomSheet>
     );
   }
@@ -361,7 +359,7 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
       <TouchableOpacity
         activeOpacity={0.9}
         disabled={subscribed}
-        onPress={() => panelRef.current.togglePanel()}
+        onPress={() => setShowDialog(true)}
         style={{
           marginHorizontal: Sizes.fixPadding * 2.0,
           ...styles.placeBidButtonStyle,

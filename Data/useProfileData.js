@@ -34,6 +34,7 @@ const useProfileData = create((set) => ({
     telegram: "",
     twitter: "",
     youtube: "",
+    following: [],
   },
   getProfile: async (token) => {
     set({ isLoading: true });
@@ -47,7 +48,6 @@ const useProfileData = create((set) => ({
       });
       if (res.data.statusCode === 200) {
         const result = res?.data?.userDetails;
-        console.log(result.likesUsers);
         set(
           produce((state) => {
             state.userData.userImage = result.profilePic
@@ -76,6 +76,7 @@ const useProfileData = create((set) => ({
             state.userData.usdtBalance = result.usdtBalance;
             state.userData.walletAddress = result.walletAddress;
             state.userData.subscribes = result.followers?.length;
+            state.userData.following = result.following;
             state.userData.likes = result.likesUsers?.length;
           })
         );

@@ -1,6 +1,5 @@
 import useProfileData from "../../../Data/useProfileData";
-import React, { useLayoutEffect } from "react";
-import useLoginData from "../../../Data/useLoginData";
+import React from "react";
 import { Dimensions, FlatList, Text, View, StyleSheet } from "react-native";
 import Bundle from "../../home/Bundle";
 import Creator from "../../home/Creator";
@@ -23,20 +22,12 @@ const MyBundles = ({ navigation }) => {
     },
   });
 
-  // Get user's token from the Login data
-  const token = useLoginData((state) => state.userInfo.token);
-
-  // Fetch data
-  const getSubscription = useProfileData((state) => state.getSubscription);
-
   // Get data from global state
-  const subscriptionLoading = useProfileData((state) => state.subscriptionLoading);
+  const subscriptionLoading = useProfileData(
+    (state) => state.subscriptionLoading
+  );
   const bundles = useProfileData((state) => state.subscriptionBundles);
   const creators = useProfileData((state) => state.subscriptionCreators);
-
-  useLayoutEffect(() => {
-    getSubscription(token);
-  }, []);
 
   // Handles variables
   const bundlesItem = ({ item }) => (
@@ -81,7 +72,7 @@ const MyBundles = ({ navigation }) => {
       </View>
     </View>
   ) : (
-    <UserNotFound isLoading={subscriptionLoading}/>
+    <UserNotFound isLoading={subscriptionLoading} />
   );
 };
 export default MyBundles;

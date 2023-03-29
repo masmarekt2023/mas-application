@@ -133,10 +133,7 @@ const DonateScreen = ({ navigation, route }) => {
     >
       <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
       <View style={{ marginTop: Sizes.fixPadding * 2 }}>
-        <Text style={{ textAlign: "center", ...Fonts.whiteColor20Bold }}>
-          {route.params?.title}
-        </Text>
-
+        {header({ title: route.params?.title })}
         <View style={styles.coinInfoWrapStyle}>
           <TouchableOpacity
             activeOpacity={0.9}
@@ -342,6 +339,46 @@ const DonateScreen = ({ navigation, route }) => {
       </View>
     </SafeAreaView>
   );
+
+  function header({ title }) {
+    return (
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <View
+          style={{
+            width: 40.0,
+            height: 40.0,
+            borderRadius: 20.0,
+            backgroundColor: Colors.tabIconBgColor,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <MaterialIcons
+            name="chevron-left"
+            color={Colors.primaryColor}
+            size={26}
+            onPress={() => navigation.pop()}
+          />
+        </View>
+        <Text
+          numberOfLines={1}
+          style={{
+            marginLeft: Sizes.fixPadding * 2.0,
+            flex: 1,
+            ...Fonts.whiteColor22Bold,
+            textAlign: "left",
+          }}
+        >
+          {title}
+        </Text>
+      </View>
+    );
+  }
 };
 
 export default DonateScreen;

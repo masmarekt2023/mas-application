@@ -97,32 +97,6 @@ const CreatorProfileScreen = ({ navigation }) => {
       flexDirection: "row",
       alignItems: "center",
     },
-    timeLeftAndFavoriteShareIconWrapStyle: {
-      marginHorizontal: Sizes.fixPadding,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-    auctionImageStyle: {
-      height: 200.0,
-      borderTopLeftRadius: Sizes.fixPadding - 5.0,
-      borderTopRightRadius: Sizes.fixPadding - 5.0,
-    },
-    auctionDetailWrapStyle: {
-      marginTop: Sizes.fixPadding - 18.0,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-    timeLeftWrapStyle: {
-      alignSelf: "flex-start",
-      marginTop: Sizes.fixPadding,
-      borderColor: Colors.primaryColor,
-      borderWidth: 1.0,
-      paddingHorizontal: Sizes.fixPadding,
-      borderRadius: Sizes.fixPadding - 5.0,
-      paddingVertical: Sizes.fixPadding - 7.0,
-    },
     bottomSheetWrapStyle: {
       paddingHorizontal: 20.0,
       paddingTop: Sizes.fixPadding + 5.0,
@@ -135,15 +109,6 @@ const CreatorProfileScreen = ({ navigation }) => {
       borderRadius: Sizes.fixPadding - 5.0,
       width: screenWidth - 40,
       padding: 0.0,
-    },
-    collectionNameFieldStyle: {
-      backgroundColor: "rgba(255,255,255,0.05)",
-      paddingHorizontal: Sizes.fixPadding,
-      paddingVertical: Sizes.fixPadding + 5.0,
-      borderRadius: Sizes.fixPadding - 5.0,
-      ...Fonts.grayColor12Regular,
-      marginTop: Sizes.fixPadding + 5.0,
-      marginBottom: Sizes.fixPadding * 3.0,
     },
     createCollectionButtonStyle: {
       borderRadius: Sizes.fixPadding - 5.0,
@@ -177,14 +142,6 @@ const CreatorProfileScreen = ({ navigation }) => {
       paddingVertical: Sizes.fixPadding,
       justifyContent: "center",
       alignItems: "center",
-    },
-    headerIconWrapStyle: {
-      width: 40.0,
-      height: 40.0,
-      backgroundColor: Colors.primaryColor,
-      borderRadius: Sizes.fixPadding - 2.0,
-      alignItems: "center",
-      justifyContent: "center",
     },
   });
 
@@ -293,7 +250,7 @@ const CreatorProfileScreen = ({ navigation }) => {
         </Text>
         <FlatList
           data={bundlesArr}
-          keyExtractor={(item) => `${item.id}`}
+          keyExtractor={(item, index) => `${index}`}
           renderItem={({ item }) => (
             <Bundle
               item={item}

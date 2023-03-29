@@ -54,19 +54,20 @@ const useChatData = create((set, get) => ({
       if (res.data.statusCode === 200) {
         set({
           chatCreatorsId: res.data.result.map(
-            (item) => item.users.filter((item2) => item2._id !== userId)[0]._id
+            (item) => item.users.filter((item2) => item2._id !== userId)[0]?._id
           ),
         });
         set({ chatsIds: res.data.result.map((i) => i._id) });
         set({
           unreadMessages: res.data.result.map((i) => ({
             chatId: i._id,
-            creatorId: i.users.filter((item2) => item2._id !== userId)[0]._id,
+            creatorId: i.users.filter((item2) => item2._id !== userId)[0]?._id,
             messages: [],
           })),
         });
       }
     } catch (error) {
+      console.log(error);
       console.log("Error in useChatData / getChatList");
     }
     set({ isLoading: false });

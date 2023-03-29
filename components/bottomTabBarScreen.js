@@ -1,4 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { View, Image, StyleSheet, Text, BackHandler } from "react-native";
 import ProfileScreen from "../screens/profile/profileScreen";
 import HomeScreen from "../screens/home/homeScreen";
@@ -20,6 +25,7 @@ import io from "socket.io-client";
 import { baseURL } from "../Data/Apiconfigs";
 import useLocalData from "../Data/localData/useLocalData";
 import useWithdrawData from "../Data/useWithdrawData";
+import useStoryData from "../Data/useStoryData";
 
 const Tab = createBottomTabNavigator();
 
@@ -58,7 +64,7 @@ const TabNavigator = () => {
 
   // Get user's token from the Login data
   const token = useLoginData((state) => state.userInfo.token);
-  const userId = useProfileData((state) => state.userData.userId);
+  const { userId } = useProfileData((state) => state.userData);
   const getProfile = useProfileData((state) => state.getProfile);
   const getCreators = useCreatorsData((state) => state.getCreators);
   const getBundles = useBundlesData((state) => state.getBundles);
@@ -78,6 +84,11 @@ const TabNavigator = () => {
   const setNotificationsArr = useNotificationData(
     (state) => state.setNotificationsArr
   );
+  const getSubscription = useProfileData((state) => state.getSubscription);
+  const subscriptionCreators = useProfileData(
+    (state) => state.subscriptionCreators
+  );
+  const getStory = useStoryData((state) => state.getStory);
 
   // get the Loading state for fetched data
   const profileLoading = useProfileData((state) => state.isLoading);
@@ -87,6 +98,7 @@ const TabNavigator = () => {
   const notificationsLoading = useNotificationData((state) => state.isLoading);
   const chatLoading = useChatData((state) => state.isLoading);
   const withdrawLoading = useWithdrawData((state) => state.isLoading);
+  const storyLoading = useStoryData((state) => state.isLoading);
   const isLoading =
     profileLoading ||
     creatorsLoading ||
@@ -94,23 +106,14 @@ const TabNavigator = () => {
     allUsersLoading ||
     notificationsLoading ||
     chatLoading ||
-    withdrawLoading;
+    withdrawLoading ||
+    storyLoading;
 
   useEffect(() => {
     getProfile(token);
     getNotifications(token);
     getTotalEarnings(token);
-
-    const notifySocket = io(baseURL + "/notifications", {
-      forceNew: true,
-      auth: {
-        token: token,
-      },
-    });
-
-    notifySocket.on("notification", (notifications) => {
-      if(!isLoading) setNotificationsArr(notifications.reverse());
-    });
+    getSubscription(token);
 
     const socket = io(baseURL, {
       auth: {
@@ -129,12 +132,30 @@ const TabNavigator = () => {
     };
   }, []);
 
+  useLayoutEffect(() => {
+    const notifySocket = io(baseURL + "/notifications", {
+      forceNew: true,
+      auth: {
+        token: token,
+      },
+    });
+
+    notifySocket.on("notification", (notifications) => {
+      if (!isLoading) setNotificationsArr(notifications.reverse());
+    });
+  }, [notificationsLoading]);
+
   useEffect(() => {
     getCreators(token, userId);
     getAllUsers(userId);
     getBundles(userId);
     getChatList(token, userId);
+    getStory(token, userId, userId);
   }, [userId]);
+
+  useEffect(() => {
+    subscriptionCreators.forEach((i) => getStory(token, i._id, userId));
+  }, [subscriptionCreators]);
 
   const setUnReadMessages = useChatData((state) => state.setUnReadMessages);
 
@@ -258,7 +279,12 @@ const TabNavigator = () => {
                       alignItems: "center",
                     }}
                   >
-                    <Text style={{...Fonts.whiteColor12Medium, color: Colors.buttonTextColor}}>
+                    <Text
+                      style={{
+                        ...Fonts.whiteColor12Medium,
+                        color: Colors.buttonTextColor,
+                      }}
+                    >
                       {unreadMessagesCount}
                     </Text>
                   </View>

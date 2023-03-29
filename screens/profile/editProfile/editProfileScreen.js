@@ -27,7 +27,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import useProfileData from "../../../Data/useProfileData";
 import useLocalData from "../../../Data/localData/useLocalData";
 import * as ImagePicker from 'expo-image-picker';
-import { showMessage } from "react-native-flash-message";
 import { Camera, CameraType } from "expo-camera";
 import {pageUrl} from "../../../Data/Apiconfigs";
 
@@ -199,17 +198,7 @@ const EditProfileScreen = ({ navigation }) => {
             `application/${type}`,
       });
       updateState({ showBottomSheet: false, selectedName: "" });
-      showMessage({
-        message: "File Uploaded",
-        type: "success",
-        titleStyle: { fontWeight: "bold", fontSize: 16 },
-      });
     } catch (err) {
-      showMessage({
-        message: "Something Wrong",
-        type: "warning",
-        titleStyle: { fontWeight: "bold", fontSize: 16 },
-      });
       console.log("Error in upload file : addScreen.js");
     }
   };
@@ -790,6 +779,7 @@ const EditProfileScreen = ({ navigation }) => {
             : { uri: watch("coverPic").uri }
         }
         style={{ marginBottom: 10 }}
+        resizeMode={"stretch"}
       >
         <TouchableOpacity
           activeOpacity={0.9}

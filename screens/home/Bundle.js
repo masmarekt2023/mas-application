@@ -21,7 +21,7 @@ const Bundle = ({ item, style, navigation }) => {
   // The style Object
   const styles = StyleSheet.create({
     auctionImageStyle: {
-      height: 175.0,
+      height: 140.0,
       borderTopLeftRadius: Sizes.fixPadding - 5.0,
       borderTopRightRadius: Sizes.fixPadding - 5.0,
     },
@@ -142,6 +142,8 @@ const Bundle = ({ item, style, navigation }) => {
         marginRight: Sizes.fixPadding * 2.0,
         marginBottom: style.marginBottom,
         borderRadius: Sizes.fixPadding - 5.0,
+        borderWidth: darkMode ? 0 : 1,
+        borderColor: Colors.primaryColor,
         width: style.width,
         backgroundColor: "rgba(255,255,255,0.05)",
       }}
@@ -167,19 +169,11 @@ const Bundle = ({ item, style, navigation }) => {
               name={like ? "favorite" : "favorite-border"}
               size={18}
               color={like ? Colors.errorColor : Colors.grayColor}
-              //onPress={() => updateState({ showSavePopup: true })}
             />
           </TouchableOpacity>
         </View>
       </ImageBackground>
-      <View
-        style={{
-          borderWidth: darkMode ? 0 : 1,
-          borderColor: Colors.primaryColor,
-          borderBottomLeftRadius: Sizes.fixPadding - 3,
-          borderBottomRightRadius: Sizes.fixPadding - 3,
-        }}
-      >
+      <View>
         <View
           style={{
             margin: Sizes.fixPadding,

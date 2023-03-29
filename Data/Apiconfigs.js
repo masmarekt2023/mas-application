@@ -105,6 +105,10 @@ const Apiconfigs = {
   landingContentList: `${url}/content/landingContentList`,
   staticContentList: `${url}/static/staticContentList`,
   viewStaticPage: `${url}/static/staticContent`,
+
+  story: `${url}/story/`,
+  likeDislikeStory: `${url}/story/likeDislikeStory/`
+
 };
 
 export default Apiconfigs;

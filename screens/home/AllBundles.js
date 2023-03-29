@@ -81,7 +81,7 @@ const AllBundles = ({ navigation }) => {
         {searchFiled()}
         <FlatList
           data={bundlesFilteredList}
-          keyExtractor={(item) => `${item._id}`}
+          keyExtractor={(item, index) => `${index}`}
           renderItem={renderItem}
           numColumns={2}
           style={{ marginLeft: 5 }}

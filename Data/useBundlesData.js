@@ -17,7 +17,7 @@ const useBundlesData = create((set) => ({
         method: "GET",
         url: Apiconfigs.listAllNft,
         params: {
-          limit: 10,
+          limit: 100,
           page: 1
         }
       });

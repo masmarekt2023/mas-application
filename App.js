@@ -39,6 +39,7 @@ import TransferFunds from "./screens/wallet/TransferFunds/TransferFunds";
 import WalletSuccessScreen from "./screens/wallet/WalletSuccessScreen/WalletSuccessScreen";
 import EditBundle from "./screens/liveAuctionsDetail/EditBundle/EditBundle";
 import WithdrawSuccessScreen from "./screens/wallet/Withdraw/WithdrawSuccessScreen";
+import Story from "./screens/home/Story";
 
 LogBox.ignoreAllLogs();
 
@@ -128,6 +129,7 @@ const App = () => {
           component={TermsAndConditionsScreen}
         />
         <Stack.Screen name="LocalCamera" component={LocalCamera} />
+        <Stack.Screen name="Story" component={Story}  options={{ ...TransitionPresets.DefaultTransition }} />
       </Stack.Navigator>
       <FlashMessage position="top" />
       {isCopied ? (

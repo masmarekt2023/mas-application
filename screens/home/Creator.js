@@ -24,7 +24,7 @@ const Creator = ({ item, style, navigation }) => {
   // The style Object
   const styles = StyleSheet.create({
     auctionImageStyle: {
-      height: 175.0,
+      height: 140.0,
       borderTopLeftRadius: Sizes.fixPadding - 5.0,
       borderTopRightRadius: Sizes.fixPadding - 5.0,
     },
@@ -130,6 +130,8 @@ const Creator = ({ item, style, navigation }) => {
         backgroundColor: "rgba(255,255,255,0.05)",
         marginBottom: style.marginBottom,
         width: screenWidth / 2.2,
+        borderWidth: darkMode ? 0 : 1,
+        borderColor: Colors.primaryColor
       }}
     >
       <ImageBackground
@@ -181,10 +183,6 @@ const Creator = ({ item, style, navigation }) => {
         style={{
           paddingHorizontal: Sizes.fixPadding + 5.0,
           paddingVertical: Sizes.fixPadding,
-          borderWidth: darkMode ? 0 : 1,
-          borderColor: Colors.primaryColor,
-          borderBottomLeftRadius: Sizes.fixPadding - 5.0,
-          borderBottomRightRadius: Sizes.fixPadding - 5.0,
         }}
       >
         <Text

@@ -16,15 +16,15 @@ const useLocalData = create((set) => ({
 
   // Styles
   lightModeColor: {
-    bodyBackColor: "#ffffff",
+    bodyBackColor: "#fff", // #6c0fda
     blackColor: "#ffffff",
     whiteColor: "#000000",
-    primaryColor: "rgba(128,15,47,1)",
+    primaryColor: "rgba(19,198,226,1)",
     inputBgColor: "#eeeeee",
-    tabIconBgColor: "rgba(128,15,47,0.2)",
+    tabIconBgColor: "rgba(19,198,226,0.2)",
     iconColor: "#ffffff",
     buttonTextColor: "#ffffff",
-    customAlertColor: "rgba(128,15,47,1)",
+    customAlertColor: "rgba(19,198,226,1)",
     customAlertTextColor: "#ffffff",
     grayColor: "#777777",
     greenColor: "#30b983",

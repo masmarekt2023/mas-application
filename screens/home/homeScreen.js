@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import {
   SafeAreaView,
   View,
@@ -18,13 +18,33 @@ import useGetAllUsersData from "../../Data/useGetAllUsersData";
 import useGetUser from "../../Data/useGetUser";
 import useLoginData from "../../Data/useLoginData";
 import useNotificationData from "../../Data/useNotificationData";
-import { MaterialIcons } from "@expo/vector-icons";
+import {
+  MaterialIcons,
+  AntDesign,
+  Entypo,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import useProfileData from "../../Data/useProfileData";
 import useLocalData from "../../Data/localData/useLocalData";
+import useStoryData from "../../Data/useStoryData";
+import * as ImagePicker from "expo-image-picker";
+import { useForm } from "react-hook-form";
+import { BottomSheet } from "@rneui/themed";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
-const itemWidth = Math.round(width * 0.8);
+const convertToFileType = (uri, name) => {
+  if (uri !== "") {
+    const type = uri.split(".")[uri.split(".").length - 1];
+    return {
+      name: `${name}.${type}`,
+      uri: uri,
+      type: `application/${type}`,
+    };
+  } else {
+    return { uri: "" };
+  }
+};
 
 const HomeScreen = ({ navigation }) => {
   // Get Colors from the Global state
@@ -40,51 +60,11 @@ const HomeScreen = ({ navigation }) => {
       alignItems: "center",
       justifyContent: "center",
     },
-    userImageStyle: {
-      width: 50.0,
-      height: 50.0,
-      borderRadius: 25.0,
-      borderColor: Colors.primaryColor,
-      borderWidth: 1.5,
-    },
     userInfoWrapStyle: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
       margin: Sizes.fixPadding * 2.0,
-    },
-    bannerImageStyle: {
-      width: itemWidth,
-      height: 150,
-      alignItems: "center",
-      justifyContent: "flex-end",
-    },
-    bannerCategoryWrapStyle: {
-      backgroundColor: Colors.primaryColor,
-      paddingHorizontal: Sizes.fixPadding * 2.8,
-      paddingVertical: Sizes.fixPadding - 5.0,
-      borderRadius: Sizes.fixPadding - 5.0,
-      marginBottom: Sizes.fixPadding,
-    },
-    auctionImageStyle: {
-      height: 200.0,
-      borderTopLeftRadius: Sizes.fixPadding - 5.0,
-      borderTopRightRadius: Sizes.fixPadding - 5.0,
-    },
-    auctionDetailWrapStyle: {
-      marginTop: Sizes.fixPadding - 18.0,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-    timeLeftWrapStyle: {
-      alignSelf: "flex-start",
-      marginTop: Sizes.fixPadding,
-      borderColor: Colors.primaryColor,
-      borderWidth: 1.0,
-      paddingHorizontal: Sizes.fixPadding,
-      borderRadius: Sizes.fixPadding - 5.0,
-      paddingVertical: Sizes.fixPadding - 7.0,
     },
     titleWrapStyle: {
       marginBottom: Sizes.fixPadding + 5.0,
@@ -92,11 +72,6 @@ const HomeScreen = ({ navigation }) => {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-    },
-    favoriteAndShareIconWrapStyle: {
-      alignSelf: "flex-end",
-      flexDirection: "row",
-      alignItems: "center",
     },
     timeLeftAndFavoriteShareIconWrapStyle: {
       marginHorizontal: Sizes.fixPadding,
@@ -126,15 +101,6 @@ const HomeScreen = ({ navigation }) => {
       width: width - 40,
       padding: 0.0,
     },
-    collectionNameFieldStyle: {
-      backgroundColor: "rgba(255,255,255,0.05)",
-      paddingHorizontal: Sizes.fixPadding,
-      paddingVertical: Sizes.fixPadding + 5.0,
-      borderRadius: Sizes.fixPadding - 5.0,
-      ...Fonts.grayColor12Regular,
-      marginTop: Sizes.fixPadding + 5.0,
-      marginBottom: Sizes.fixPadding * 3.0,
-    },
     createCollectionButtonStyle: {
       borderRadius: Sizes.fixPadding - 5.0,
       paddingVertical: Sizes.fixPadding + 5.0,
@@ -148,16 +114,6 @@ const HomeScreen = ({ navigation }) => {
       paddingHorizontal: Sizes.fixPadding * 2.0,
       backgroundColor: Colors.bodyBackColor,
     },
-    favoriteAndShareIconContainStyle: {
-      zIndex: 3,
-      elevation: 3,
-      backgroundColor: "rgb(255,255,255,0.7)",
-      width: 30.0,
-      height: 30.0,
-      borderRadius: 15.0,
-      alignItems: "center",
-      justifyContent: "center",
-    },
     animatedView: {
       backgroundColor: "#333333",
       position: "absolute",
@@ -169,23 +125,137 @@ const HomeScreen = ({ navigation }) => {
       justifyContent: "center",
       alignItems: "center",
     },
+    storyContainerStyle: {
+      marginRight: Sizes.fixPadding * 2.0,
+      alignItems: "center",
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      backgroundColor: "#fff",
+      justifyContent: "center",
+      position: "relative",
+    },
+    addStoryStyle: {
+      position: "absolute",
+      width: 20,
+      height: 20,
+      borderRadius: 10,
+      backgroundColor: Colors.primaryColor,
+      justifyContent: "center",
+      alignItems: "center",
+      right: 0,
+      bottom: 0,
+    },
+    changeProfilePicBottomSheetStyle: {
+      backgroundColor: Colors.bodyBackColor,
+      paddingHorizontal: Sizes.fixPadding * 2.0,
+      paddingTop: Sizes.fixPadding + 10.0,
+      borderTopLeftRadius: Sizes.fixPadding * 3.0,
+      borderTopRightRadius: Sizes.fixPadding * 3.0,
+    },
+    changeProfilePicOptionsIconWrapStyle: {
+      width: 40.0,
+      height: 40.0,
+      borderRadius: 20.0,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    sendButtonStyle: {
+      width: 35,
+      height: 35,
+      borderRadius: 17.5,
+      backgroundColor: Colors.primaryColor,
+      justifyContent: "center",
+      alignItems: "center",
+    },
   });
 
   // get user token from the login data
   const token = useLoginData((state) => state.userInfo.token);
-  // get user data from the global state
-  const { userImage, userName } = useProfileData((state) => state.userData);
+  // Get user profile data
+  const { userId, userImage, name, userName } = useProfileData(
+    (state) => state.userData
+  );
   // Creators list
   const creatorsList = useCreatorsData((state) => state.creatorsList);
   // All Creators List
   const allCreatorsList = useGetAllUsersData((state) => state.allUsersList);
   // Bundle list
-  const bundlesList = useBundlesData((state) => state.bundlesList).slice(0, 10);
+  const bundlesList = useBundlesData((state) => state.bundlesList);
   // Get Creators Info
   const getCreators = useGetUser((state) => state.getUser);
   const setCreatorName = useGetUser((state) => state.setUsername);
   // get if there are unread messages
   const isUnreadMessage = useNotificationData((state) => state.isUnreadMessage);
+  // get the story from the user
+  const storyArr = useStoryData((state) => state.storyArr);
+  const userStories = storyArr.find((i) => i.userId === userId)?.result;
+  // get the subscription creators
+  const subscriptionCreators = useProfileData(
+    (state) => state.subscriptionCreators
+  );
+  // upload story
+  const uploadStory = useStoryData((state) => state.addStory);
+
+  // React-Hook-form for handling the form's inputs
+  const { setValue, watch } = useForm({
+    defaultValues: {
+      file: convertToFileType(userImage, `${name}-profilePic`),
+      showBottomSheet: false,
+      openFileSender: false,
+    },
+  });
+
+  // Select File From device
+  const selectFile = async () => {
+    try {
+      setValue("showBottomSheet", false);
+      let res = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+      });
+      const type = res.uri.split(".")[res.uri.split(".").length - 1];
+      setValue("file", {
+        name: `${res.type}.${type}`,
+        uri: res.uri,
+        type: `application/${type}`,
+      });
+      setValue("openFileSender", true);
+    } catch (err) {
+      console.log("Error in upload file : addScreen.js");
+    }
+  };
+
+  // Access to camera and handle the photo
+  const cameraPicUrl = useLocalData((state) => state.cameraPicUrl);
+  const takePic = () => {
+    setValue("showBottomSheet", false);
+    navigation.push("LocalCamera");
+  };
+
+  useLayoutEffect(() => {
+    if (cameraPicUrl !== "") {
+      setValue("file", convertToFileType(cameraPicUrl, "camera"));
+      setValue("openFileSender", true);
+    }
+  }, [cameraPicUrl]);
+
+  // View user stories
+  const viewStory = () => {
+    setValue("showBottomSheet", false);
+    navigation.push("Story", {
+      item: userStories,
+      isUserStory: true,
+      userInfo: { userName: userName, userImage: userImage },
+    });
+  };
+
+  // upload story
+  const addStory = () => {
+    setValue("openFileSender", false);
+    uploadStory(token, watch("file"), userId);
+    setValue("file", { uri: "" });
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bodyBackColor }}>
@@ -204,49 +274,78 @@ const HomeScreen = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
         />
       </View>
+      {changeProfilePicOptionsSheet()}
+      {watch("openFileSender") && FileSender()}
     </SafeAreaView>
   );
 
   function StoriesInfo() {
-    const topCreators = [
-      {
-        userName: userName,
-        profilePic: userImage,
-      },
-      ...allCreatorsList.map((item) => ({
-        userName: item.userName,
-        profilePic: item.profilePic,
-      })),
-    ];
     const renderItem = ({ item }) => {
+      const isUser = item.userId === userId;
+      const userDetails = isUser
+        ? { profilePic: userImage }
+        : subscriptionCreators.find((i) => i._id === item.userId);
       return (
         <TouchableOpacity
           activeOpacity={0.9}
+          onPress={() =>
+            isUser
+              ? setValue("showBottomSheet", true)
+              : navigation.push("Story", {
+                  item: item.result,
+                  isUserStory: isUser,
+                  userInfo: {
+                    userImage: userDetails?.profilePic
+                      ? userDetails?.profilePic
+                      : "",
+                    userName: userDetails?.userName,
+                  },
+                })
+          }
           style={{
-            marginRight: Sizes.fixPadding * 2.0,
-            alignItems: "center",
-            borderRadius: 30,
-            backgroundColor: "#fff",
-            padding: 2,
-            borderColor: Colors.primaryColor,
-            borderWidth: 2,
+            ...styles.storyContainerStyle,
+            borderColor: isUser
+              ? userStories?.length
+                ? Colors.primaryColor
+                : Colors.grayColor
+              : Colors.primaryColor,
+            borderWidth: isUser ? (userStories?.length ? 2 : 1) : 2,
+            display:
+              item.result?.length > 0 ? "flex" : isUser ? "flex" : "none",
           }}
         >
           <Image
             source={
-              item.profilePic
-                ? { uri: item.profilePic }
+              userDetails?.profilePic
+                ? { uri: userDetails?.profilePic }
                 : require("../../assets/images/icon.png")
             }
-            style={{ width: 55.0, height: 55.0, borderRadius: 27.5 }}
+            style={{
+              width: 50.0,
+              height: 50.0,
+              borderRadius: 25.0,
+              borderWidth: 1,
+              borderColor: Colors.grayColor,
+            }}
           />
+          <View
+            style={{
+              ...styles.addStoryStyle,
+              display: isUser ? "flex" : "none",
+            }}
+          >
+            <AntDesign name="plus" size={12} color={Colors.buttonTextColor} />
+          </View>
         </TouchableOpacity>
       );
     };
     return (
       <View>
         <FlatList
-          data={topCreators}
+          data={[
+            { userId: userId, result: userStories },
+            ...storyArr.filter((i) => i.userId !== userId),
+          ]}
           keyExtractor={(item, index) => `${index}`}
           renderItem={renderItem}
           horizontal
@@ -316,7 +415,7 @@ const HomeScreen = ({ navigation }) => {
         </View>
         <FlatList
           data={topCreators}
-          keyExtractor={(item) => `${item._id}`}
+          keyExtractor={(item, index) => `${index}`}
           renderItem={renderItem}
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -378,7 +477,7 @@ const HomeScreen = ({ navigation }) => {
         </View>
         <FlatList
           data={bundlesList}
-          keyExtractor={(item) => `${item._id}`}
+          keyExtractor={(item, index) => `${index}`}
           renderItem={renderItem}
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -425,6 +524,144 @@ const HomeScreen = ({ navigation }) => {
             }
           />
         </TouchableOpacity>
+      </View>
+    );
+  }
+
+  function changeProfilePicOptionsSheet() {
+    return (
+      <BottomSheet
+        isVisible={watch("showBottomSheet")}
+        containerStyle={{ backgroundColor: "rgba(0.5, 0.50, 0, 0.50)" }}
+        onBackdropPress={() => setValue("showBottomSheet", false)}
+      >
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={() => setValue("showBottomSheet", false)}
+          style={styles.changeProfilePicBottomSheetStyle}
+        >
+          <Text style={{ textAlign: "center", ...Fonts.whiteColor20SemiBold }}>
+            Choose Option
+          </Text>
+          <View
+            style={{
+              marginTop: Sizes.fixPadding + 10.0,
+              marginBottom: Sizes.fixPadding,
+            }}
+          >
+            {changeProfilePicOptionsSort({
+              bgColor: "#009688",
+              icon: (
+                <Entypo
+                  name="camera"
+                  size={18}
+                  color={Colors.buttonTextColor}
+                />
+              ),
+              option: "Camera",
+            })}
+            {changeProfilePicOptionsSort({
+              bgColor: "#00A7F7",
+              icon: (
+                <MaterialCommunityIcons
+                  name="image"
+                  size={20}
+                  color={Colors.buttonTextColor}
+                />
+              ),
+              option: "Gallery",
+            })}
+            {userStories?.length > 0 &&
+              changeProfilePicOptionsSort({
+                bgColor: "#DD5A5A",
+                icon: (
+                  <AntDesign
+                    name="eye"
+                    size={20}
+                    color={Colors.buttonTextColor}
+                  />
+                ),
+                option: "View Story",
+              })}
+          </View>
+        </TouchableOpacity>
+      </BottomSheet>
+    );
+  }
+
+  function changeProfilePicOptionsSort({ bgColor, icon, option }) {
+    const onPress = () => {
+      option === "Camera" ? takePic() : null;
+      option === "Gallery" ? selectFile() : null;
+      option === "View Story" ? viewStory() : null;
+    };
+    return (
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={onPress}
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          marginBottom: Sizes.fixPadding * 2.0,
+        }}
+      >
+        <View
+          style={{
+            ...styles.changeProfilePicOptionsIconWrapStyle,
+            backgroundColor: bgColor,
+          }}
+        >
+          {icon}
+        </View>
+        <Text
+          style={{
+            marginLeft: Sizes.fixPadding + 5.0,
+            ...Fonts.whiteColor14Medium,
+          }}
+        >
+          {option}
+        </Text>
+      </TouchableOpacity>
+    );
+  }
+
+  function FileSender() {
+    return (
+      <View
+        style={{
+          backgroundColor: Colors.blackColor,
+          width: width,
+          height: height - 80, // 80 px is bottom bar Height
+        }}
+      >
+        <TouchableOpacity
+          activeOpacity={0.9}
+          style={{ margin: Sizes.fixPadding }}
+          onPress={() => setValue("openFileSender", false)}
+        >
+          <AntDesign name="close" size={24} color={Colors.whiteColor} />
+        </TouchableOpacity>
+        <Image
+          style={{ flex: 1 }}
+          source={{ uri: watch("file").uri ? watch("file").uri : "" }}
+          resizeMode={"stretch"}
+        />
+        <View
+          style={{
+            paddingHorizontal: Sizes.fixPadding,
+            paddingTop: Sizes.fixPadding,
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          <TouchableOpacity
+            activeOpacity={0.9}
+            style={{ ...styles.sendButtonStyle }}
+            onPress={addStory}
+          >
+            <AntDesign name="upload" size={18} color={Colors.buttonTextColor} />
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }

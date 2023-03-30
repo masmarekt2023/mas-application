@@ -9,18 +9,16 @@ import {
   StatusBar,
   StyleSheet,
   Text,
-  Dimensions,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BottomSheet } from "@rneui/themed";
-import useGetAllUsersData from "../../Data/useGetAllUsersData";
 import DashedLine from "react-native-dashed-line";
 import useGetUser from "../../Data/useGetUser";
 import useLoginData from "../../Data/useLoginData";
 import useBundlesData from "../../Data/useBundlesData";
 import useLocalData from "../../Data/localData/useLocalData";
-
-const screenHeight = Dimensions.get("screen").height;
+import axios from "axios";
+import Apiconfigs from "../../Data/Apiconfigs";
 
 const SearchScreen = ({ navigation }) => {
   // Get Colors from the Global state
@@ -78,7 +76,6 @@ const SearchScreen = ({ navigation }) => {
       borderTopLeftRadius: Sizes.fixPadding * 3.0,
       borderTopRightRadius: Sizes.fixPadding * 3.0,
       backgroundColor: Colors.bodyBackColor,
-      height: screenHeight * 0.8,
     },
     animatedView: {
       backgroundColor: "#333333",
@@ -126,10 +123,6 @@ const SearchScreen = ({ navigation }) => {
   // get user token from the login data
   const token = useLoginData((state) => state.userInfo.token);
 
-  // Get the list of Creators and the List of User from the global state
-  const allUserList = useGetAllUsersData((state) => state.allUsersList);
-  const allBundleList = useBundlesData((state) => state.bundlesList);
-
   // set the data of the Creator in the global state and navigate to Creator Screen
   const setUsername = useGetUser((state) => state.setUsername);
   const getUser = useGetUser((state) => state.getUser);
@@ -170,54 +163,94 @@ const SearchScreen = ({ navigation }) => {
     duration,
   } = state;
 
+  const searchByCreator = async () => {
+    try {
+      const res = await axios({
+        method: "GET",
+        url: Apiconfigs.searchUser,
+        params: {
+          search: search,
+          filter: [`${creatorSearchKey}`],
+          limit: creatorSearchKey === "speciality" ? 30 : 10,
+        },
+      });
+      if (res.data.statusCode === 200) {
+        updateState({ creatorsList: res.data.result.docs });
+      }
+    } catch (e) {
+      console.log("Error in SearchScreen / searchByCreator");
+    }
+  };
+
+  const searchByBundle = async () => {
+    try {
+      const res = await axios({
+        method: "GET",
+        url: Apiconfigs.searchNft,
+        headers: {
+          token: token,
+        },
+        params: {
+          search: search,
+        },
+      });
+      if (res.data.statusCode === 200) {
+        const filterAmount = {
+          min: amount.min !== "" ? amount.min : 0,
+          max: amount.max !== "" ? amount.max : 100000,
+        };
+        const filterDuration = {
+          min: duration.min !== "" ? duration.min : 0,
+          max: duration.max !== "" ? duration.max : 100000,
+        };
+        updateState({
+          bundleList: res.data.result.docs
+            .filter(
+              (i) =>
+                +i.donationAmount >= filterAmount.min &&
+                +i.donationAmount <= filterAmount.max
+            )
+            .filter((i) => i.coinName === coinName)
+            .filter(
+              (i) =>
+                +i.duration.split(" ")[0] >= filterDuration.min &&
+                +i.duration.split(" ")[0] <= filterDuration.max
+            )
+            .filter((i) =>
+              i.bundleTitle.toLowerCase().includes(search.toLowerCase())
+            ),
+        });
+      }
+    } catch (e) {
+      console.log("Error in SearchScreen / searchByBundle");
+    }
+  };
+
   useLayoutEffect(() => {
     const searchingTime = setTimeout(() => {
       if (selectedSearchType === "Creator") {
         if (search !== "") {
-          updateState({
-            creatorsList: allUserList.filter((i) =>
-              i[`${creatorSearchKey}`]
-                .toLowerCase()
-                .includes(search.toLowerCase())
-            ),
-          });
+          searchByCreator();
         } else {
           updateState({ creatorsList: [] });
         }
       } else {
         if (search !== "") {
-          const filterAmount = {
-            min: amount.min !== "" ? amount.min : 0,
-            max: amount.max !== "" ? amount.max : 100000,
-          };
-          const filterDuration = {
-            min: duration.min !== "" ? duration.min : 0,
-            max: duration.max !== "" ? duration.max : 100000,
-          };
-          updateState({
-            bundleList: allBundleList
-              .filter(
-                (i) =>
-                  +i.donationAmount >= filterAmount.min &&
-                  +i.donationAmount <= filterAmount.max
-              )
-              .filter((i) => i.coinName === coinName)
-              .filter(
-                (i) =>
-                  +i.duration.split(" ")[0] >= filterDuration.min &&
-                  +i.duration.split(" ")[0] <= filterDuration.max
-              )
-              .filter((i) =>
-                i.bundleTitle.toLowerCase().includes(search.toLowerCase())
-              ),
-          });
+          searchByBundle();
         } else {
           updateState({ bundleList: [] });
         }
       }
-    }, 1000);
+    }, 500);
     return () => clearTimeout(searchingTime);
-  }, [search, amount, duration, coinName, creatorSearchKey]);
+  }, [
+    search,
+    amount,
+    duration,
+    coinName,
+    creatorSearchKey,
+    selectedSearchType,
+  ]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bodyBackColor }}>
@@ -604,7 +637,7 @@ const SearchScreen = ({ navigation }) => {
               ? Colors.primaryColor
               : Colors.bodyBackColor,
         }}
-        onPress={() => updateState({ selectedSearchType: item, search: "" })}
+        onPress={() => updateState({ selectedSearchType: item })}
       >
         <Text
           style={

@@ -6,9 +6,8 @@ const useStoryData = create((set, get) => ({
   isLoading: false,
 
   // Get Story for user
-  storyArr: [],
-  userLikedStories: [],
-  getStory: async (token, userId, ourId) => {
+  userStories: [],
+  getStory: async (token, userId) => {
     set({ isLoading: true });
     try {
       const res = await axios({
@@ -19,38 +18,29 @@ const useStoryData = create((set, get) => ({
         },
       });
       if (res.data.statusCode === 200) {
-        const result = res.data.result;
-        result.forEach((i) => {
-          if (i.likeUsers.includes(ourId))
-            set((state) => ({
-              userLikedStories: [...state.userLikedStories, i._id],
-            }));
-        });
-        set((state) => {
-          if (result !== []) {
-            if (state.storyArr.find((i) => i.userId === userId)) {
-              return {
-                ...state,
-                storyArr: state.storyArr.map((i) =>
-                  i.userId === userId
-                    ? {
-                        userId: userId,
-                        result: result,
-                      }
-                    : i
-                ),
-              };
-            } else {
-              return {
-                ...state,
-                storyArr: [
-                  ...state.storyArr,
-                  { userId: userId, result: result },
-                ],
-              };
-            }
-          }
-        });
+        set({userStories: res.data.result})
+      }
+    } catch (e) {
+      console.log("Error in useStoryData / getStory");
+    }
+    set({ isLoading: false });
+  },
+
+  // Get Story for user
+  storyArr: [],
+  userLikedStories: [],
+  getAllStories: async (token, userId) => {
+    set({ isLoading: true });
+    try {
+      const res = await axios({
+        method: "GET",
+        url: Apiconfigs.getAllStories + userId,
+        headers: {
+          token: token,
+        },
+      });
+      if (res.data.statusCode === 200) {
+          set({storyArr: res.data.result});
       }
     } catch (e) {
       console.log("Error in useStoryData / getStory");

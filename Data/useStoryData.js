@@ -66,7 +66,7 @@ const useStoryData = create((set, get) => ({
         data: formData,
       });
       if (res.data.statusCode === 200) {
-        get().getStory(token, userId, userId);
+        get().getStory(token, userId);
       }
     } catch (e) {
       console.log("Error in useStoryData / addStory");
@@ -108,7 +108,7 @@ const useStoryData = create((set, get) => ({
         },
       });
       if (res.data.statusCode === 200) {
-        get().getStory(token, userId, userId);
+        get().getStory(token, userId);
       }
     } catch (e) {
       console.log("Error in useStoryData / deleteStory");

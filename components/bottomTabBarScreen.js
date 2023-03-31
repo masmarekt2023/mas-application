@@ -85,10 +85,8 @@ const TabNavigator = () => {
     (state) => state.setNotificationsArr
   );
   const getSubscription = useProfileData((state) => state.getSubscription);
-  const subscriptionCreators = useProfileData(
-    (state) => state.subscriptionCreators
-  );
   const getStory = useStoryData((state) => state.getStory);
+  const getAllStories = useStoryData((state) => state.getAllStories);
 
   // get the Loading state for fetched data
   const profileLoading = useProfileData((state) => state.isLoading);
@@ -150,12 +148,9 @@ const TabNavigator = () => {
     getAllUsers(userId);
     getBundles(userId);
     getChatList(token, userId);
-    getStory(token, userId, userId);
+    getStory(token, userId);
+    getAllStories(token, userId);
   }, [userId]);
-
-  useEffect(() => {
-    subscriptionCreators.forEach((i) => getStory(token, i._id, userId));
-  }, [subscriptionCreators]);
 
   const setUnReadMessages = useChatData((state) => state.setUnReadMessages);
 

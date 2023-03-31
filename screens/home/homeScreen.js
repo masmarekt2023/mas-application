@@ -189,7 +189,7 @@ const HomeScreen = ({ navigation }) => {
   const isUnreadMessage = useNotificationData((state) => state.isUnreadMessage);
   // get the story from the user
   const storyArr = useStoryData((state) => state.storyArr);
-  const userStories = storyArr.find((i) => i.userId === userId)?.result;
+  const userStories = useStoryData(state => state.userStories);
   // get the subscription creators
   const subscriptionCreators = useProfileData(
     (state) => state.subscriptionCreators

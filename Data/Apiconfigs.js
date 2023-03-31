@@ -5,10 +5,10 @@ const { manifest } = Constants;
 
 export let baseURL = "https://mas-server-l32v.onrender.com";
 export let pageUrl = "https://mas2023-lhqo.onrender.com";
-/*if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
   baseURL = `http://${manifest.debuggerHost.split(':').shift()}:1865`;
   //socketURL = "ws://192.168.1.255:1865";
-}*/
+}
 
 const url = `${baseURL}/api/v1`;
 const Apiconfigs = {
@@ -41,6 +41,7 @@ const Apiconfigs = {
   addNft: `${url}/nft/nft`,
   editNft: `${url}/nft/nft`,
   viewNft: `${url}/nft/viewNft/`,
+  searchNft: `${url}/nft/searchNft`,
   order: `${url}/order/order`,
   cancelOrder: `${url}/order/cancelOrder?_id=`,
 
@@ -81,6 +82,7 @@ const Apiconfigs = {
   profileFollowersList: `${url}/user/profileFollowersList`,
   profileFollowingList: `${url}/user/profileFollowingList`,
   donateUserList: `${url}/user/donateUserList`,
+  searchUser: `${url}/user/searchUser`,
 
   chatList: `${url}/chat/list/`,
   initChat: `${url}/chat/init/`,
@@ -107,7 +109,8 @@ const Apiconfigs = {
   viewStaticPage: `${url}/static/staticContent`,
 
   story: `${url}/story/`,
-  likeDislikeStory: `${url}/story/likeDislikeStory/`
+  likeDislikeStory: `${url}/story/likeDislikeStory/`,
+  getAllStories: `${url}/story/getAllStories/`
 
 };
 

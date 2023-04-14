@@ -20,8 +20,10 @@ import useLoginData from "../../Data/useLoginData";
 import { Dialog } from "@rneui/themed";
 import { Video } from "expo-av";
 
-const screenWidth = Dimensions.get("screen").width;
-const screenHeight = Dimensions.get("screen").height;
+const {width, height} = Dimensions.get("screen")
+
+const screenWidth = width < height ? width : height;
+const screenHeight = width > height ? width : height;
 
 const videoFormats = [
   "mp4",
@@ -53,7 +55,7 @@ const Story = ({ navigation, route }) => {
     dialogTextStyle: {
       width: 200,
       textAlign: "center",
-      color: Colors.grayColor,
+      color: '#000000',
       lineHeight: 20,
       marginBottom: Sizes.fixPadding * 3,
     },

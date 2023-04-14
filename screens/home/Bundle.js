@@ -1,5 +1,4 @@
 import {
-  Image,
   ImageBackground,
   StyleSheet,
   Text,
@@ -7,23 +6,27 @@ import {
   View,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import React, { useLayoutEffect, useState } from "react";
+import React, {useEffect, useLayoutEffect, useState} from "react";
 import useLoginData from "../../Data/useLoginData";
 import useProfileData from "../../Data/useProfileData";
 import useBundlesData from "../../Data/useBundlesData";
-import useGetUser from "../../Data/useGetUser";
 import useLocalData from "../../Data/localData/useLocalData";
 
 const Bundle = ({ item, style, navigation }) => {
   // Get Colors from the Global state
-  const { Colors, Fonts, Sizes, darkMode } = useLocalData((state) => state.styles);
+  const { Colors, Fonts, Sizes } = useLocalData((state) => state.styles);
 
   // The style Object
   const styles = StyleSheet.create({
-    auctionImageStyle: {
-      height: 140.0,
-      borderTopLeftRadius: Sizes.fixPadding - 5.0,
-      borderTopRightRadius: Sizes.fixPadding - 5.0,
+    cardContainer: {
+      marginRight: Sizes.fixPadding * 2.0,
+      borderRadius: Sizes.fixPadding * 2,
+      backgroundColor: "rgba(255,255,255,0.1)",
+      marginBottom: style.marginBottom,
+      width:  style.width,
+      padding: Sizes.fixPadding,
+      borderWidth: 1,
+      borderColor: Colors.primaryColor
     },
     auctionDetailWrapStyle: {
       marginTop: Sizes.fixPadding - 18.0,
@@ -36,7 +39,7 @@ const Bundle = ({ item, style, navigation }) => {
       marginTop: Sizes.fixPadding,
       borderColor: Colors.primaryColor,
       borderWidth: 1.0,
-      paddingHorizontal: Sizes.fixPadding,
+      paddingHorizontal: Sizes.fixPadding - 2,
       borderRadius: Sizes.fixPadding - 5.0,
       paddingVertical: Sizes.fixPadding - 7.0,
     },
@@ -108,25 +111,26 @@ const Bundle = ({ item, style, navigation }) => {
   // Handle like data
   const updateLikeData = useBundlesData((state) => state.updateBundlesLikeData);
   const likesUser = useBundlesData((state) => state.likesUser);
-  const [like, setLike] = useState(likesUser.includes(item._id));
-  useLayoutEffect(() => {
+  const [like, setLike] = useState(item?.likesUsers.includes(userId));
+
+  useEffect(() => {
     setLike(likesUser.includes(item._id));
-  }, [likesUser]);
+  },[likesUser])
+
   const onClickLike = () => {
+    setLike(prevState => !prevState);
     updateLikeData(token, item._id);
   };
 
   // set the data of the Creator in the global state and navigate to Creator Screen
-  const setUsername = useGetUser((state) => state.setUsername);
-  const getUser = useGetUser((state) => state.getUser);
+  /*const getUser = useGetUser((state) => state.getUser);
   const navToCreatorScreen = () => {
     if (isUserBundle) {
       navigation.navigate("Profile");
     } else {
-      setUsername(item.userId.userName);
-      getUser(token, navigation, userId);
+      getUser(token, navigation, item.userId.userName);
     }
-  };
+  };*/
 
   return (
     <TouchableOpacity
@@ -138,103 +142,36 @@ const Bundle = ({ item, style, navigation }) => {
           showPayDialog: false,
         });
       }}
-      style={{
-        marginRight: Sizes.fixPadding * 2.0,
-        marginBottom: style.marginBottom,
-        borderRadius: Sizes.fixPadding - 5.0,
-        borderWidth: darkMode ? 0 : 1,
-        borderColor: Colors.primaryColor,
-        width: style.width,
-        backgroundColor: "rgba(255,255,255,0.05)",
-      }}
+      style={styles.cardContainer}
     >
       <ImageBackground
         source={{ uri: item.mediaUrl }}
-        style={{ ...styles.auctionImageStyle, width: style.width }}
-        borderTopLeftRadius={Sizes.fixPadding - 5.0}
-        borderTopRightRadius={Sizes.fixPadding - 5.0}
+        style={{ height: 160.0 }}
+        borderRadius={Sizes.fixPadding}
       >
-        <View
-          style={{
-            margin: Sizes.fixPadding,
-            ...styles.favoriteAndShareIconWrapStyle,
-          }}
-        >
-          <TouchableOpacity
-            activeOpacity={0.9}
-            style={styles.favoriteAndShareIconContainStyle}
-            onPress={onClickLike}
-          >
-            <MaterialIcons
-              name={like ? "favorite" : "favorite-border"}
-              size={18}
-              color={like ? Colors.errorColor : Colors.grayColor}
-            />
-          </TouchableOpacity>
-        </View>
       </ImageBackground>
       <View>
-        <View
-          style={{
-            margin: Sizes.fixPadding,
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <TouchableOpacity activeOpacity={0.9} onPress={navToCreatorScreen}>
-            <Image
-              source={
-                item.userId.profilePic === ""
-                  ? require("../../assets/images/icon.png")
-                  : { uri: item.userId.profilePic }
-              }
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 27.5,
-                marginRight: Sizes.fixPadding,
-                display: item.userId.profilePic ? "flex" : "none",
-              }}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.9}
-            style={{ marginLeft: Sizes.fixPadding }}
+        <View>
+          <Text style={{ ...Fonts.whiteColor16SemiBold }}>
+            {item.bundleTitle}
+          </Text>
+          <Text
+              style={{...Fonts.grayColor14Regular}}
           >
-            <Text style={{ ...Fonts.whiteColor16SemiBold }}>
-              {item.bundleTitle}
-            </Text>
-            <Text
-              style={{
-                marginTop: Sizes.fixPadding - 10.0,
-                lineHeight: 15.0,
-                ...Fonts.grayColor14Regular,
-              }}
-            >
-              {new Date(item.createdAt).toLocaleDateString("en-us", {
-                year: "numeric",
-                month: "numeric",
-                day: "numeric",
-              })}
-            </Text>
-          </TouchableOpacity>
+            @{item.userId.userName}
+          </Text>
         </View>
         <View
           style={{
-            paddingHorizontal: Sizes.fixPadding + 5.0,
             paddingVertical: Sizes.fixPadding,
           }}
         >
           <View style={styles.auctionDetailWrapStyle}>
             <Text
-              numberOfLines={3}
+              numberOfLines={1}
               style={{
                 ...Fonts.grayColor14Regular,
                 flex: 1,
-                width: 150,
-                marginTop: 2,
-                height: 30,
-                lineHeight: 23,
               }}
             >
               {item.donationAmount} {item.coinName} for {item.duration}
@@ -263,6 +200,17 @@ const Bundle = ({ item, style, navigation }) => {
                   ? "Subscribed"
                   : "Subscribe"}
               </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                activeOpacity={0.9}
+                style={{marginTop: Sizes.fixPadding}}
+                onPress={onClickLike}
+            >
+              <MaterialIcons
+                  name={like ? "favorite" : "favorite-border"}
+                  size={18}
+                  color={like ? Colors.errorColor : Colors.primaryColor}
+              />
             </TouchableOpacity>
           </View>
         </View>

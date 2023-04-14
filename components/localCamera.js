@@ -1,11 +1,15 @@
 import { Camera, CameraType } from "expo-camera";
-import React, {useEffect, useState} from "react";
-import { TouchableOpacity, View, Dimensions, StyleSheet } from "react-native";
-import {Ionicons, MaterialIcons} from "@expo/vector-icons";
+import React, { useEffect, useState } from "react";
+import {TouchableOpacity, View, Dimensions, StyleSheet, SafeAreaView, StatusBar} from "react-native";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import useLocalData from "../Data/localData/useLocalData";
-import * as Permissions from 'expo-permissions';
+import * as Permissions from "expo-permissions";
 
-const size = Dimensions.get("screen");
+
+const {width, height} = Dimensions.get('screen');
+
+const screenWidth = width < height ? width : height;
+const screenHeight = height > width ? height : width;
 export const LocalCamera = ({ navigation }) => {
   // Get Colors from the Global state
   const { Colors, Sizes } = useLocalData((state) => state.styles);
@@ -16,8 +20,7 @@ export const LocalCamera = ({ navigation }) => {
       position: "absolute",
       height: 50,
       width: 50,
-      bottom: -size.height + 120,
-      right: 20,
+      bottom: -screenHeight + 120,
       borderRadius: 30,
       backgroundColor: Colors.grayColor,
       justifyContent: "center",
@@ -32,8 +35,8 @@ export const LocalCamera = ({ navigation }) => {
       justifyContent: "center",
       position: "absolute",
       left: Sizes.fixPadding * 2.0,
-      top : Sizes.fixPadding * 2.0,
-    }
+      top: Sizes.fixPadding * 4.0,
+    },
   });
 
   const setCameraPicUrl = useLocalData((state) => state.setCameraPicUrl);
@@ -55,27 +58,32 @@ export const LocalCamera = ({ navigation }) => {
     }
   };
 
-  useEffect(async () => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    if(status !== "granted") navigation.pop();
+  useEffect(() => {
+    const getData = async () => {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA);
+      if (status !== "granted") navigation.pop();
+    };
+
+    getData();
   }, []);
 
   return (
-    <View style={{ width: size.width, height: size.height }}>
+    <SafeAreaView style={{ width: screenWidth, height: screenHeight }}>
+      <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
       <Camera
         style={{ flex: 1, position: "relative" }}
         type={type}
         ref={(ref) => setCamera(ref)}
       >
-        <View style={styles.arrow}>
-          <MaterialIcons
-              name="chevron-left"
-              color={Colors.primaryColor}
-              size={26}
-              onPress={() => navigation.goBack()}
-          />
-        </View>
         <View>
+          <TouchableOpacity style={{...styles.button, left: 20}}>
+            <MaterialIcons
+                name="chevron-left"
+                color={Colors.primaryColor}
+                size={26}
+                onPress={() => navigation.goBack()}
+            />
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={toggleCameraType}
             style={{ ...styles.button, right: 20 }}
@@ -83,24 +91,24 @@ export const LocalCamera = ({ navigation }) => {
             <Ionicons
               name="reload-outline"
               size={30}
-              color={Colors.buttonTextColor}
+              color={Colors.primaryColor}
             />
           </TouchableOpacity>
           <TouchableOpacity
-            style={{ ...styles.button, right: size.width * 0.5 - 25 }}
+            style={{ ...styles.button, right: screenWidth * 0.5 - 25 }}
             onPress={snapPhoto.bind(this)}
           >
             <View
               style={{
                 width: 30,
                 height: 30,
-                backgroundColor: Colors.buttonTextColor,
+                backgroundColor: Colors.primaryColor,
                 borderRadius: 30,
               }}
             />
           </TouchableOpacity>
         </View>
       </Camera>
-    </View>
+    </SafeAreaView>
   );
 };

@@ -16,10 +16,10 @@ import * as yup from "yup";
 import { useController, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 import useVerificationData from "../../Data/useVerificationData";
-import { showMessage } from "react-native-flash-message";
 import useSignUpData from "../../Data/useSignUpData";
 import useWithdrawData from "../../Data/useWithdrawData";
 import useLocalData from "../../Data/localData/useLocalData";
+import { localAlert } from "../../components/localAlert";
 
 const { width } = Dimensions.get("window");
 
@@ -252,11 +252,7 @@ const VerificationScreen = ({ navigation, route }) => {
                 sendOpt(token, channel, context);
               }
             } else {
-              showMessage({
-                message: "You can get another code after 60 seconds",
-                type: "warning",
-                titleStyle: { fontWeight: "bold", fontSize: 16 },
-              });
+              localAlert("You can get another code after 60 seconds");
             }
           }}
         >
@@ -325,10 +321,11 @@ const VerificationScreen = ({ navigation, route }) => {
         }}
       >
         <TextInput
-          selectionColor={Colors.whiteColor}
+          selectionColor={Colors.inputTextColor}
           value={field.value}
           style={{
             ...Fonts.whiteColor14Medium,
+            color: Colors.inputTextColor,
             paddingLeft: Sizes.fixPadding,
           }}
           ref={field.ref}
@@ -371,7 +368,9 @@ const VerificationScreen = ({ navigation, route }) => {
         </View>
         <Text style={{ ...Fonts.whiteColor26SemiBold }}>Verification</Text>
         <Text style={{ textAlign: "center", ...Fonts.whiteColor14Medium }}>
-          {`We have sent the verification code to your ${channel === "email" ? "email" : "phone"}`}
+          {`We have sent the verification code to your ${
+            channel === "email" ? "email" : "phone"
+          }`}
         </Text>
       </View>
     );

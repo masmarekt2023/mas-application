@@ -4,10 +4,9 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Dimensions,
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import useProfileData from "../../Data/useProfileData";
 import useLoginData from "../../Data/useLoginData";
 import useGetUser from "../../Data/useGetUser";
@@ -15,30 +14,27 @@ import useChatData from "../../Data/useChatData";
 import useGetAllUsersData from "../../Data/useGetAllUsersData";
 import useLocalData from "../../Data/localData/useLocalData";
 
-const screenWidth = Dimensions.get("window").width;
-
 const Creator = ({ item, style, navigation }) => {
   // Get Colors from the Global state
-  const { Colors, Fonts, Sizes, darkMode } = useLocalData((state) => state.styles);
+  const { Colors, Fonts, Sizes } = useLocalData((state) => state.styles);
 
   // The style Object
   const styles = StyleSheet.create({
-    auctionImageStyle: {
-      height: 140.0,
-      borderTopLeftRadius: Sizes.fixPadding - 5.0,
-      borderTopRightRadius: Sizes.fixPadding - 5.0,
-    },
-    auctionDetailWrapStyle: {
-      marginTop: Sizes.fixPadding,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+    cardContainer: {
+      marginRight: Sizes.fixPadding * 2.0,
+      borderRadius: Sizes.fixPadding * 2,
+      backgroundColor: "rgba(255,255,255,0.1)",
+      marginBottom: style.marginBottom,
+      width: style.width,
+      padding: Sizes.fixPadding,
+      borderWidth: 1,
+      borderColor: Colors.primaryColor,
     },
     timeLeftWrapStyle: {
       alignSelf: "flex-start",
       borderColor: Colors.primaryColor,
       borderWidth: 1.0,
-      paddingHorizontal: Sizes.fixPadding,
+      paddingHorizontal: Sizes.fixPadding - 4,
       borderRadius: Sizes.fixPadding - 5.0,
       paddingVertical: Sizes.fixPadding - 7.0,
     },
@@ -73,7 +69,6 @@ const Creator = ({ item, style, navigation }) => {
   const userId = useProfileData((state) => state.userData.userId);
 
   // set the data of the Creator in the global state
-  const setUsername = useGetUser((state) => state.setUsername);
   const getUser = useGetUser((state) => state.getUser);
 
   // Handle subscribe data
@@ -88,10 +83,13 @@ const Creator = ({ item, style, navigation }) => {
     item.followers.filter((i) => i !== userId).length
   );
   useLayoutEffect(() => {
-    setSubscribed(subscribesUser.includes(item._id));
-    subscribesUser.includes(item._id)
-      ? setNb(item.followers.filter((i) => i !== userId).length + 1)
-      : setNb(item.followers.filter((i) => i !== userId).length);
+    if (subscribesUser.includes(item._id)) {
+      setSubscribed(true);
+      setNb(item.followers.filter((i) => i !== userId).length + 1);
+    } else {
+      setSubscribed(false);
+      setNb(item.followers.filter((i) => i !== userId).length);
+    }
   }, [subscribesUser]);
 
   // Handle like data
@@ -99,9 +97,9 @@ const Creator = ({ item, style, navigation }) => {
     (state) => state.updateCreatorLikeData
   );
   const likesUser = useGetAllUsersData((state) => state.likesUser);
-  const [like, setLike] = useState(likesUser.includes(item._id));
+  const [like, setLike] = useState(item?.likesUsers.includes(userId));
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     setLike(likesUser.includes(item._id));
   }, [likesUser]);
 
@@ -121,18 +119,9 @@ const Creator = ({ item, style, navigation }) => {
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={() => {
-        setUsername(item.userName);
-        getUser(token, navigation, userId);
+        getUser(token, navigation, item.userName);
       }}
-      style={{
-        marginRight: Sizes.fixPadding * 2.0,
-        borderRadius: Sizes.fixPadding - 5.0,
-        backgroundColor: "rgba(255,255,255,0.05)",
-        marginBottom: style.marginBottom,
-        width: screenWidth / 2.2,
-        borderWidth: darkMode ? 0 : 1,
-        borderColor: Colors.primaryColor
-      }}
+      style={styles.cardContainer}
     >
       <ImageBackground
         source={
@@ -140,70 +129,29 @@ const Creator = ({ item, style, navigation }) => {
             ? { uri: item.profilePic }
             : require("../../assets/images/icon.png")
         }
-        style={{ ...styles.auctionImageStyle }}
-        borderTopLeftRadius={Sizes.fixPadding - 5.0}
-        borderTopRightRadius={Sizes.fixPadding - 5.0}
-      >
-        <View
-          style={{
-            margin: Sizes.fixPadding,
-            ...styles.favoriteAndShareIconWrapStyle,
-          }}
-        >
-          <TouchableOpacity
-            activeOpacity={0.9}
-            style={{
-              ...styles.favoriteAndShareIconContainStyle,
-              marginRight: Sizes.fixPadding,
-            }}
-            onPress={() => {
-              updateLikeData(token, item._id);
-            }}
-          >
-            <MaterialIcons
-              name={like ? "favorite" : "favorite-border"}
-              size={18}
-              color={like ? Colors.errorColor : Colors.grayColor}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.favoriteAndShareIconContainStyle}
-            activeOpacity={0.9}
-            onPress={onClickChat}
-          >
-            <Ionicons
-              name="chatbubble-outline"
-              size={18}
-              color={Colors.grayColor}
-            />
-          </TouchableOpacity>
-        </View>
-      </ImageBackground>
+        style={{ height: 160.0 }}
+        borderRadius={Sizes.fixPadding}
+      ></ImageBackground>
       <View
         style={{
-          paddingHorizontal: Sizes.fixPadding + 5.0,
-          paddingVertical: Sizes.fixPadding,
+          paddingBottom: Sizes.fixPadding,
         }}
       >
-        <Text
-          numberOfLines={1}
-          style={{ ...Fonts.whiteColor18SemiBold, width: screenWidth / 2.7 }}
-        >
-          {item.name ? item.name : item.userName}
-        </Text>
-        <Text
-          numberOfLines={3}
-          style={{
-            ...Fonts.grayColor14Regular,
-            flex: 1,
-            width: 150,
-            marginTop: 2,
-            height: 50,
-            lineHeight: 23,
-          }}
-        >
-          {item.speciality}
-        </Text>
+        <View style={{ height: 60, alignItems: 'center' }}>
+          <Text numberOfLines={1} style={{ ...Fonts.whiteColor18SemiBold, color: Colors.inputTextColor }}>
+            {item.userName}
+          </Text>
+          <Text
+            numberOfLines={1}
+            style={{
+              flex: 1,
+              lineHeight: 23,
+            }}
+          >
+            <Text style={{...Fonts.primaryColor16Regular, color: Colors.inputTextColor}}>{item.speciality ? 'speciality:' : ''} </Text>
+            <Text style={Fonts.grayColor14Regular}>{item.speciality}</Text>
+          </Text>
+        </View>
         <View
           style={{
             display: "flex",
@@ -219,13 +167,39 @@ const Creator = ({ item, style, navigation }) => {
             }}
             onPress={() => {
               updateSubscribeData(token, item._id);
+              setSubscribed((prevState) => !prevState);
             }}
           >
             <Text style={{ ...Fonts.primaryColor12Medium }}>
               {subscribed ? "Subscribed" : "Subscribe"}
             </Text>
           </TouchableOpacity>
-          <Text style={{ ...Fonts.primaryColor12Medium }}>
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={() => {
+              setLike((prevState) => !prevState);
+              updateLikeData(token, item._id);
+            }}
+          >
+            <MaterialIcons
+              name={like ? "favorite" : "favorite-border"}
+              size={18}
+              color={like ? Colors.errorColor : Colors.primaryColor}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.9} onPress={onClickChat}>
+            <Ionicons
+              name="chatbubble-outline"
+              size={18}
+              color={Colors.primaryColor}
+            />
+          </TouchableOpacity>
+          <Text
+            style={{
+              ...Fonts.primaryColor12Medium,
+              display: style?.width < 180 ? "none" : "flex",
+            }}
+          >
             {nb} {nb > 1 ? "Subs" : "Sub"}
           </Text>
         </View>

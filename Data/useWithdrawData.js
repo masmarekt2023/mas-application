@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import Apiconfigs from "./Apiconfigs";
 import axios from "axios";
-import {showMessage} from "react-native-flash-message";
+import { localAlert } from "../components/localAlert";
 
-const useWithdrawData = create((set,get) => ({
+const useWithdrawData = create((set, get) => ({
   isLoading: false,
   txId: "",
   withdraw: async (token, data, navigation, withdrawData) => {
@@ -17,7 +17,7 @@ const useWithdrawData = create((set,get) => ({
         data: data,
       });
       if (res.data.statusCode === 201) {
-        set({txId: res.data.result.txid});
+        set({ txId: res.data.result.txid });
         navigation.push("Verification", {
           token: token,
           channel: "sms",
@@ -39,8 +39,8 @@ const useWithdrawData = create((set,get) => ({
         url: Apiconfigs.verifyOtp,
         data: {
           otp: code,
-          channel: 'sms',
-          context: 'withdraw',
+          channel: "sms",
+          context: "withdraw",
           txid: get().txId,
         },
         headers: {
@@ -49,19 +49,15 @@ const useWithdrawData = create((set,get) => ({
       });
       console.log(res.data);
       if (res.data.statusCode === 200) {
-          navigation.push("WithdrawSuccess", {...data})
+        navigation.push("WithdrawSuccess", { ...data });
       } else {
-        showMessage({
-          message: res.data.responseMessage,
-          type: "danger",
-          titleStyle: { fontWeight: "bold", fontSize: 16 },
-        });
+        localAlert(res.data.responseMessage);
       }
     } catch (err) {
       console.log("Error in useVerificationData / verificationOtp");
     }
     set({ isLoading: false });
-  }
+  },
 }));
 
 export default useWithdrawData;

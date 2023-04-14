@@ -26,6 +26,7 @@ import { baseURL } from "../Data/Apiconfigs";
 import useLocalData from "../Data/localData/useLocalData";
 import useWithdrawData from "../Data/useWithdrawData";
 import useStoryData from "../Data/useStoryData";
+import useDonateData from "../Data/useDonateData";
 
 const Tab = createBottomTabNavigator();
 
@@ -65,14 +66,6 @@ const TabNavigator = () => {
   // Get user's token from the Login data
   const token = useLoginData((state) => state.userInfo.token);
   const { userId } = useProfileData((state) => state.userData);
-  const getProfile = useProfileData((state) => state.getProfile);
-  const getCreators = useCreatorsData((state) => state.getCreators);
-  const getBundles = useBundlesData((state) => state.getBundles);
-  const getAllUsers = useGetAllUsersData((state) => state.getAllUsers);
-  const getNotifications = useNotificationData(
-    (state) => state.getNotifications
-  );
-  const getChatList = useChatData((state) => state.getChatList);
   const chatsIds = useChatData((state) => state.chatsIds);
   const setOnlineUser = useChatData((state) => state.setOnlineUser);
   const unreadMessagesCount = useChatData((state) => state.unreadMessages)
@@ -80,13 +73,9 @@ const TabNavigator = () => {
     .reduce(function (i, j) {
       return i + j;
     });
-  const getTotalEarnings = useProfileData((state) => state.getTotalEarnings);
   const setNotificationsArr = useNotificationData(
     (state) => state.setNotificationsArr
   );
-  const getSubscription = useProfileData((state) => state.getSubscription);
-  const getStory = useStoryData((state) => state.getStory);
-  const getAllStories = useStoryData((state) => state.getAllStories);
 
   // get the Loading state for fetched data
   const profileLoading = useProfileData((state) => state.isLoading);
@@ -97,6 +86,7 @@ const TabNavigator = () => {
   const chatLoading = useChatData((state) => state.isLoading);
   const withdrawLoading = useWithdrawData((state) => state.isLoading);
   const storyLoading = useStoryData((state) => state.isLoading);
+  const donationLoading = useDonateData((state) => state.isLoading);
   const isLoading =
     profileLoading ||
     creatorsLoading ||
@@ -105,14 +95,10 @@ const TabNavigator = () => {
     notificationsLoading ||
     chatLoading ||
     withdrawLoading ||
-    storyLoading;
+    storyLoading ||
+    donationLoading;
 
   useEffect(() => {
-    getProfile(token);
-    getNotifications(token);
-    getTotalEarnings(token);
-    getSubscription(token);
-
     const socket = io(baseURL, {
       auth: {
         token: token,
@@ -143,34 +129,25 @@ const TabNavigator = () => {
     });
   }, [notificationsLoading]);
 
-  useEffect(() => {
-    getCreators(token, userId);
-    getAllUsers(userId);
-    getBundles(userId);
-    getChatList(token, userId);
-    getStory(token, userId);
-    getAllStories(token, userId);
-  }, [userId]);
-
   const setUnReadMessages = useChatData((state) => state.setUnReadMessages);
 
   useEffect(() => {
-    const socket = io(baseURL, {
-      auth: {
-        token: token,
-      },
-    });
+      const socket = io(baseURL, {
+        auth: {
+          token: token,
+        },
+      });
 
-    chatsIds.forEach((chatId) =>
-      socket.on(chatId, (message) => {
-        if (message.sender !== userId && message.status !== "Read") {
-          setUnReadMessages(message);
-        }
-      })
-    );
+      chatsIds.forEach((chatId) =>
+        socket.on(chatId, (message) => {
+          if (message.sender !== userId && message.status !== "Read") {
+            setUnReadMessages(message);
+          }
+        })
+      );
 
-    return () => chatsIds.forEach((chatId) => socket.off(chatId));
-  }, [chatsIds]);
+      return () => chatsIds.forEach((chatId) => socket.off(chatId));
+    }, [chatsIds]);
 
   const backAction = () => {
     backClickCount === 1 ? BackHandler.exitApp() : _spring();

@@ -124,14 +124,15 @@ const ForgetPassword = ({ navigation }) => {
             borderColor: Colors.errorColor,
           }}
         >
-          <MaterialIcons name="email" size={20} color={Colors.whiteColor} />
+          <MaterialIcons name="email" size={20} color={Colors.inputTextColor} />
           <TextInput
             value={field.value}
             onChangeText={field.onChange}
             placeholder="Enter Email"
-            placeholderTextColor={Colors.grayColor}
+            placeholderTextColor={Colors.inputTextColor}
             style={{
               ...Fonts.whiteColor14Medium,
+              color: Colors.inputTextColor,
               flex: 1,
               marginLeft: Sizes.fixPadding + 2.0,
             }}

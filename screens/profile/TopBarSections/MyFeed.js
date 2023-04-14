@@ -57,7 +57,7 @@ const MyFeed = ({ navigation }) => {
       />
     </View>
   ) : (
-    <UserNotFound isLoading={feedLoading}/>
+    <UserNotFound isLoading={feedLoading} />
   );
 };
 export default MyFeed;

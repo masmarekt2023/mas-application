@@ -208,7 +208,7 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
   // Handle Like Data
   const updateLikeData = useBundlesData((state) => state.updateBundlesLikeData);
   const likesUser = useBundlesData((state) => state.likesUser);
-  const [like, setLike] = useState(likesUser.includes(item._id));
+  const [like, setLike] = useState(item?.likesUsers.includes(item._id));
   useLayoutEffect(() => {
     setLike(likesUser.includes(item._id));
   }, [likesUser]);
@@ -217,14 +217,12 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
   };
 
   // set the data of the Creator in the global state and navigate to Creator Screen
-  const setUsername = useGetUser((state) => state.setUsername);
   const getUser = useGetUser((state) => state.getUser);
   const navToCreatorScreen = () => {
     if (isUserBundle) {
       navigation.navigate("Profile");
     } else {
-      setUsername(item.userId.userName);
-      getUser(token, navigation, userId);
+      getUser(token, navigation, item.userId.userName);
     }
   };
 
@@ -391,7 +389,7 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
               source={
                 item.mediaUrl
                   ? { uri: item.mediaUrl }
-                  : require("../../assets/images/users/user1.png")
+                  : require("../../assets/images/icon.png")
               }
               style={{ width: 70.0, height: 70.0, borderRadius: 35 }}
             />

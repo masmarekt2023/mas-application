@@ -1,12 +1,10 @@
 import useProfileData from "../../../Data/useProfileData";
 import React, { useLayoutEffect } from "react";
 import useLoginData from "../../../Data/useLoginData";
-import { Dimensions, FlatList, Text, View, StyleSheet } from "react-native";
+import { FlatList, Text, View, StyleSheet } from "react-native";
 import Creator from "../../home/Creator";
 import UserNotFound from "../userCards/UserNotFound";
 import useLocalData from "../../../Data/localData/useLocalData";
-
-const screenWidth = Dimensions.get("window").width;
 
 const MySubscribers = ({ navigation }) => {
   // Get Colors from the Global state
@@ -41,7 +39,7 @@ const MySubscribers = ({ navigation }) => {
   const renderItem = ({ item }) => (
     <Creator
       item={item}
-      style={{ marginBottom: 0, width: screenWidth / 2.2 }}
+      style={{ marginBottom: 0, width: 200 }}
       navigation={navigation}
     />
   );

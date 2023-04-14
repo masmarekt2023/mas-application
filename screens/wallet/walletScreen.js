@@ -13,8 +13,10 @@ import {
 import useProfileData from "../../Data/useProfileData";
 import useLocalData from "../../Data/localData/useLocalData";
 
-const ScreenWidth = Dimensions.get("screen").width;
-const ScreenHeight = Dimensions.get("screen").height;
+const { width, height } = Dimensions.get("window");
+
+const ScreenWidth = width < height ? width : height;
+const ScreenHeight = height > width ? height : width;
 
 const WalletScreen = ({ navigation }) => {
   // Get Colors from the Global state
@@ -212,7 +214,7 @@ const WalletScreen = ({ navigation }) => {
           position: "absolute",
           backgroundColor: "rgba(0,0,0,0.4)",
           width: ScreenWidth,
-          height: ScreenHeight - StatusBar.currentHeight,
+          height: ScreenHeight,
           justifyContent: "center",
           alignItems: "center",
         }}
@@ -222,8 +224,8 @@ const WalletScreen = ({ navigation }) => {
             backgroundColor: Colors.buttonTextColor,
             padding: Sizes.fixPadding,
             borderRadius: Sizes.fixPadding,
-            minHeight: ScreenHeight * 0.3,
-            width: ScreenWidth * 0.8,
+            width: ScreenWidth * 0.95,
+            alignItems: "center",
           }}
         >
           <Text
@@ -235,13 +237,13 @@ const WalletScreen = ({ navigation }) => {
             style={{
               fontSize: 18,
               fontWeight: "600",
-              color: Colors.errorColor,
+              color: Colors.bodyBackColor,
               lineHeight: 26,
               textAlign: "center",
             }}
           >
-            Please make sure you use BSC (BNB Smart Chain) and send only
-            supperted tokens (MAS, USDT, BUSD)
+            Please make sure that you use BSC (BNB Smart Chain) and send only
+            supported tokens (MAS, USDT, BUSD)
           </Text>
           <View
             style={{
@@ -252,39 +254,50 @@ const WalletScreen = ({ navigation }) => {
           >
             <Text
               numberOfLines={2}
-              style={{ ...Fonts.whiteColor14Medium, color: "#000000" }}
+              style={{
+                ...Fonts.whiteColor14Medium,
+                color: "#000000",
+                textAlign: "center",
+              }}
             >
               {walletAddress}
             </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: ScreenWidth * 0.8,
+                marginVertical: Sizes.fixPadding
+            }}
+          >
             <TouchableOpacity
               activeOpacity={0.9}
               onPress={() => copyToClipboard(walletAddress)}
               style={{
                 backgroundColor: Colors.primaryColor,
-                padding: Sizes.fixPadding * 0.5,
+                paddingHorizontal: Sizes.fixPadding,
+                justifyContent: "center",
+                alignItems: "center",
                 borderRadius: Sizes.fixPadding * 0.5,
               }}
             >
               <Text
                 style={{
-                  ...Fonts.whiteColor12Medium,
+                  ...Fonts.whiteColor16Medium,
                   color: Colors.buttonTextColor,
                 }}
               >
                 Copy Wallet Address
               </Text>
             </TouchableOpacity>
-          </View>
-          <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
             <TouchableOpacity
               style={{
                 backgroundColor: Colors.primaryColor,
-                paddingVertical: Sizes.fixPadding * 0.5,
-                width: 75,
+                paddingHorizontal: Sizes.fixPadding,
                 justifyContent: "center",
                 alignItems: "center",
-                marginTop: Sizes.fixPadding,
-                borderRadius: Sizes.fixPadding,
+                borderRadius: Sizes.fixPadding * 0.5,
               }}
               onPress={() => updateState({ openDeposit: false })}
             >

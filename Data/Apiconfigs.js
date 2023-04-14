@@ -1,12 +1,13 @@
-import Constants from "expo-constants";
-const { manifest } = Constants;
+//import Constants from "expo-constants";
+
+//const { manifest } = Constants;
 //export let baseURL = "https://node.masplatform.net";
 //export let socketURL = "wss://node.masplatform.net";
 
-export let baseURL = "https://mas-server-l32v.onrender.com";
+export let baseURL = "https://mas-server-lk9j.onrender.com";
 export let pageUrl = "https://mas2023-lhqo.onrender.com";
-/*if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-  baseURL = `http://${manifest.debuggerHost.split(':').shift()}:1865`;
+/*if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
+  baseURL = `http://${manifest.debuggerHost.split(":").shift()}:1865`;
   //socketURL = "ws://192.168.1.255:1865";
 }*/
 
@@ -62,7 +63,6 @@ const Apiconfigs = {
   forgotPassword: `${url}/user/forgotPassword/`,
   resetPassword: `${url}/user/resetPassword/`,
 
-
   withdraw: `${url}/blockchain/withdraw`,
   sendOrderToUser: `${url}/order/sendOrderToUser`,
   soldOrderList: `${url}/order/soldOrderList`,
@@ -78,6 +78,7 @@ const Apiconfigs = {
   getUser: `${url}/user/getUser/`,
   getCertificates: `${url}/user/getCertificates`,
   listAllNft: `${url}/nft/listAllNft`,
+  getNftSubscribers: `${url}/nft/subscribers/`,
   followProfile: `${url}/user/followProfile/`,
   profileFollowersList: `${url}/user/profileFollowersList`,
   profileFollowingList: `${url}/user/profileFollowingList`,
@@ -100,6 +101,7 @@ const Apiconfigs = {
   bundlePostList: `${url}/user/bundlePostList/`,
   bundleContentList: `${url}/user/bundleContentList`,
   allUserList: `${url}/user/allUserList`,
+  topUser: `${url}/user/topUsers`,
   exportNFT: `${url}/user/exportNFT`,
   totalEarnings: `${url}/user/totalEarnings`,
   listSocial: `${url}/admin/listSocial`,
@@ -110,8 +112,7 @@ const Apiconfigs = {
 
   story: `${url}/story/`,
   likeDislikeStory: `${url}/story/likeDislikeStory/`,
-  getAllStories: `${url}/story/getAllStories/`
-
+  getAllStories: `${url}/story/getAllStories/`,
 };
 
 export default Apiconfigs;

@@ -47,7 +47,7 @@ const NotificationsForDay = ({ notificationsList, title }) => {
     notificationWrapStyle: {
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: Colors.inputBgColor,
+      backgroundColor: Colors.primaryColor,
       borderRadius: Sizes.fixPadding - 5.0,
       padding: Sizes.fixPadding + 5.0,
       marginHorizontal: Sizes.fixPadding * 2.0,
@@ -135,15 +135,15 @@ const NotificationsForDay = ({ notificationsList, title }) => {
               <Text
                 numberOfLines={1}
                 style={{
-                  ...Fonts.whiteColor16Medium,
-                  opacity: data.item.isRead ? 0.8 : 1,
+                  ...Fonts.whiteColor18Medium,
+                  color: Colors.inputTextColor,
                 }}
               >
                 {data.item.title}
               </Text>
               <Text
                 numberOfLines={data.item.description.length / 50 + 2}
-                style={{ ...Fonts.grayColor13Regular }}
+                style={{ ...Fonts.whiteColor16Regular, color: Colors.inputTextColor }}
               >
                 {data.item.description}
               </Text>

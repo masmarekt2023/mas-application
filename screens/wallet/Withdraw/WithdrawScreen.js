@@ -2,6 +2,7 @@ import {
   Dimensions,
   Image,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TextInput,
@@ -15,10 +16,12 @@ import useLoginData from "../../../Data/useLoginData";
 import useWithdrawData from "../../../Data/useWithdrawData";
 import useLocalData from "../../../Data/localData/useLocalData";
 
-const ScreenWidth = Dimensions.get("screen").width;
-const ScreenHeight = Dimensions.get("screen").height;
+const { width, height } = Dimensions.get("screen");
 
-import { showMessage } from "react-native-flash-message";
+const ScreenWidth = width < height ? width : height;
+const ScreenHeight = height > width ? height : width;
+
+import { localAlert } from "../../../components/localAlert";
 
 const WithdrawScreen = ({ navigation, route }) => {
   // Get Colors from the Global state
@@ -56,7 +59,7 @@ const WithdrawScreen = ({ navigation, route }) => {
       backgroundColor: Colors.bodyBackColor,
     },
     addRemoveIconWrapStyle: {
-      borderColor: Colors.whiteColor,
+      borderColor: Colors.inputTextColor,
       borderWidth: 1.0,
       width: 35.0,
       height: 35.0,
@@ -125,8 +128,11 @@ const WithdrawScreen = ({ navigation, route }) => {
         position: "relative",
       }}
     >
-      <ScrollView style={{ flex: 1, marginTop: Sizes.fixPadding * 2 }}>
-          {header()}
+      <ScrollView
+        style={{ flex: 1, marginTop: Sizes.fixPadding * 2 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {header()}
         <View style={styles.coinInfoWrapStyle}>
           <TouchableOpacity
             activeOpacity={0.9}
@@ -139,7 +145,7 @@ const WithdrawScreen = ({ navigation, route }) => {
           >
             <MaterialIcons
               name="remove"
-              color={Colors.whiteColor}
+              color={Colors.inputTextColor}
               size={24.0}
             />
           </TouchableOpacity>
@@ -155,7 +161,7 @@ const WithdrawScreen = ({ navigation, route }) => {
             <View
               style={{
                 borderWidth: 2,
-                borderColor: Colors.primaryColor,
+                borderColor: Colors.inputTextColor,
                 padding: Sizes.fixPadding,
                 borderRadius: Sizes.fixPadding * 0.5,
                 marginHorizontal: Sizes.fixPadding,
@@ -167,14 +173,16 @@ const WithdrawScreen = ({ navigation, route }) => {
                 value={coinAmount}
                 style={{
                   ...Fonts.primaryColor22SemiBold,
+                  color: Colors.inputTextColor,
                 }}
-                selectionColor={Colors.primaryColor}
+                selectionColor={Colors.inputTextColor}
                 keyboardType={"number-pad"}
               />
             </View>
             <Text
               style={{
                 ...Fonts.whiteColor16SemiBold,
+                color: Colors.inputTextColor,
                 marginLeft: Sizes.fixPadding * 0.5,
               }}
             >
@@ -190,7 +198,11 @@ const WithdrawScreen = ({ navigation, route }) => {
             }
             style={styles.addRemoveIconWrapStyle}
           >
-            <MaterialIcons name="add" color={Colors.whiteColor} size={24.0} />
+            <MaterialIcons
+              name="add"
+              color={Colors.inputTextColor}
+              size={24.0}
+            />
           </TouchableOpacity>
         </View>
 
@@ -212,17 +224,15 @@ const WithdrawScreen = ({ navigation, route }) => {
           />
         </View>
         <Text style={{ marginTop: Sizes.fixPadding, color: Colors.whiteColor }}>
-          Please make sure your wallet address is correct and it is work in{" "}
+          Please make sure that your wallet address is correct and it is work in{" "}
           <Text style={{ color: Colors.errorColor }}>
             bnb smart chain (BEP20)
           </Text>{" "}
           Network
         </Text>
-      </ScrollView>
-      <View>
         <DashedLine
           dashLength={5}
-          dashColor={Colors.inputBgColor}
+          dashColor={Colors.primaryColor}
           dashGap={5}
           style={{ marginVertical: Sizes.fixPadding * 2.0 }}
         />
@@ -296,17 +306,9 @@ const WithdrawScreen = ({ navigation, route }) => {
                     feed: `${(+coinAmount * 3) / 100}`,
                   }
                 )
-              : showMessage({
-                  message: "wallet address should not be empty",
-                  type: "warning",
-                  titleStyle: { fontWeight: "bold", fontSize: 16 },
-                })
+              : localAlert("wallet address should not be empty")
           }
-          style={{
-            ...styles.placeBidButtonStyle,
-            opacity:
-              coinAmount > selectedCoinAmount || coinAmount <= 0 ? 0.7 : 1,
-          }}
+          style={styles.placeBidButtonStyle}
         >
           <Text
             style={{
@@ -317,7 +319,7 @@ const WithdrawScreen = ({ navigation, route }) => {
             Withdraw
           </Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
       {openWarning && WarningMessage()}
     </View>
   );
@@ -344,7 +346,7 @@ const WithdrawScreen = ({ navigation, route }) => {
             marginLeft: Sizes.fixPadding * 2.0,
             flex: 1,
             ...Fonts.whiteColor22Bold,
-              textAlign: 'left'
+            textAlign: "left",
           }}
         >
           Withdraw
@@ -360,7 +362,7 @@ const WithdrawScreen = ({ navigation, route }) => {
           position: "absolute",
           backgroundColor: "rgba(0,0,0,0.4)",
           width: ScreenWidth,
-          height: ScreenHeight,
+          height: ScreenHeight - StatusBar.currentHeight,
           justifyContent: "center",
           alignItems: "center",
         }}
@@ -368,10 +370,11 @@ const WithdrawScreen = ({ navigation, route }) => {
         <View
           style={{
             backgroundColor: "#ffffff",
-            padding: Sizes.fixPadding,
             borderRadius: Sizes.fixPadding,
-            minHeight: ScreenHeight * 0.3,
-            width: ScreenWidth * 0.8,
+            minHeight: 200,
+            width: 350,
+            paddingTop: Sizes.fixPadding,
+            alignItems: "center",
           }}
         >
           <Text
@@ -383,42 +386,35 @@ const WithdrawScreen = ({ navigation, route }) => {
             style={{
               fontSize: 18,
               fontWeight: "600",
-              color: Colors.errorColor,
+              color: Colors.bodyBackColor,
               lineHeight: 26,
               textAlign: "center",
+              marginBottom: Sizes.fixPadding * 2,
             }}
           >
-            Please make sure you use BSC (BNB Smart Chain) and send only
-            supperted tokens (MAS, USDT, BUSD)
+            Please make sure that you use {"\n"} BSC (BNB Smart Chain) and send
+            only supported tokens (MAS, USDT, BUSD, ...)
           </Text>
-          <View
+          <TouchableOpacity
             style={{
-              flex: 1,
-              justifyContent: "flex-end",
-              alignItems: "flex-end",
+              backgroundColor: Colors.primaryColor,
+              paddingVertical: Sizes.fixPadding * 0.5,
+              width: 75,
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: Sizes.fixPadding,
             }}
+            onPress={() => updateState({ openWarning: false })}
           >
-            <TouchableOpacity
+            <Text
               style={{
-                backgroundColor: Colors.primaryColor,
-                paddingVertical: Sizes.fixPadding * 0.5,
-                width: 75,
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: Sizes.fixPadding,
+                ...Fonts.whiteColor16SemiBold,
+                color: Colors.buttonTextColor,
               }}
-              onPress={() => updateState({ openWarning: false })}
             >
-              <Text
-                style={{
-                  ...Fonts.whiteColor16SemiBold,
-                  color: Colors.buttonTextColor,
-                }}
-              >
-                Close
-              </Text>
-            </TouchableOpacity>
-          </View>
+              Submit
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     );

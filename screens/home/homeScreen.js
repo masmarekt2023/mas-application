@@ -33,6 +33,9 @@ import { BottomSheet } from "@rneui/themed";
 
 const { width, height } = Dimensions.get("window");
 
+const widthScreen = width < height ? width : height;
+const heightScreen = height > width ? height : width;
+
 const convertToFileType = (uri, name) => {
   if (uri !== "") {
     const type = uri.split(".")[uri.split(".").length - 1];
@@ -64,7 +67,8 @@ const HomeScreen = ({ navigation }) => {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      margin: Sizes.fixPadding * 2.0,
+      margin: Sizes.fixPadding,
+      marginBottom: 0
     },
     titleWrapStyle: {
       marginBottom: Sizes.fixPadding + 5.0,
@@ -98,7 +102,7 @@ const HomeScreen = ({ navigation }) => {
     },
     dialogWrapStyle: {
       borderRadius: Sizes.fixPadding - 5.0,
-      width: width - 40,
+      width: widthScreen - 40,
       padding: 0.0,
     },
     createCollectionButtonStyle: {
@@ -126,11 +130,10 @@ const HomeScreen = ({ navigation }) => {
       alignItems: "center",
     },
     storyContainerStyle: {
-      marginRight: Sizes.fixPadding * 2.0,
       alignItems: "center",
-      width: 60,
-      height: 60,
-      borderRadius: 30,
+      width: 50,
+      height: 50,
+      borderRadius: 25.0,
       backgroundColor: "#fff",
       justifyContent: "center",
       position: "relative",
@@ -178,18 +181,17 @@ const HomeScreen = ({ navigation }) => {
   );
   // Creators list
   const creatorsList = useCreatorsData((state) => state.creatorsList);
-  // All Creators List
-  const allCreatorsList = useGetAllUsersData((state) => state.allUsersList);
+  // Top Creators
+  const topCreators = useGetAllUsersData((state) => state.topUser);
   // Bundle list
   const bundlesList = useBundlesData((state) => state.bundlesList);
   // Get Creators Info
   const getCreators = useGetUser((state) => state.getUser);
-  const setCreatorName = useGetUser((state) => state.setUsername);
   // get if there are unread messages
   const isUnreadMessage = useNotificationData((state) => state.isUnreadMessage);
   // get the story from the user
   const storyArr = useStoryData((state) => state.storyArr);
-  const userStories = useStoryData(state => state.userStories);
+  const userStories = useStoryData((state) => state.userStories);
   // get the subscription creators
   const subscriptionCreators = useProfileData(
     (state) => state.subscriptionCreators
@@ -203,6 +205,7 @@ const HomeScreen = ({ navigation }) => {
       file: convertToFileType(userImage, `${name}-profilePic`),
       showBottomSheet: false,
       openFileSender: false,
+      isCameraOpen: false,
     },
   });
 
@@ -215,12 +218,17 @@ const HomeScreen = ({ navigation }) => {
         allowsEditing: true,
       });
       const type = res.uri.split(".")[res.uri.split(".").length - 1];
-      setValue("file", {
-        name: `${res.type}.${type}`,
-        uri: res.uri,
-        type: `application/${type}`,
-      });
-      setValue("openFileSender", true);
+      uploadStory(
+        token,
+        {
+          name: `${res.type}.${type}`,
+          uri: res.uri,
+          type: `application/${type}`,
+        },
+        userId
+      );
+      setValue("file", { uri: "" });
+      //setValue("openFileSender", true);
     } catch (err) {
       console.log("Error in upload file : addScreen.js");
     }
@@ -230,13 +238,17 @@ const HomeScreen = ({ navigation }) => {
   const cameraPicUrl = useLocalData((state) => state.cameraPicUrl);
   const takePic = () => {
     setValue("showBottomSheet", false);
+    setValue("cameraOpen", true);
     navigation.push("LocalCamera");
   };
 
   useLayoutEffect(() => {
-    if (cameraPicUrl !== "") {
-      setValue("file", convertToFileType(cameraPicUrl, "camera"));
-      setValue("openFileSender", true);
+    if (cameraPicUrl !== "" && watch("cameraOpen")) {
+      //setValue("file", convertToFileType(cameraPicUrl, "camera"));
+      uploadStory(token, convertToFileType(cameraPicUrl, "camera"), userId);
+      setValue("file", { uri: "" });
+      setValue("cameraOpen", false);
+      //setValue("openFileSender", true);
     }
   }, [cameraPicUrl]);
 
@@ -252,7 +264,7 @@ const HomeScreen = ({ navigation }) => {
 
   // upload story
   const addStory = () => {
-    setValue("openFileSender", false);
+    //setValue("openFileSender", false);
     uploadStory(token, watch("file"), userId);
     setValue("file", { uri: "" });
   };
@@ -262,6 +274,7 @@ const HomeScreen = ({ navigation }) => {
       <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
       <View style={{ flex: 1 }}>
         {userInfo()}
+        <View style={{width: width, height: 1, backgroundColor: Colors.primaryColor}}></View>
         <FlatList
           ListHeaderComponent={
             <>
@@ -283,7 +296,7 @@ const HomeScreen = ({ navigation }) => {
     const renderItem = ({ item }) => {
       const isUser = item.userId === userId;
       const userDetails = isUser
-        ? { profilePic: userImage }
+        ? { profilePic: userImage, userName: "Your Story" }
         : subscriptionCreators.find((i) => i._id === item.userId);
       return (
         <TouchableOpacity
@@ -302,40 +315,45 @@ const HomeScreen = ({ navigation }) => {
                   },
                 })
           }
-          style={{
-            ...styles.storyContainerStyle,
-            borderColor: isUser
-              ? userStories?.length
-                ? Colors.primaryColor
-                : Colors.grayColor
-              : Colors.primaryColor,
-            borderWidth: isUser ? (userStories?.length ? 2 : 1) : 2,
-            display:
-              item.result?.length > 0 ? "flex" : isUser ? "flex" : "none",
-          }}
+          style={{ alignItems: "center", marginRight: Sizes.fixPadding * 2.0 }}
         >
-          <Image
-            source={
-              userDetails?.profilePic
-                ? { uri: userDetails?.profilePic }
-                : require("../../assets/images/icon.png")
-            }
-            style={{
-              width: 50.0,
-              height: 50.0,
-              borderRadius: 25.0,
-              borderWidth: 1,
-              borderColor: Colors.grayColor,
-            }}
-          />
           <View
             style={{
-              ...styles.addStoryStyle,
-              display: isUser ? "flex" : "none",
+              ...styles.storyContainerStyle,
+              borderColor: isUser
+                ? userStories?.length
+                  ? Colors.primaryColor
+                  : '#949494'
+                : Colors.primaryColor,
+              borderWidth: isUser ? (userStories?.length ? 2 : 1) : 2,
+              display:
+                item.result?.length > 0 ? "flex" : isUser ? "flex" : "none",
             }}
           >
-            <AntDesign name="plus" size={12} color={Colors.buttonTextColor} />
+            <Image
+              source={
+                userDetails?.profilePic
+                  ? { uri: userDetails?.profilePic }
+                  : require("../../assets/images/icon.png")
+              }
+              style={{
+                width: 47.0,
+                height: 47.0,
+                borderRadius: 23.5,
+                borderWidth: 1,
+                borderColor: Colors.grayColor,
+              }}
+            />
+            <View
+              style={{
+                ...styles.addStoryStyle,
+                display: isUser ? "flex" : "none",
+              }}
+            >
+              <AntDesign name="plus" size={12} color={Colors.buttonTextColor} />
+            </View>
           </View>
+          <Text style={Fonts.whiteColor14Regular}>{userDetails?.userName}</Text>
         </TouchableOpacity>
       );
     };
@@ -350,27 +368,18 @@ const HomeScreen = ({ navigation }) => {
           renderItem={renderItem}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingLeft: Sizes.fixPadding * 2.0 }}
+          contentContainerStyle={{ paddingLeft: Sizes.fixPadding * 2.0, paddingTop: Sizes.fixPadding }}
         />
       </View>
     );
   }
 
   function topCreatorInfo() {
-    const topCreators = allCreatorsList
-      .sort((p1, p2) =>
-        p1.followers.length < p2.followers.length
-          ? 1
-          : p1.followers.length > p2.followers.length
-          ? -1
-          : 0
-      )
-      .slice(0, 5);
-
     const renderItem = ({ item }) => {
       const onPress = () => {
-        setCreatorName(item.userName);
-        getCreators(token, navigation, item._id);
+        item._id === userId
+          ? navigation.push("Setting")
+          : getCreators(token, navigation, item.userName);
       };
 
       return (
@@ -429,7 +438,7 @@ const HomeScreen = ({ navigation }) => {
     const renderItem = ({ item }) => (
       <Creator
         item={item}
-        style={{ marginBottom: 0 }}
+        style={{ marginBottom: 0, width: 200 }}
         navigation={navigation}
       />
     );
@@ -460,7 +469,7 @@ const HomeScreen = ({ navigation }) => {
     const renderItem = ({ item }) => (
       <Bundle
         item={item}
-        style={{ marginBottom: 0, width: width / 2.2 }}
+        style={{ marginBottom: 0, width: 200 }}
         navigation={navigation}
       />
     );
@@ -490,17 +499,12 @@ const HomeScreen = ({ navigation }) => {
   function userInfo() {
     return (
       <View style={styles.userInfoWrapStyle}>
-        <Text style={{ ...Fonts.whiteColor20Bold, fontStyle: "italic" }}>
-          MAS Marketplace
-        </Text>
+        <Text style={{ ...Fonts.whiteColor22Bold, fontSize: 26 }}>MAS Marketplace</Text>
         <TouchableOpacity
           activeOpacity={0.9}
           onPress={() => navigation.navigate("Notification")}
           style={{
-            ...styles.notificationIconWrapStyle,
-            backgroundColor: isUnreadMessage
-              ? Colors.tabIconBgColor
-              : Colors.primaryColor,
+            marginRight: Sizes.fixPadding
           }}
         >
           {isUnreadMessage ? (
@@ -510,9 +514,6 @@ const HomeScreen = ({ navigation }) => {
                 top: -Sizes.fixPadding * 0.5,
                 right: -Sizes.fixPadding * 0.5,
                 borderRadius: Sizes.fixPadding * 0.5,
-                width: Sizes.fixPadding,
-                height: Sizes.fixPadding,
-                backgroundColor: Colors.primaryColor,
               }}
             ></View>
           ) : null}
@@ -520,7 +521,7 @@ const HomeScreen = ({ navigation }) => {
             name="notifications"
             size={24}
             color={
-              isUnreadMessage ? Colors.primaryColor : Colors.buttonTextColor
+              isUnreadMessage ? Colors.primaryColor : Colors.primaryColor
             }
           />
         </TouchableOpacity>
@@ -630,8 +631,8 @@ const HomeScreen = ({ navigation }) => {
       <View
         style={{
           backgroundColor: Colors.blackColor,
-          width: width,
-          height: height - 80, // 80 px is bottom bar Height
+          width: widthScreen,
+          height: heightScreen - 80, // 80 px is bottom bar Height
         }}
       >
         <TouchableOpacity

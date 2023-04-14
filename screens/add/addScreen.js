@@ -20,13 +20,13 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useController, useForm } from "react-hook-form";
-import { showMessage } from "react-native-flash-message";
 import useBundlesData from "../../Data/useBundlesData";
 import useLoginData from "../../Data/useLoginData";
 import useLocalData from "../../Data/localData/useLocalData";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
 import { BottomSheet } from "@rneui/themed";
+import {localAlert} from "../../components/localAlert";
 
 const convertToFileType = (uri, name) => {
   if (uri !== "") {
@@ -78,6 +78,7 @@ const AddScreen = ({ navigation }) => {
     textFieldStyle: {
       marginTop: Sizes.fixPadding,
       ...Fonts.whiteColor14Medium,
+      color: Colors.inputTextColor,
       backgroundColor: Colors.inputBgColor,
       paddingHorizontal: Sizes.fixPadding,
       paddingVertical: Sizes.fixPadding + 5.0,
@@ -104,10 +105,10 @@ const AddScreen = ({ navigation }) => {
     picker: {
       backgroundColor: Colors.inputBgColor,
       marginTop: Sizes.fixPadding,
-      color: Colors.whiteColor,
+      color: Colors.inputTextColor,
     },
     pickerItem: {
-      color: Colors.whiteColor,
+      color: Colors.primaryColor,
     },
     changeProfilePicBottomSheetStyle: {
       backgroundColor: Colors.bodyBackColor,
@@ -172,9 +173,7 @@ const AddScreen = ({ navigation }) => {
     try {
       let res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
+        allowsEditing: true
       });
       const type = res.uri.split(".")[res.uri.split(".").length - 1];
       setValue("file", {
@@ -360,7 +359,7 @@ const AddScreen = ({ navigation }) => {
           <MaterialCommunityIcons
             name="calendar-month"
             size={22}
-            color={Colors.grayColor}
+            color={Colors.buttonTextColor}
           />
         </TouchableOpacity>
       </View>
@@ -388,7 +387,7 @@ const AddScreen = ({ navigation }) => {
             value={field.value}
             onChangeText={field.onChange}
             placeholder="Enter Price"
-            placeholderTextColor={Colors.grayColor}
+            placeholderTextColor={Colors.inputTextColor}
             style={{
               ...styles.textFieldStyle,
               borderWidth: inputError ? 1 : 0,
@@ -424,6 +423,7 @@ const AddScreen = ({ navigation }) => {
       >
         <Text style={{ ...Fonts.whiteColor14Regular }}>Coin Name</Text>
         <Picker
+          mode={"dropdown"}
           style={styles.picker}
           itemStyle={styles.pickerItem}
           selectedValue={watch("coinName")}
@@ -458,8 +458,8 @@ const AddScreen = ({ navigation }) => {
           <TextInput
             value={field.value}
             onChangeText={field.onChange}
-            placeholder="Description of NFT"
-            placeholderTextColor={Colors.grayColor}
+            placeholder="Description of Bundle"
+            placeholderTextColor={Colors.inputTextColor}
             style={{
               ...styles.textFieldStyle,
               borderWidth: inputError ? 1 : 0,
@@ -505,7 +505,7 @@ const AddScreen = ({ navigation }) => {
             value={field.value}
             onChangeText={field.onChange}
             placeholder="Name of your Bundle"
-            placeholderTextColor={Colors.grayColor}
+            placeholderTextColor={Colors.inputTextColor}
             style={{
               ...styles.textFieldStyle,
               borderWidth: inputError ? 1 : 0,
@@ -549,7 +549,7 @@ const AddScreen = ({ navigation }) => {
             value={field.value}
             onChangeText={field.onChange}
             placeholder="Title of your Bundle"
-            placeholderTextColor={Colors.grayColor}
+            placeholderTextColor={Colors.inputTextColor}
             style={{
               ...styles.textFieldStyle,
               borderWidth: inputError ? 1 : 0,
@@ -602,7 +602,7 @@ const AddScreen = ({ navigation }) => {
               right: -17.5,
             }}
           >
-            <AntDesign name="close" size={24} color={"#ffffff"} />
+            <AntDesign name="close" size={24} color={Colors.buttonTextColor} />
           </TouchableOpacity>
         </View>
       </View>
@@ -617,23 +617,23 @@ const AddScreen = ({ navigation }) => {
           onPress={() => updateState({ showBottomSheet: true })}
           style={{
             ...styles.uploadFileInfoWrapStyle,
-            borderColor: errors?.file ? Colors.errorColor : Colors.whiteColor,
+            borderColor: errors?.file ? Colors.errorColor : Colors.buttonTextColor,
           }}
         >
           <View
             style={{
               ...styles.uploadIconWrapStyle,
               borderWidth: 1,
-              borderColor: Colors.primaryColor,
+              borderColor: Colors.buttonTextColor,
             }}
           >
             <MaterialIcons
               name="cloud-upload"
               size={24}
-              color={Colors.primaryColor}
+              color={Colors.buttonTextColor}
             />
           </View>
-          <Text style={{ ...Fonts.whiteColor14Regular }}>Upload your file</Text>
+          <Text style={{ ...Fonts.whiteColor14Regular, color: Colors.buttonTextColor }}>Upload your file</Text>
           <Text
             style={{
               marginTop: Sizes.fixPadding - 7.0,
@@ -700,14 +700,10 @@ const AddScreen = ({ navigation }) => {
         (date.getTime() - nowDate.getTime()) /
         (1000 * 60 * 60 * 24)
       ).toFixed(0);
-      if (days > 7) {
+      if (days > 0) {
         setValue("duration", `${days} Days`);
       } else {
-        showMessage({
-          message: "duration should be 7 days at least",
-          type: "warning",
-          titleStyle: { fontWeight: "bold", fontSize: 16 },
-        });
+        localAlert("duration should be in the present days.")
       }
       hideDatePicker();
       //updateState({ endDate: `${date.getUTCDate()} ${monthsList[date.getUTCMonth()]}, ${date.getUTCFullYear()}` })

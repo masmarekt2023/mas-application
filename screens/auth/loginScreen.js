@@ -162,9 +162,9 @@ const LoginScreen = ({ navigation }) => {
           {passwordTextField({ name: "password", control: control })}
           {forgetPasswordText()}
           {loginButton()}
+          {dontAccountInfo()}
         </ScrollView>
       </View>
-      {dontAccountInfo()}
       {backClickCount === 1 ? (
         <View style={[styles.animatedView]}>
           <Text
@@ -183,7 +183,7 @@ const LoginScreen = ({ navigation }) => {
 
   function dontAccountInfo() {
     return (
-      <Text style={{ textAlign: "center", margin: Sizes.fixPadding * 2.0 }}>
+      <Text style={{ textAlign: "center", marginBottom: Sizes.fixPadding * 6.0 }}>
         <Text style={{ ...Fonts.whiteColor14Medium }}>
           Don’t have an account? {}
         </Text>
@@ -257,7 +257,7 @@ const LoginScreen = ({ navigation }) => {
             <MaterialIcons
               name="lock-open"
               size={20}
-              color={Colors.whiteColor}
+              color={Colors.inputTextColor}
             />
             <TextInput
               value={field.value}
@@ -267,17 +267,20 @@ const LoginScreen = ({ navigation }) => {
               placeholderTextColor={Colors.grayColor}
               style={{
                 ...Fonts.whiteColor14Medium,
+                color: Colors.inputTextColor,
+                flex: 1,
                 marginLeft: Sizes.fixPadding + 2.0,
+                marginRight: Sizes.fixPadding
               }}
               selectionColor={Colors.primaryColor}
             />
+            <MaterialCommunityIcons
+                name={securePassword ? "eye" : "eye-off"}
+                size={20}
+                color={Colors.inputTextColor}
+                onPress={() => updateState({ securePassword: !securePassword })}
+            />
           </View>
-          <MaterialCommunityIcons
-            name={securePassword ? "eye" : "eye-off"}
-            size={20}
-            color={Colors.whiteColor}
-            onPress={() => updateState({ securePassword: !securePassword })}
-          />
         </View>
         {errors?.password ? (
           <Text
@@ -310,7 +313,7 @@ const LoginScreen = ({ navigation }) => {
             borderColor: Colors.errorColor,
           }}
         >
-          <MaterialIcons name="email" size={20} color={Colors.whiteColor} />
+          <MaterialIcons name="email" size={20} color={Colors.inputTextColor} />
           <TextInput
             value={field.value}
             onChangeText={field.onChange}
@@ -318,6 +321,7 @@ const LoginScreen = ({ navigation }) => {
             placeholderTextColor={Colors.grayColor}
             style={{
               ...Fonts.whiteColor14Medium,
+              color: Colors.inputTextColor,
               flex: 1,
               marginLeft: Sizes.fixPadding + 2.0,
             }}

@@ -31,22 +31,17 @@ const Action = ({ item, navigation }) => {
   // get user token from the login data
   const token = useLoginData((state) => state.userInfo.token);
 
-  // get the user id from the user profile data
-  const userId = useProfileData((state) => state.userData.userId);
-
   // get creators Data from global state
   const creator = useGetAllUsersData((state) => state.allUsersList).filter(
-    (i) => i._id === item.toDonationUser._id
+    (i) => i._id === item?.toDonationUser?._id
   )[0];
   const creatorPic = creator?.profilePic;
 
   // set the creator data in global state and show it in creator screen
-  const setCreatorName = useGetUser((state) => state.setUsername);
   const getCreator = useGetUser((state) => state.getUser);
 
   const navToUser = () => {
-    setCreatorName(creator.userName);
-    getCreator(token, navigation, userId);
+    getCreator(token, navigation, creator?.userName);
   };
 
   /* handle Variables */
@@ -67,32 +62,33 @@ const Action = ({ item, navigation }) => {
               : require("../../../assets/images/icon.png")
           }
           style={{
-            width: 100.0,
-            height: 100.0,
+            width: 60.0,
+            height: 60.0,
             borderRadius: Sizes.fixPadding - 5.0,
           }}
+          animated={true}
         />
       </TouchableOpacity>
       <View style={{ flex: 1, marginLeft: Sizes.fixPadding + 5.0 }}>
         <Text numberOfLines={1}>
-          <Text style={Fonts.grayColor14Regular}>you sent </Text>
-          <Text style={Fonts.whiteColor14Medium}>
+          <Text style={{...Fonts.grayColor14Regular, fontSize: 16}}>you sent </Text>
+          <Text style={Fonts.whiteColor16Medium}>
             {item.amount} {item.coinName}
           </Text>
-          <Text style={Fonts.grayColor14Regular}> to </Text>
-          <Text onPress={navToUser} style={Fonts.whiteColor14Medium}>
-            @{item.toDonationUser.userName}
+          <Text style={{...Fonts.grayColor14Regular, fontSize: 16}}> to </Text>
+          <Text onPress={navToUser} style={Fonts.whiteColor16Medium}>
+            @{item?.toDonationUser?.userName}
           </Text>
         </Text>
         <Text numberOfLines={1} onPress={() => copyToClipboard(item._id)}>
-          <Text style={Fonts.whiteColor12Medium}>Receipt Id: </Text>
-          <Text style={Fonts.grayColor12Regular}>{item._id}</Text>
+          <Text style={Fonts.whiteColor14Medium}>Receipt Id: </Text>
+          <Text style={Fonts.grayColor14Regular}>{item._id}</Text>
         </Text>
         <Text numberOfLines={1}>
-          <Text style={Fonts.whiteColor12Medium}>Status: </Text>
-          <Text style={Fonts.grayColor12Regular}>{item.transactionStatus}</Text>
+          <Text style={Fonts.whiteColor14Medium}>Status: </Text>
+          <Text style={Fonts.grayColor14Regular}>{item.transactionStatus}</Text>
         </Text>
-        <Text style={Fonts.grayColor12Regular}>
+        <Text style={Fonts.grayColor14Regular}>
           {date.toLocaleDateString()} at {date.toLocaleTimeString().slice(0, 5)}
         </Text>
       </View>

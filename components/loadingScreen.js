@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View } from "react-native";
+import {ImageBackground} from "react-native";
 import * as Font from "expo-font";
 import useLocalData from "../Data/localData/useLocalData";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -40,9 +40,9 @@ const LoadingScreen = ({ navigation }) => {
 
     getData();
     loadFont();
-  });
+  },[]);
 
-  return <View style={{ flex: 1, backgroundColor: "#ffffff" }} />;
+  return <ImageBackground resizeMode={"stretch"} source={require("../assets/images/icon.png")} style={{ flex: 1 }} />;
 };
 
 export default LoadingScreen;

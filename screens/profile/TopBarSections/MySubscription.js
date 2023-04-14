@@ -1,12 +1,10 @@
 import useProfileData from "../../../Data/useProfileData";
 import React from "react";
-import { Dimensions, FlatList, Text, View, StyleSheet } from "react-native";
+import { FlatList, Text, View, StyleSheet } from "react-native";
 import Bundle from "../../home/Bundle";
 import Creator from "../../home/Creator";
 import UserNotFound from "../userCards/UserNotFound";
 import useLocalData from "../../../Data/localData/useLocalData";
-
-const screenWidth = Dimensions.get("window").width;
 
 const MyBundles = ({ navigation }) => {
   // Get Colors from the Global state
@@ -33,13 +31,13 @@ const MyBundles = ({ navigation }) => {
   const bundlesItem = ({ item }) => (
     <Bundle
       item={item.bundleDetails}
-      style={{ marginBottom: 0, width: screenWidth / 2.2 }}
+      style={{ marginBottom: 0, width: 200 }}
       navigation={navigation}
     />
   );
 
   const creatorsItem = ({ item }) => (
-    <Creator item={item} style={{ marginBottom: 20 }} navigation={navigation} />
+    <Creator item={item} style={{ marginBottom: 20, width: 200 }} navigation={navigation} />
   );
 
   return bundles.length && creators.length ? (

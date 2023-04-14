@@ -2,9 +2,9 @@ import { create } from "zustand";
 import Apiconfigs from "./Apiconfigs";
 import axios from "axios";
 import produce from "immer";
-import { showMessage } from "react-native-flash-message";
+import { localAlert } from "../components/localAlert";
 
-const useProfileData = create((set) => ({
+const useProfileData = create((set, get) => ({
   isLoading: false,
 
   // Profile Data
@@ -120,18 +120,11 @@ const useProfileData = create((set) => ({
         },
       });
       if (res.data.statusCode === 200) {
-        showMessage({
-          message: "Your profile has been updated successfully",
-          type: "success",
-          titleStyle: { fontWeight: "bold", fontSize: 16 },
-        });
+        localAlert("Your profile has been updated successfully");
+        get().getProfile(token);
         navigation.push("BottomTabBar");
       } else {
-        showMessage({
-          message: res.data.responseMessage,
-          type: "danger",
-          titleStyle: { fontWeight: "bold", fontSize: 16 },
-        });
+        localAlert(res.data.responseMessage);
       }
     } catch (e) {
       console.log(e);

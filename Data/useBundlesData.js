@@ -2,10 +2,12 @@ import { create } from "zustand";
 import Apiconfigs from "./Apiconfigs";
 import axios from "axios";
 import apiconfigs from "./Apiconfigs";
-import { showMessage } from "react-native-flash-message";
+import { localAlert } from "../components/localAlert";
 
 const useBundlesData = create((set) => ({
   isLoading: false,
+  setLoading: (status) => set({ isLoading: status }),
+
   bundlesList: [],
   myBundlesList: [],
   likesUser: [],
@@ -17,16 +19,19 @@ const useBundlesData = create((set) => ({
         method: "GET",
         url: Apiconfigs.listAllNft,
         params: {
-          limit: 100,
-          page: 1
-        }
+          limit: 8,
+        },
       });
       if (res.data.statusCode === 200) {
         set({
-          bundlesList: res.data.result.docs.filter((i) => i.userId._id !== userId),
+          bundlesList: res.data.result.docs.filter(
+            (i) => i.userId._id !== userId
+          ),
         });
         set({
-          myBundlesList: res.data.result.docs.filter((i) => i.userId._id === userId),
+          myBundlesList: res.data.result.docs.filter(
+            (i) => i.userId._id === userId
+          ),
         });
         set({
           likesUser: res.data.result.docs
@@ -49,32 +54,35 @@ const useBundlesData = create((set) => ({
   createBundle: async (token, data, navigation) => {
     set({ isLoading: true });
     const formData = new FormData();
-    formData.append('file', data.file);
-    formData.append('tokenName', data.bundleName);
-    formData.append('bundleTitle', data.bundleTitle);
-    formData.append('bundleName', data.bundleName);
-    formData.append('duration', data.duration);
-    formData.append('details', data.details);
-    formData.append('donationAmount', `${data.donationAmount}`);
-    formData.append('coinName', data.coinName);
+    formData.append("file", data.file);
+    formData.append("tokenName", data.bundleName);
+    formData.append("bundleTitle", data.bundleTitle);
+    formData.append("bundleName", data.bundleName);
+    formData.append("duration", data.duration);
+    formData.append("details", data.details);
+    formData.append("donationAmount", `${data.donationAmount}`);
+    formData.append("coinName", data.coinName);
     try {
       const res = await axios({
         method: "POST",
         url: Apiconfigs.addNft,
         data: formData,
         headers: {
-          Accept: 'application/json',
+          Accept: "application/json",
           "Content-Type": "multipart/form-data",
           token: token,
         },
       });
       if (res.data.statusCode === 200) {
-        navigation.push("NFTUploadSuccess", {message: "You have successfully added a bundle for sale"});
+        navigation.push("NFTUploadSuccess", {
+          message: "You have successfully added a bundle for sale",
+        });
       } else {
         console.log("Error in useBundlesData/createBundle");
       }
     } catch (e) {
       console.log("Error in useBundlesData/createBundle");
+      console.log(e);
     }
     set({ isLoading: false });
   },
@@ -91,16 +99,18 @@ const useBundlesData = create((set) => ({
         url: Apiconfigs.editNft,
         data: formData,
         headers: {
-          Accept: 'application/json',
+          Accept: "application/json",
           "Content-Type": "multipart/form-data",
           token: token,
         },
       });
-      if(res.data.statusCode === 200){
-        navigation.push("NFTUploadSuccess", {message: "You have successfully updated your bundle."})
+      if (res.data.statusCode === 200) {
+        navigation.push("NFTUploadSuccess", {
+          message: "You have successfully updated your bundle.",
+        });
       }
-    }catch (e) {
-      console.log("Error in useBundlesData / editBundle")
+    } catch (e) {
+      console.log("Error in useBundlesData / editBundle");
     }
     set({ isLoading: false });
   },
@@ -134,11 +144,11 @@ const useBundlesData = create((set) => ({
   shareForAudience: async (token, data, navigation) => {
     set({ isLoading: true });
     const formData = new FormData();
-    formData.append("mediaUrl",data.file);
-    formData.append("title",data.title);
-    formData.append("details",data.details);
-    formData.append("postType",data.type);
-    formData.append("nftIds",JSON.stringify(data.bundleIds));
+    formData.append("mediaUrl", data.file);
+    formData.append("title", data.title);
+    formData.append("details", data.details);
+    formData.append("postType", data.type);
+    formData.append("nftIds", JSON.stringify(data.bundleIds));
     try {
       const res = await axios({
         method: "POST",
@@ -146,13 +156,15 @@ const useBundlesData = create((set) => ({
         data: formData,
         headers: {
           token: token,
-          Accept: 'application/json',
-          "Content-Type": "multipart/form-data"
+          Accept: "application/json",
+          "Content-Type": "multipart/form-data",
         },
       });
       console.log(res.data);
       if (res.data.statusCode === 200) {
-        navigation.push("NFTUploadSuccess", {message: "You have successfully shared a Audience"});
+        navigation.push("NFTUploadSuccess", {
+          message: "You have successfully shared a Audience",
+        });
       } else {
         console.log("Error in useBundlesData/shareForAudience");
       }
@@ -201,17 +213,9 @@ const useBundlesData = create((set) => ({
       });
       if (res.data.statusCode === 200) {
         set((state) => ({ subscribesUser: [...state.subscribesUser, id] }));
-        showMessage({
-          message: "You have subscribed successfully.",
-          type: "success",
-          titleStyle: { fontWeight: "bold", fontSize: 16 },
-        });
+        localAlert("You have subscribed successfully.");
       } else {
-        showMessage({
-          message: res.data.responseMessage,
-          type: "warning",
-          titleStyle: { fontWeight: "bold", fontSize: 16 },
-        });
+        localAlert(res.data.responseMessage);
       }
     } catch (e) {
       console.log(e);
@@ -221,7 +225,7 @@ const useBundlesData = create((set) => ({
   },
 
   // unSubscribe Bundle
-  unSubscribeToBundle: async (token, id) => {
+  /*unSubscribeToBundle: async (token, id) => {
     try {
       const res = await axios({
         method: "DELETE",
@@ -234,22 +238,14 @@ const useBundlesData = create((set) => ({
         set((state) => ({
           subscribesUser: state.subscribesUser.filter((i) => i !== id),
         }));
-        showMessage({
-          message: "You have unsubscribed successfully.",
-          type: "success",
-          titleStyle: { fontWeight: "bold", fontSize: 16 },
-        });
+        localAlert("You have unsubscribed successfully.");
       } else {
-        showMessage({
-          message: "Something went wrong",
-          type: "danger",
-          titleStyle: { fontWeight: "bold", fontSize: 16 },
-        });
+        localAlert("Something went wrong");
       }
     } catch (e) {
       console.log("Error in useSubscribeData/subscribeToBundle");
     }
-  },
+  },*/
 }));
 
 export default useBundlesData;

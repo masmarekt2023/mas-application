@@ -196,7 +196,7 @@ const SettingScreen = ({ navigation }) => {
           })}
         </TouchableOpacity>
         {divider()}
-        <TouchableOpacity
+        {/*<TouchableOpacity
           activeOpacity={0.9}
           onPress={() => navigation.push("Faqs")}
         >
@@ -215,7 +215,7 @@ const SettingScreen = ({ navigation }) => {
             optionIcon: require("../../assets/images/icons/contact.png"),
           })}
         </TouchableOpacity>
-        {divider()}
+        {divider()}*/}
         <TouchableOpacity
           activeOpacity={0.9}
           onPress={() => navigation.push("TermsAndConditions")}

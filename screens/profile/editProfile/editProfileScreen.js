@@ -26,9 +26,9 @@ import { useController, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import useProfileData from "../../../Data/useProfileData";
 import useLocalData from "../../../Data/localData/useLocalData";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 import { Camera, CameraType } from "expo-camera";
-import {pageUrl} from "../../../Data/Apiconfigs";
+import { pageUrl } from "../../../Data/Apiconfigs";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -82,6 +82,7 @@ const EditProfileScreen = ({ navigation }) => {
       paddingHorizontal: Sizes.fixPadding + 2.0,
       paddingVertical: Sizes.fixPadding + 5.0,
       ...Fonts.whiteColor14Medium,
+      color: Colors.inputTextColor,
       marginTop: Sizes.fixPadding,
     },
     updateButtonStyle: {
@@ -186,16 +187,13 @@ const EditProfileScreen = ({ navigation }) => {
     try {
       let res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
+        allowsEditing: true
       });
       const type = res.uri.split(".")[res.uri.split(".").length - 1];
       setValue(selectedName, {
         name: `${res.type}.${type}`,
         uri: res.uri,
-        type:
-            `application/${type}`,
+        type: `application/${type}`,
       });
       updateState({ showBottomSheet: false, selectedName: "" });
     } catch (err) {
@@ -382,7 +380,7 @@ const EditProfileScreen = ({ navigation }) => {
             numberOfLines={1}
             style={{
               ...Fonts.whiteColor14Medium,
-              opacity: 0.7,
+              color: Colors.inputTextColor,
               width: screenWidth * 0.7,
             }}
           >
@@ -423,7 +421,7 @@ const EditProfileScreen = ({ navigation }) => {
             numberOfLines={1}
             style={{
               ...Fonts.whiteColor14Medium,
-              opacity: 0.7,
+              color: Colors.inputTextColor,
               width: screenWidth * 0.7,
             }}
           >
@@ -481,7 +479,7 @@ const EditProfileScreen = ({ navigation }) => {
             value={field.value}
             onChangeText={field.onChange}
             placeholder={`Enter your ${name} account`}
-            placeholderTextColor={Colors.grayColor}
+            placeholderTextColor={Colors.inputTextColor}
             selectionColor={Colors.primaryColor}
             style={{
               ...styles.textFieldStyle,
@@ -522,10 +520,10 @@ const EditProfileScreen = ({ navigation }) => {
           <Text
             style={{
               ...Fonts.whiteColor14Medium,
-              opacity: 0.7,
+              color: Colors.inputTextColor,
             }}
           >
-              {pageUrl}/user-profile/{userName}
+            {pageUrl}/user-profile/{userName}
           </Text>
           <TouchableOpacity
             activeOpacity={0.9}
@@ -562,7 +560,13 @@ const EditProfileScreen = ({ navigation }) => {
             justifyContent: "space-between",
           }}
         >
-          <Text style={Fonts.whiteColor14Medium} selectable={true}>
+          <Text
+            style={{
+              ...Fonts.whiteColor14Medium,
+              color: Colors.inputTextColor,
+            }}
+            selectable={true}
+          >
             {phone}
           </Text>
           <AntDesign
@@ -583,7 +587,7 @@ const EditProfileScreen = ({ navigation }) => {
               })
             }
           >
-            <Text style={Fonts.primaryColor14SemiBold}>send code ?</Text>
+            <Text style={Fonts.primaryColor14SemiBold}>Send Code to verification phone number</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -607,7 +611,13 @@ const EditProfileScreen = ({ navigation }) => {
             justifyContent: "space-between",
           }}
         >
-          <Text style={Fonts.whiteColor14Medium} selectable={true}>
+          <Text
+            style={{
+              ...Fonts.whiteColor14Medium,
+              color: Colors.inputTextColor,
+            }}
+            selectable={true}
+          >
             {email}
           </Text>
           <AntDesign
@@ -628,7 +638,7 @@ const EditProfileScreen = ({ navigation }) => {
               })
             }
           >
-            <Text style={Fonts.primaryColor14SemiBold}>send code ?</Text>
+            <Text style={Fonts.primaryColor14SemiBold}>Send Code to verification email</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -657,7 +667,7 @@ const EditProfileScreen = ({ navigation }) => {
             value={field.value}
             onChangeText={field.onChange}
             placeholder="About Me"
-            placeholderTextColor={Colors.grayColor}
+            placeholderTextColor={Colors.inputTextColor}
             selectionColor={Colors.primaryColor}
             style={{
               ...styles.textFieldStyle,
@@ -702,7 +712,7 @@ const EditProfileScreen = ({ navigation }) => {
             value={field.value}
             onChangeText={field.onChange}
             placeholder="Enter Speciality"
-            placeholderTextColor={Colors.grayColor}
+            placeholderTextColor={Colors.inputTextColor}
             selectionColor={Colors.primaryColor}
             style={{
               ...styles.textFieldStyle,
@@ -747,7 +757,7 @@ const EditProfileScreen = ({ navigation }) => {
             value={field.value}
             onChangeText={field.onChange}
             placeholder="Enter Name"
-            placeholderTextColor={Colors.grayColor}
+            placeholderTextColor={Colors.inputTextColor}
             selectionColor={Colors.primaryColor}
             style={{
               ...styles.textFieldStyle,

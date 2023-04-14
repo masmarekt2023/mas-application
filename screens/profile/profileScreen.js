@@ -189,6 +189,9 @@ const ProfileScreen = ({ navigation }) => {
     },
   });
 
+  // Get total earnings from the global state
+  const totalEarnings = useProfileData((state) => state.totalEarnings);
+
   const topBarList = [
     {
       option: "My Bundles",
@@ -216,15 +219,18 @@ const ProfileScreen = ({ navigation }) => {
       section: <DonateTransaction navigation={navigation} />,
     },
     {
-      option: "Transaction History",
+      option: "Total Earnings",
       index: 5,
-      section: <TransactionHistory navigation={navigation} />,
+      section: totalEarningsInfo({
+        title: "Total Creat & Earnings",
+        ...totalEarnings,
+      }),
     },
   ];
 
   const viewArr = [
     "Total Balance",
-    "Total Earnings",
+    "My Transitions",
     "My Activities",
     "About Me",
   ];
@@ -245,9 +251,6 @@ const ProfileScreen = ({ navigation }) => {
     youtube,
     twitter,
   } = useProfileData((state) => state.userData);
-
-  // Get total earnings from the global state
-  const totalEarnings = useProfileData((state) => state.totalEarnings);
 
   // handle variables
   const [state, setState] = useState({
@@ -271,8 +274,17 @@ const ProfileScreen = ({ navigation }) => {
         <FlatList
           ListHeaderComponent={
             <>
-              {selectedView === viewArr[0] && totalEarningsInfo()}
-              {selectedView === viewArr[1] && totalEarningsInfo()}
+              {selectedView === viewArr[0] &&
+                totalEarningsInfo({
+                  title: "Total Balance",
+                  masBalance,
+                  usdtBalance,
+                  busdBalance,
+                  bnbBalance,
+                })}
+              {selectedView === viewArr[1] && (
+                <TransactionHistory navigation={navigation} />
+              )}
               {selectedView === viewArr[2] && (
                 <>
                   {tabBar()}
@@ -316,6 +328,7 @@ const ProfileScreen = ({ navigation }) => {
               style={{
                 ...Fonts.whiteColor14SemiBold,
                 fontSize: 13,
+                textAlign: "center",
                 color:
                   selectedView === item
                     ? Colors.primaryColor
@@ -343,12 +356,12 @@ const ProfileScreen = ({ navigation }) => {
         style={{
           backgroundColor:
             selectedTabIndex === item.index
-              ? Colors.inputBgColor
+              ? Colors.primaryColor
               : "transparent",
           ...styles.tabOptionWrapStyle,
         }}
       >
-        <Text style={{ ...Fonts.whiteColor16SemiBold }}>{item.option}</Text>
+        <Text style={{ ...Fonts.whiteColor16SemiBold, color: Colors.buttonTextColor }}>{item.option}</Text>
       </TouchableOpacity>
     );
     return (
@@ -375,35 +388,33 @@ const ProfileScreen = ({ navigation }) => {
     );
   }
 
-  function totalEarningsInfo() {
+  function totalEarningsInfo({
+    title,
+    masBalance,
+    usdtBalance,
+    busdBalance,
+    bnbBalance,
+  }) {
     const iconsArr = [
       {
         name: "MAS",
-        desc: "MAS",
         icon: require("../../assets/images/coins/mas.png"),
-        value:
-          selectedView === viewArr[0] ? masBalance : totalEarnings.masBalance,
+        value: masBalance,
       },
       {
-        name: "TetherUs",
-        desc: "USDT",
+        name: "USDT",
         icon: require("../../assets/images/coins/usdt.png"),
-        value:
-          selectedView === viewArr[0] ? usdtBalance : totalEarnings.usdtBalance,
+        value: usdtBalance,
       },
       {
         name: "BUSD",
-        desc: "BUSD",
         icon: require("../../assets/images/coins/busd.png"),
-        value:
-          selectedView === viewArr[0] ? busdBalance : totalEarnings.busdBalance,
+        value: busdBalance,
       },
       {
         name: "BNB",
-        desc: "BNB",
         icon: require("../../assets/images/coins/bnb.png"),
-        value:
-          selectedView === viewArr[0] ? bnbBalance : totalEarnings.bnbBalance,
+        value: bnbBalance,
       },
     ];
     const renderItem = ({ item, index }) => (
@@ -420,14 +431,6 @@ const ProfileScreen = ({ navigation }) => {
           <Image source={item.icon} style={{ width: 30, height: 30 }} />
           <View style={{ marginLeft: Sizes.fixPadding * 1.5 }}>
             <Text style={Fonts.whiteColor16SemiBold}>{item.name}</Text>
-            <Text
-              style={{
-                ...Fonts.grayColor14Regular,
-                marginTop: -Sizes.fixPadding / 2,
-              }}
-            >
-              {item.desc}
-            </Text>
           </View>
         </View>
         <Text style={Fonts.whiteColor16Regular}>{item.value.toFixed(2)}</Text>
@@ -441,11 +444,7 @@ const ProfileScreen = ({ navigation }) => {
           paddingHorizontal: Sizes.fixPadding,
         }}
       >
-        <Text style={Fonts.whiteColor16SemiBold}>
-          {selectedView === viewArr[0]
-            ? "TOTAL BALANCE"
-            : "Total Creat & Earnings"}
-        </Text>
+        <Text style={Fonts.whiteColor16SemiBold}>{title}</Text>
         <View
           style={{
             marginVertical: Sizes.fixPadding,
@@ -498,7 +497,7 @@ const ProfileScreen = ({ navigation }) => {
                 size={15}
                 color={
                   facebook === "" || !facebook
-                    ? Colors.whiteColor
+                    ? Colors.inputTextColor
                     : Colors.facebook
                 }
                 name={"facebook-f"}
@@ -513,7 +512,7 @@ const ProfileScreen = ({ navigation }) => {
                 size={15}
                 color={
                   telegram === "" || !telegram
-                    ? Colors.whiteColor
+                    ? Colors.inputTextColor
                     : Colors.telegram
                 }
                 name={"telegram-plane"}
@@ -528,7 +527,7 @@ const ProfileScreen = ({ navigation }) => {
                 size={15}
                 color={
                   twitter === "" || !twitter
-                    ? Colors.whiteColor
+                    ? Colors.inputTextColor
                     : Colors.twitter
                 }
                 name={"twitter"}
@@ -543,7 +542,7 @@ const ProfileScreen = ({ navigation }) => {
                 size={15}
                 color={
                   youtube === "" || !youtube
-                    ? Colors.whiteColor
+                    ? Colors.inputTextColor
                     : Colors.youtube
                 }
                 name={"youtube"}

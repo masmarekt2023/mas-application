@@ -58,11 +58,12 @@ const ShareForAudienceScreen = ({ navigation }) => {
       justifyContent: "center",
       marginBottom: Sizes.fixPadding + 5.0,
       borderWidth: 1,
-      borderColor: Colors.primaryColor,
+      borderColor: Colors.inputTextColor,
     },
     textFieldStyle: {
       marginTop: Sizes.fixPadding,
       ...Fonts.whiteColor14Medium,
+      color: Colors.inputTextColor,
       backgroundColor: Colors.inputBgColor,
       paddingHorizontal: Sizes.fixPadding,
       paddingVertical: Sizes.fixPadding + 5.0,
@@ -137,8 +138,6 @@ const ShareForAudienceScreen = ({ navigation }) => {
       let res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
       });
       const type = res.uri.split(".")[res.uri.split(".").length - 1];
       setValue("file", {
@@ -180,7 +179,14 @@ const ShareForAudienceScreen = ({ navigation }) => {
         onPress={onSubmit}
         style={styles.continueButtonStyle}
       >
-        <Text style={{ ...Fonts.whiteColor20SemiBold, color: Colors.buttonTextColor }}>Share</Text>
+        <Text
+          style={{
+            ...Fonts.whiteColor20SemiBold,
+            color: Colors.buttonTextColor,
+          }}
+        >
+          Share
+        </Text>
       </TouchableOpacity>
     );
   }
@@ -216,7 +222,7 @@ const ShareForAudienceScreen = ({ navigation }) => {
               source={
                 item.mediaUrl
                   ? { uri: item.mediaUrl }
-                  : require("../../../assets/images/users/user1.png")
+                  : require("../../../assets/images/icon.png")
               }
               style={{ width: 55.0, height: 55.0, borderRadius: 27.5 }}
             />
@@ -297,7 +303,7 @@ const ShareForAudienceScreen = ({ navigation }) => {
                 ...Fonts.whiteColor14SemiBold,
                 color:
                   watch("type") === "PUBLIC"
-                    ? Colors.bodyBackColor
+                    ? Colors.buttonTextColor
                     : Colors.whiteColor,
               }}
             >
@@ -325,7 +331,7 @@ const ShareForAudienceScreen = ({ navigation }) => {
                 ...Fonts.whiteColor14SemiBold,
                 color:
                   watch("type") === "PRIVATE"
-                    ? Colors.bodyBackColor
+                    ? Colors.buttonTextColor
                     : Colors.whiteColor,
               }}
             >
@@ -358,7 +364,7 @@ const ShareForAudienceScreen = ({ navigation }) => {
             value={field.value}
             onChangeText={field.onChange}
             placeholder="Enter Description"
-            placeholderTextColor={Colors.grayColor}
+            placeholderTextColor={Colors.inputTextColor}
             style={{
               ...styles.textFieldStyle,
               borderWidth: inputError ? 1 : 0,
@@ -404,7 +410,7 @@ const ShareForAudienceScreen = ({ navigation }) => {
             value={field.value}
             onChangeText={field.onChange}
             placeholder="Enter Title"
-            placeholderTextColor={Colors.grayColor}
+            placeholderTextColor={Colors.inputTextColor}
             style={{
               ...styles.textFieldStyle,
               borderWidth: inputError ? 1 : 0,
@@ -472,17 +478,26 @@ const ShareForAudienceScreen = ({ navigation }) => {
           onPress={selectFile}
           style={{
             ...styles.uploadFileInfoWrapStyle,
-            borderColor: errors?.file ? Colors.errorColor : Colors.whiteColor,
+            borderColor: errors?.file
+              ? Colors.errorColor
+              : Colors.buttonTextColor,
           }}
         >
           <View style={styles.uploadIconWrapStyle}>
             <MaterialIcons
               name="cloud-upload"
               size={24}
-              color={Colors.primaryColor}
+              color={Colors.buttonTextColor}
             />
           </View>
-          <Text style={{ ...Fonts.whiteColor14Regular }}>Upload your file</Text>
+          <Text
+            style={{
+              ...Fonts.whiteColor14Regular,
+              color: Colors.inputTextColor,
+            }}
+          >
+            Upload your file
+          </Text>
           <Text
             style={{
               marginTop: Sizes.fixPadding - 7.0,

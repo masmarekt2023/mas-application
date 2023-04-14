@@ -19,11 +19,11 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useController, useForm } from "react-hook-form";
-import { showMessage } from "react-native-flash-message";
 import useBundlesData from "../../../Data/useBundlesData";
 import useLoginData from "../../../Data/useLoginData";
 import useLocalData from "../../../Data/localData/useLocalData";
 import * as ImagePicker from "expo-image-picker";
+import { localAlert } from "../../../components/localAlert";
 
 const EditBundle = ({ navigation, route }) => {
   // Get Colors from the Global state
@@ -59,11 +59,12 @@ const EditBundle = ({ navigation, route }) => {
       justifyContent: "center",
       marginBottom: Sizes.fixPadding + 5.0,
       borderWidth: 1,
-      borderColor: Colors.primaryColor,
+      borderColor: Colors.inputTextColor,
     },
     textFieldStyle: {
       marginTop: Sizes.fixPadding,
       ...Fonts.whiteColor14Medium,
+      color: Colors.inputTextColor,
       backgroundColor: Colors.inputBgColor,
       paddingHorizontal: Sizes.fixPadding,
       paddingVertical: Sizes.fixPadding + 5.0,
@@ -148,8 +149,6 @@ const EditBundle = ({ navigation, route }) => {
       let res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
       });
       const type = res.uri.split(".")[res.uri.split(".").length - 1];
       setValue("file", {
@@ -158,11 +157,7 @@ const EditBundle = ({ navigation, route }) => {
         type: `application/${type}`,
       });
     } catch (err) {
-      showMessage({
-        message: "Something Wrong",
-        type: "warning",
-        titleStyle: { fontWeight: "bold", fontSize: 16 },
-      });
+      localAlert("Something Wrong");
       console.log("Error in upload file : addScreen.js");
     }
   };
@@ -222,7 +217,7 @@ const EditBundle = ({ navigation, route }) => {
 
   function endingDateInfo() {
     return (
-      <View style={{ margin: Sizes.fixPadding * 2.0, opacity: 0.7 }}>
+      <View style={{ margin: Sizes.fixPadding * 2.0, opacity: 0.8 }}>
         <Text style={{ ...Fonts.whiteColor14Regular }}>Ending Date</Text>
         <TouchableOpacity activeOpacity={0.9} style={styles.dateInfoWrapStyle}>
           <Text style={{ ...Fonts.grayColor12Regular }}>
@@ -259,12 +254,12 @@ const EditBundle = ({ navigation, route }) => {
             value={field.value}
             onChangeText={field.onChange}
             placeholder="Enter Price"
-            placeholderTextColor={Colors.grayColor}
+            placeholderTextColor={Colors.inputTextColor}
             style={{
               ...styles.textFieldStyle,
               borderWidth: inputError ? 1 : 0,
               borderColor: Colors.errorColor,
-              opacity: 0.6,
+              opacity: 0.8,
             }}
             selectionColor={Colors.primaryColor}
             keyboardType="number-pad"
@@ -308,12 +303,12 @@ const EditBundle = ({ navigation, route }) => {
             value={field.value}
             onChangeText={field.onChange}
             placeholder="Description of NFT"
-            placeholderTextColor={Colors.grayColor}
+            placeholderTextColor={Colors.inputTextColor}
             style={{
               ...styles.textFieldStyle,
               borderWidth: inputError ? 1 : 0,
               borderColor: Colors.errorColor,
-              opacity: 0.6,
+              opacity: 0.8,
             }}
             selectionColor={Colors.primaryColor}
             multiline={true}
@@ -356,12 +351,12 @@ const EditBundle = ({ navigation, route }) => {
             value={field.value}
             onChangeText={field.onChange}
             placeholder="Name of your Bundle"
-            placeholderTextColor={Colors.grayColor}
+            placeholderTextColor={Colors.inputTextColor}
             style={{
               ...styles.textFieldStyle,
               borderWidth: inputError ? 1 : 0,
               borderColor: Colors.errorColor,
-              opacity: 0.6,
+              opacity: 0.8,
             }}
             selectionColor={Colors.primaryColor}
             editable={false}
@@ -402,12 +397,12 @@ const EditBundle = ({ navigation, route }) => {
             value={field.value}
             onChangeText={field.onChange}
             placeholder="Title of your Bundle"
-            placeholderTextColor={Colors.grayColor}
+            placeholderTextColor={Colors.inputTextColor}
             style={{
               ...styles.textFieldStyle,
               borderWidth: inputError ? 1 : 0,
               borderColor: Colors.errorColor,
-              opacity: 0.6,
+              opacity: 0.8,
             }}
             selectionColor={Colors.primaryColor}
             editable={false}
@@ -472,21 +467,31 @@ const EditBundle = ({ navigation, route }) => {
           onPress={selectFile}
           style={{
             ...styles.uploadFileInfoWrapStyle,
-            borderColor: errors?.file ? Colors.errorColor : Colors.whiteColor,
+            borderColor: errors?.file
+              ? Colors.errorColor
+              : Colors.inputTextColor,
           }}
         >
           <View style={styles.uploadIconWrapStyle}>
             <MaterialIcons
               name="cloud-upload"
               size={24}
-              color={Colors.primaryColor}
+              color={Colors.inputTextColor}
             />
           </View>
-          <Text style={{ ...Fonts.whiteColor14Regular }}>Upload your file</Text>
+          <Text
+            style={{
+              ...Fonts.whiteColor14Regular,
+              color: Colors.inputTextColor,
+            }}
+          >
+            Upload your file
+          </Text>
           <Text
             style={{
               marginTop: Sizes.fixPadding - 7.0,
               ...Fonts.grayColor12Regular,
+              color: Colors.inputTextColor,
             }}
           >
             ( Image, MP4)
@@ -552,11 +557,7 @@ const EditBundle = ({ navigation, route }) => {
       if (days > 7) {
         setValue("duration", `${days} Days`);
       } else {
-        showMessage({
-          message: "duration should be 7 days at least",
-          type: "warning",
-          titleStyle: { fontWeight: "bold", fontSize: 16 },
-        });
+        localAlert("duration should be 7 days at least");
       }
       hideDatePicker();
       //updateState({ endDate: `${date.getUTCDate()} ${monthsList[date.getUTCMonth()]}, ${date.getUTCFullYear()}` })

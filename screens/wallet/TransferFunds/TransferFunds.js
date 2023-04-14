@@ -11,8 +11,10 @@ import {
 } from "react-native";
 import React, { createRef, useLayoutEffect, useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
-import useGetAllUsersData from "../../../Data/useGetAllUsersData";
 import useLocalData from "../../../Data/localData/useLocalData";
+import axios from "axios";
+import Apiconfigs from "../../../Data/Apiconfigs";
+import useProfileData from "../../../Data/useProfileData";
 
 const TransferFunds = ({ navigation }) => {
   // Get Colors from the Global state
@@ -48,21 +50,35 @@ const TransferFunds = ({ navigation }) => {
     },
   });
 
+  const {userId} = useProfileData(state => state.userData);
+
+  const getAllUsers = async () => {
+    try {
+      const res = await axios({
+        method: "GET",
+        url: Apiconfigs.allUserList,
+        params: {
+          search: search.length > 0 ? search : null,
+          limit: 10,
+        },
+      });
+        if (res.data.statusCode === 200) {
+            setCreatorsList(res.data.result.docs.filter(i => i._id !== userId));
+        }
+    } catch (error) {
+      console.log("Error in TransferFunds / getAllUsers");
+    }
+  };
+
   // filter the Chat user form the userList
-  const allUserList = useGetAllUsersData((state) => state.allUsersList);
-  const [creatorsList, setCreatorsList] = useState(allUserList);
+  const [creatorsList, setCreatorsList] = useState([]);
 
   const [search, setSearch] = useState("");
 
   useLayoutEffect(() => {
-    if (search === "") {
-      setCreatorsList(allUserList);
-    }
     const searchingTime = setTimeout(() => {
-      if (search !== "") {
-        setCreatorsList(allUserList.filter((i) => i?.name.includes(search)));
-      }
-    }, 1000);
+      getAllUsers()
+    }, 300);
 
     return () => clearTimeout(searchingTime);
   }, [search]);
@@ -120,8 +136,12 @@ const TransferFunds = ({ navigation }) => {
           value={search}
           onChangeText={(value) => setSearch(value)}
           placeholder="Search"
-          placeholderTextColor={Colors.grayColor}
-          style={{ ...Fonts.whiteColor14Medium, flex: 1 }}
+          placeholderTextColor={Colors.inputTextColor}
+          style={{
+            ...Fonts.whiteColor14Medium,
+            flex: 1,
+            color: Colors.inputTextColor,
+          }}
           selectionColor={Colors.primaryColor}
         />
         <TouchableOpacity
@@ -134,7 +154,7 @@ const TransferFunds = ({ navigation }) => {
               width: 20.0,
               height: 20.0,
               resizeMode: "contain",
-              tintColor: Colors.grayColor,
+              tintColor: Colors.inputTextColor,
             }}
           />
         </TouchableOpacity>

@@ -16,17 +16,18 @@ const useLocalData = create((set) => ({
 
   // Styles
   lightModeColor: {
-    bodyBackColor: "#fff", // #6c0fda
-    blackColor: "#ffffff",
-    whiteColor: "#000000",
+    bodyBackColor: "#560f73",
+    blackColor: "rgba(19,198,226,1)",
+    whiteColor: "rgba(19,198,226,1)",
     primaryColor: "rgba(19,198,226,1)",
-    inputBgColor: "#eeeeee",
+    inputBgColor: "#515050",
+    inputTextColor: "#ffffff",
     tabIconBgColor: "rgba(19,198,226,0.2)",
     iconColor: "#ffffff",
     buttonTextColor: "#ffffff",
     customAlertColor: "rgba(19,198,226,1)",
     customAlertTextColor: "#ffffff",
-    grayColor: "#777777",
+    grayColor: "#ffffff",
     greenColor: "#30b983",
     errorColor: "#ef4444",
     facebook: "#4267B2",
@@ -41,6 +42,7 @@ const useLocalData = create((set) => ({
     whiteColor: "#FFFFFF",
     primaryColor: "rgba(140,49,255,1)",
     inputBgColor: "rgba(255,255,255,0.05)",
+    inputTextColor: "#ffffff",
     tabIconBgColor: "rgba(140, 49, 255,0.2)",
     iconColor: "#ffffff",
     buttonTextColor: "#ffffff",
@@ -58,17 +60,18 @@ const useLocalData = create((set) => ({
   styles: {
     darkMode: false,
     Colors: {
-      bodyBackColor: "#ffffff",
-      blackColor: "#ffffff",
-      whiteColor: "#000000",
-      primaryColor: "#ffa34e",
-      inputBgColor: "#eeeeee",
-      tabIconBgColor: "rgba(255, 163, 78, 0.2)",
-      customAlertColor: "#ffa34e",
-      customAlertTextColor: "#ffffff",
+      bodyBackColor: "#560f73",
+      blackColor: "rgba(19,198,226,1)",
+      whiteColor: "rgba(19,198,226,1)",
+      primaryColor: "rgba(19,198,226,1)",
+      inputBgColor: "#515050",
+      inputTextColor: "#ffffff",
+      tabIconBgColor: "rgba(19,198,226,0.2)",
       iconColor: "#ffffff",
       buttonTextColor: "#ffffff",
-      grayColor: "#949494",
+      customAlertColor: "rgba(19,198,226,1)",
+      customAlertTextColor: "#ffffff",
+      grayColor: "#ffffff",
       greenColor: "#30b983",
       errorColor: "#ef4444",
       facebook: "#4267B2",
@@ -78,187 +81,187 @@ const useLocalData = create((set) => ({
     },
     Fonts: {
       grayColor12Regular: {
-        color: "#949494",
+        color: "#ffffff",
         fontSize: 12,
         fontFamily: "SF_Compact_Display_Regular",
       },
 
       grayColor13Regular: {
-        color: "#949494",
+        color: "#ffffff",
         fontSize: 13,
         fontFamily: "SF_Compact_Display_Regular",
       },
 
       grayColor14Regular: {
-        color: "#949494",
+        color: "#ffffff",
         fontSize: 14,
         fontFamily: "SF_Compact_Display_Regular",
       },
 
       grayColor12Medium: {
-        color: "#949494",
+        color: "#ffffff",
         fontSize: 12,
         fontFamily: "SF_Compact_Display_Medium",
       },
 
       grayColor13Medium: {
-        color: "#949494",
+        color: "#ffffff",
         fontSize: 13,
         fontFamily: "SF_Compact_Display_Medium",
       },
 
       primaryColor14Regular: {
-        color: "#ffa34e",
+        color: "rgba(19,198,226,1)",
         fontSize: 14,
         fontFamily: "SF_Compact_Display_Regular",
       },
 
       primaryColor16Regular: {
-        color: "#ffa34e",
+        color: "rgba(19,198,226,1)",
         fontSize: 16,
         fontFamily: "SF_Compact_Display_Regular",
       },
 
       primaryColor12Medium: {
-        color: "#ffa34e",
+        color: "rgba(19,198,226,1)",
         fontSize: 12,
         fontFamily: "SF_Compact_Display_Medium",
       },
 
       primaryColor14Medium: {
-        color: "#ffa34e",
+        color: "rgba(19,198,226,1)",
         fontSize: 14,
         fontFamily: "SF_Compact_Display_Medium",
       },
 
       primaryColor14SemiBold: {
-        color: "#ffa34e",
+        color: "rgba(19,198,226,1)",
         fontSize: 14,
         fontFamily: "SF_Compact_Display_SemiBold",
       },
 
       primaryColor16SemiBold: {
-        color: "#ffa34e",
+        color: "rgba(19,198,226,1)",
         fontSize: 16,
         fontFamily: "SF_Compact_Display_SemiBold",
       },
 
       primaryColor20SemiBold: {
-        color: "#ffa34e",
+        color: "rgba(19,198,226,1)",
         fontSize: 20,
         fontFamily: "SF_Compact_Display_SemiBold",
       },
 
       primaryColor22SemiBold: {
-        color: "#ffa34e",
+        color: "rgba(19,198,226,1)",
         fontSize: 22,
         fontFamily: "SF_Compact_Display_SemiBold",
       },
 
       primaryColor14Bold: {
-        color: "#ffa34e",
+        color: "rgba(19,198,226,1)",
         fontSize: 14,
         fontFamily: "SF_Compact_Display_Bold",
       },
 
       whiteColor14Regular: {
-        color: "#000000",
+        color: "rgba(19,198,226,1)",
         fontSize: 14,
         fontFamily: "SF_Compact_Display_Regular",
       },
 
       whiteColor16Regular: {
-        color: "#000000",
+        color: "rgba(19,198,226,1)",
         fontSize: 16,
         fontFamily: "SF_Compact_Display_Regular",
       },
 
       whiteColor22Regular: {
-        color: "#000000",
+        color: "rgba(19,198,226,1)",
         fontSize: 22,
         fontFamily: "SF_Compact_Display_Regular",
       },
 
       whiteColor30Regular: {
-        color: "#000000",
+        color: "rgba(19,198,226,1)",
         fontSize: 30,
         fontFamily: "SF_Compact_Display_Regular",
       },
 
       whiteColor12Medium: {
-        color: "#000000",
+        color: "rgba(19,198,226,1)",
         fontSize: 12,
         fontFamily: "SF_Compact_Display_Medium",
       },
 
       whiteColor14Medium: {
-        color: "#000000",
+        color: "rgba(19,198,226,1)",
         fontSize: 14,
         fontFamily: "SF_Compact_Display_Medium",
       },
 
       whiteColor16Medium: {
-        color: "#000000",
+        color: "rgba(19,198,226,1)",
         fontSize: 16,
         fontFamily: "SF_Compact_Display_Medium",
       },
 
       whiteColor18Medium: {
-        color: "#000000",
+        color: "rgba(19,198,226,1)",
         fontSize: 18,
         fontFamily: "SF_Compact_Display_Medium",
       },
 
       whiteColor14SemiBold: {
-        color: "#000000",
+        color: "rgba(19,198,226,1)",
         fontSize: 14,
         fontFamily: "SF_Compact_Display_SemiBold",
       },
 
       whiteColor16SemiBold: {
-        color: "#000000",
+        color: "rgba(19,198,226,1)",
         fontSize: 16,
         fontFamily: "SF_Compact_Display_SemiBold",
       },
 
       whiteColor18SemiBold: {
-        color: "#000000",
+        color: "rgba(19,198,226,1)",
         fontSize: 18,
         fontFamily: "SF_Compact_Display_SemiBold",
       },
 
       whiteColor20SemiBold: {
-        color: "#000000",
+        color: "rgba(19,198,226,1)",
         fontSize: 20,
         fontFamily: "SF_Compact_Display_SemiBold",
       },
 
       whiteColor22SemiBold: {
-        color: "#000000",
+        color: "rgba(19,198,226,1)",
         fontSize: 22,
         fontFamily: "SF_Compact_Display_SemiBold",
       },
 
       whiteColor26SemiBold: {
-        color: "#000000",
+        color: "rgba(19,198,226,1)",
         fontSize: 26,
         fontFamily: "SF_Compact_Display_SemiBold",
       },
 
       whiteColor16Bold: {
-        color: "#000000",
+        color: "rgba(19,198,226,1)",
         fontSize: 16,
         fontFamily: "SF_Compact_Display_Bold",
       },
 
       whiteColor20Bold: {
-        color: "#000000",
+        color: "rgba(19,198,226,1)",
         fontSize: 20,
         fontFamily: "SF_Compact_Display_Bold",
       },
 
       whiteColor22Bold: {
-        color: "#000000",
+        color: "rgba(19,198,226,1)",
         fontSize: 22,
         fontFamily: "SF_Compact_Display_Bold",
       },
@@ -289,35 +292,35 @@ const useLocalData = create((set) => ({
             color: colors.grayColor,
             fontSize: 12,
             fontFamily: "SF_Compact_Display_Regular",
-            fontWeight: '600',
+            fontWeight: "600",
           },
 
           grayColor13Regular: {
             color: colors.grayColor,
             fontSize: 13,
             fontFamily: "SF_Compact_Display_Regular",
-            fontWeight: '600',
+            fontWeight: "600",
           },
 
           grayColor14Regular: {
             color: colors.grayColor,
             fontSize: 14,
             fontFamily: "SF_Compact_Display_Regular",
-            fontWeight: '600',
+            fontWeight: "600",
           },
 
           grayColor12Medium: {
             color: colors.grayColor,
             fontSize: 12,
             fontFamily: "SF_Compact_Display_Medium",
-            fontWeight: '600',
+            fontWeight: "600",
           },
 
           grayColor13Medium: {
             color: colors.grayColor,
             fontSize: 13,
             fontFamily: "SF_Compact_Display_Medium",
-            fontWeight: '600',
+            fontWeight: "600",
           },
 
           primaryColor14Regular: {

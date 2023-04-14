@@ -4,6 +4,8 @@ import axios from "axios";
 
 const useGetAllUsersData = create((set) => ({
   isLoading: false,
+  setLoading: (status) => set({ isLoading: status }),
+
   allUsersList: [],
   creatorsWalletAddress: [],
   likesUser: [],
@@ -15,7 +17,7 @@ const useGetAllUsersData = create((set) => ({
         method: "GET",
         url: Apiconfigs.allUserList,
         params: {
-          limit: 100,
+          limit: 8,
         },
       });
       if (res.data.statusCode === 200) {
@@ -106,6 +108,26 @@ const useGetAllUsersData = create((set) => ({
     } catch (e) {
       console.log("Error in useSubscribeData/updateCreatorSubscribeData");
     }
+  },
+
+  topUser: [],
+  getTopUser: async () => {
+    set({ isLoading: true });
+    try {
+      const res = await axios({
+        method: "GET",
+        url: Apiconfigs.topUser,
+        params: {
+          limit: 8,
+        },
+      });
+      if (res.data.statusCode === 200) {
+        set({ topUser: res.data.result });
+      }
+    } catch (e) {
+      console.log("Error in useGetAllUsersData / getTopUser");
+    }
+    set({ isLoading: false });
   },
 }));
 

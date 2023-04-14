@@ -10,12 +10,16 @@ import {
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import useLocalData from "../../Data/localData/useLocalData";
+import useBundlesData from "../../Data/useBundlesData";
+import useProfileData from "../../Data/useProfileData";
 
 const { width, height } = Dimensions.get("window");
 
 const NFTUploadSuccessScreen = ({ navigation, route }) => {
   // Get Colors from the Global state
-    const { Colors, Fonts, Sizes, darkMode } = useLocalData((state) => state.styles);
+  const { Colors, Fonts, Sizes, darkMode } = useLocalData(
+    (state) => state.styles
+  );
 
   // The style Object
 
@@ -32,6 +36,10 @@ const NFTUploadSuccessScreen = ({ navigation, route }) => {
         BackHandler.removeEventListener("hardwareBackPress", backAction);
     }, [backAction])
   );
+
+  const userId = useProfileData((state) => state.userData.userId);
+  const getBundles = useBundlesData((state) => state.getBundles);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bodyBackColor }}>
       <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
@@ -45,7 +53,10 @@ const NFTUploadSuccessScreen = ({ navigation, route }) => {
   function backToHomeText() {
     return (
       <Text
-        onPress={() => navigation.push("BottomTabBar")}
+        onPress={() => {
+          getBundles(userId);
+          navigation.push("BottomTabBar");
+        }}
         style={{
           margin: Sizes.fixPadding * 2.0,
           textAlign: "center",

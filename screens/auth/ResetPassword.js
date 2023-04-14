@@ -13,7 +13,7 @@ import {
   Entypo,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useController, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
@@ -21,8 +21,8 @@ import useForgetPasswordData from "../../Data/useForgetPasswordData";
 import YupPassword from "yup-password";
 import useResetPasswordData from "../../Data/useResetPasswordData";
 import Loading from "../../components/Loading";
-import {showMessage} from "react-native-flash-message";
 import useLocalData from "../../Data/localData/useLocalData";
+import { localAlert } from "../../components/localAlert";
 
 const ResetPassword = ({ navigation }) => {
   // Get Colors from the Global state
@@ -150,7 +150,14 @@ const ResetPassword = ({ navigation }) => {
           opacity: Object.keys(errors).length ? 0.7 : 1,
         }}
       >
-        <Text style={{ ...Fonts.whiteColor20SemiBold, color: Colors.buttonTextColor }}>Reset</Text>
+        <Text
+          style={{
+            ...Fonts.whiteColor20SemiBold,
+            color: Colors.buttonTextColor,
+          }}
+        >
+          Reset
+        </Text>
       </TouchableOpacity>
     );
   }
@@ -174,14 +181,15 @@ const ResetPassword = ({ navigation }) => {
           }}
         >
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Entypo name="key" size={20} color={Colors.whiteColor} />
+            <Entypo name="key" size={20} color={Colors.inputTextColor} />
             <TextInput
               value={field.value}
               onChangeText={field.onChange}
               placeholder="Enter Email Validation Code"
-              placeholderTextColor={Colors.grayColor}
+              placeholderTextColor={Colors.inputTextColor}
               style={{
                 ...Fonts.whiteColor14Medium,
+                color: Colors.inputTextColor,
                 marginLeft: Sizes.fixPadding + 2.0,
               }}
               selectionColor={Colors.primaryColor}
@@ -191,19 +199,22 @@ const ResetPassword = ({ navigation }) => {
           <TouchableOpacity
             activeOpacity={0.9}
             onPress={() => {
-              if(allowGetCode){
+              if (allowGetCode) {
                 setAllowGetCode(false);
                 sendCode({ email: getValues("email") });
-              }else {
-                showMessage({
-                  message: "You can get another code after 60 seconds",
-                  type: "warning",
-                  titleStyle: { fontWeight: "bold", fontSize: 16 },
-                });
+              } else {
+                localAlert("You can get another code after 60 seconds");
               }
             }}
           >
-            <Text style={Fonts.whiteColor14Medium}>Get Code</Text>
+            <Text
+              style={{
+                ...Fonts.whiteColor14Medium,
+                color: Colors.inputTextColor,
+              }}
+            >
+              Get Code
+            </Text>
           </TouchableOpacity>
         </View>
         {errors?.code ? (
@@ -242,16 +253,17 @@ const ResetPassword = ({ navigation }) => {
             <MaterialIcons
               name="lock-open"
               size={20}
-              color={Colors.whiteColor}
+              color={Colors.inputTextColor}
             />
             <TextInput
               value={field.value}
               onChangeText={field.onChange}
               placeholder="Enter Your New Password"
               secureTextEntry={securePassword}
-              placeholderTextColor={Colors.grayColor}
+              placeholderTextColor={Colors.inputTextColor}
               style={{
                 ...Fonts.whiteColor14Medium,
+                color: Colors.inputTextColor,
                 marginLeft: Sizes.fixPadding + 2.0,
               }}
               selectionColor={Colors.primaryColor}
@@ -260,7 +272,7 @@ const ResetPassword = ({ navigation }) => {
           <MaterialCommunityIcons
             name={securePassword ? "eye" : "eye-off"}
             size={20}
-            color={Colors.whiteColor}
+            color={Colors.inputTextColor}
             onPress={() => setSecurePassword((prevState) => !prevState)}
           />
         </View>

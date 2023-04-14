@@ -2,7 +2,7 @@ import { create } from "zustand";
 import Apiconfigs from "./Apiconfigs";
 import axios from "axios";
 
-import { showMessage } from "react-native-flash-message";
+import { localAlert } from "../components/localAlert";
 
 const useLoginData = create((set) => ({
   isLoading: false,
@@ -20,26 +20,20 @@ const useLoginData = create((set) => ({
       const res = await axios({
         method: "POST",
         url: Apiconfigs.userlogin,
-        data: data,
+        data: {
+          email: `${data.email.charAt(0).toLowerCase()}${data.email.slice(1)}`,
+          password: data.password,
+        },
       });
       if (Object.entries(res.data.result).length > 0) {
-        console.log(res.data.result);
         set({ userInfo: res.data.result });
-        navigation.push("BottomTabBar");
+        navigation.push("LoadingAfterLogin");
       } else {
-        showMessage({
-          message: res.data.responseMessage,
-          type: "danger",
-          titleStyle: { fontWeight: "bold", fontSize: 16 },
-        });
+        localAlert("User Not Found");
       }
     } catch (error) {
       if (error.response) {
-        showMessage({
-          message: error.response.data.responseMessage,
-          type: "danger",
-          titleStyle: { fontWeight: "bold", fontSize: 16 },
-        });
+        localAlert(error.response.data.responseMessage);
       } else {
         console.log(error.message);
       }

@@ -10,18 +10,6 @@ import {
 } from "react-native";
 import useLocalData from "../../Data/localData/useLocalData";
 
-const termsOfUseList = [
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non enim ut mollis interdum fames pulvinar pharetra odioCurabitur mauris at porta viverra odio lobortis quis.",
-  "Orci cras ridiculus etiam orci. Nulla praesent nunc ornaresed sed ut velit, ullamcorper. Sagittis pulvinar feugiat est consequat non mi. At turpis aliquam consectetur tellus quam amet, nam fringilla turpis.",
-  "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nemo enim ipsam voluptatem quia voluptas sit aspernatuaut odit aut fugit, sed quia consequuntur magni dolores.",
-];
-
-const companyPoliciesList = [
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non enim ut mollis interdum fames pulvinar pharetra odioCurabitur mauris at porta viverra odio lobortis quis.",
-  "Orci cras ridiculus etiam orci. Nulla praesent nunc ornaresed sed ut velit, ullamcorper. Sagittis pulvinar feugiat est consequat non mi. At turpis aliquam consectetur tellus quam amet, nam fringilla turpis.",
-  "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nemo enim ipsam voluptatem quia voluptas sit aspernatuaut odit aut fugit, sed quia consequuntur magni dolores.",
-];
-
 const TermsAndConditionsScreen = ({ navigation }) => {
   // Get Colors from the Global state
   const { Colors, Fonts, Sizes } = useLocalData((state) => state.styles);
@@ -36,6 +24,52 @@ const TermsAndConditionsScreen = ({ navigation }) => {
       justifyContent: "center",
     },
   });
+  const termsArr = [
+    {
+      header: "User Conduct",
+      text: "Users must agree to use the app in a lawful and ethical manner, and not engage in any activities that may harm the app or other users.",
+    },
+    {
+      header: "Intellectual Property",
+      text: "Users must agree to respect the intellectual property rights of others and not use the app to infringe upon those rights.",
+    },
+    {
+      header: "Privacy",
+      text: "The app must adhere to all applicable privacy laws and regulations, and clearly outline its data collection and usage practices.",
+    },
+    {
+      header: "Content Guidelines",
+      text: "The app must outline guidelines for the types of content that are allowed on the platform and any prohibited content, such as content that is illegal or offensive.",
+    },
+    {
+      header: "Dispute Resolution",
+      text: "The app must provide a mechanism for resolving disputes between users, such as through mediation or arbitration.",
+    },
+    {
+      header: "Security",
+      text: "The app must implement strong security measures to protect user funds and private keys, such as multi-factor authentication and encryption.",
+    },
+    {
+      header: "User Responsibility",
+      text: "Users must agree to take responsibility for their own wallet security, such as keeping their private keys confidential and taking precautions against theft or loss.",
+    },
+    {
+      header: "Backup and Recovery",
+      text: "The app must provide users with the ability to backup and recover their wallet in the event of loss or damage.",
+    },
+    {
+      header: "Transaction Fees",
+      text: "The app may charge transaction fees for sending and receiving cryptocurrencies or NFTs, which must be clearly outlined in the terms and conditions.",
+    },
+    {
+      header: "Legal Compliance",
+      text: "The app must comply with all applicable laws and regulations related to cryptocurrency and financial services.",
+    },
+    {
+      header: "Limited Liability",
+      text: "The app developer may limit its liability for any losses or damages related to the use of the wallet feature.",
+    },
+  ];
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bodyBackColor }}>
@@ -46,50 +80,31 @@ const TermsAndConditionsScreen = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingTop: Sizes.fixPadding }}
         >
-          {termsOfUseInfo()}
-          {companyPoliciesInfo()}
+          <View
+            style={{
+              padding: Sizes.fixPadding,
+            }}
+          >
+            {termsArr.map((e, i) => term(i, e.header, e.text))}
+          </View>
         </ScrollView>
       </View>
     </SafeAreaView>
   );
 
-  function companyPoliciesInfo() {
+  function term(key, header, text) {
     return (
-      <View style={{ margin: Sizes.fixPadding * 2.0 }}>
+      <Text
+        style={{ lineHeight: 20, marginBottom: Sizes.fixPadding }}
+        key={key}
+      >
+        <Text style={Fonts.primaryColor16SemiBold}>{header}: </Text>
         <Text
-          style={{
-            marginBottom: Sizes.fixPadding,
-            ...Fonts.whiteColor18SemiBold,
-          }}
+          style={{ ...Fonts.whiteColor14Medium, color: Colors.inputTextColor }}
         >
-          Company Policy
+          {text}
         </Text>
-        {companyPoliciesList.map((item, index) => (
-          <Text key={`${index}`} style={{ ...Fonts.grayColor13Regular }}>
-            {item}
-          </Text>
-        ))}
-      </View>
-    );
-  }
-
-  function termsOfUseInfo() {
-    return (
-      <View style={{ marginHorizontal: Sizes.fixPadding * 2.0 }}>
-        <Text
-          style={{
-            marginBottom: Sizes.fixPadding,
-            ...Fonts.whiteColor18SemiBold,
-          }}
-        >
-          Terms of Use
-        </Text>
-        {termsOfUseList.map((item, index) => (
-          <Text key={`${index}`} style={{ ...Fonts.grayColor13Regular }}>
-            {item}
-          </Text>
-        ))}
-      </View>
+      </Text>
     );
   }
 

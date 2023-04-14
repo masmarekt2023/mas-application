@@ -11,7 +11,7 @@ import {
   Text,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { BottomSheet } from "@rneui/themed";
+import { BottomSheet, Dialog } from "@rneui/themed";
 import DashedLine from "react-native-dashed-line";
 import useGetUser from "../../Data/useGetUser";
 import useLoginData from "../../Data/useLoginData";
@@ -90,6 +90,7 @@ const SearchScreen = ({ navigation }) => {
     },
     minMaxPriceTextFieldStyle: {
       ...Fonts.whiteColor16Regular,
+      color: Colors.inputTextColor,
       backgroundColor: Colors.inputBgColor,
       paddingHorizontal: Sizes.fixPadding,
       flex: 0.8,
@@ -124,11 +125,9 @@ const SearchScreen = ({ navigation }) => {
   const token = useLoginData((state) => state.userInfo.token);
 
   // set the data of the Creator in the global state and navigate to Creator Screen
-  const setUsername = useGetUser((state) => state.setUsername);
   const getUser = useGetUser((state) => state.getUser);
   const navToCreatorScreen = (item) => {
-    setUsername(item.userName);
-    getUser(token, navigation, item._id);
+    getUser(token, navigation, item.userName);
   };
 
   // get the list of bundle content from the global state
@@ -266,7 +265,9 @@ const SearchScreen = ({ navigation }) => {
   );
 
   function filterSheet() {
-    return (
+    return selectedSearchType === "Creator" ? (
+      creatorSearchKeyInfo()
+    ) : (
       <BottomSheet
         isVisible={showFilterSheet}
         containerStyle={{ backgroundColor: "rgba(0.5, 0.50, 0, 0.50)" }}
@@ -283,15 +284,9 @@ const SearchScreen = ({ navigation }) => {
             Select Filter
           </Text>
           <View style={{ flex: 1 }}>
-            {selectedSearchType === "Creator" ? (
-              <>{creatorSearchKeyInfo()}</>
-            ) : (
-              <>
-                {amountInfo()}
-                {coinNameInfo()}
-                {durationInfo()}
-              </>
-            )}
+            {amountInfo()}
+            {coinNameInfo()}
+            {durationInfo()}
           </View>
           {selectedSearchType !== "Creator" && resetAndApplyInfo()}
         </View>
@@ -335,49 +330,54 @@ const SearchScreen = ({ navigation }) => {
   function creatorSearchKeyInfo() {
     const list = ["name", "userName", "speciality"];
     return (
-      <View>
-        <Text style={{ ...Fonts.whiteColor18SemiBold }}>Searching by</Text>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            flexWrap: "wrap",
-          }}
-        >
-          {list.map((item, index) => (
-            <TouchableOpacity
-              activeOpacity={0.9}
-              onPress={() =>
-                updateState({ creatorSearchKey: item, showFilterSheet: false })
+      <Dialog
+        isVisible={showFilterSheet}
+        onBackdropPress={() => updateState({ showFilterSheet: false })}
+        overlayStyle={{
+          position: "absolute",
+          top: 140,
+          right: 10,
+          borderRadius: 0,
+          width: 150,
+          padding: Sizes.fixPadding,
+        }}
+      >
+        {list.map((item, index, array) => (
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={() =>
+              updateState({ creatorSearchKey: item, showFilterSheet: false })
+            }
+            key={`${index}`}
+            style={{
+              backgroundColor:
+                creatorSearchKey === item
+                  ? Colors.primaryColor
+                  : Colors.inputTextColor,
+              borderWidth: creatorSearchKey === item ? 0 : 1,
+              borderColor: Colors.primaryColor,
+              marginBottom:
+                index === array.length - 1 ? 0 : Sizes.fixPadding * 1.5,
+              paddingHorizontal: Sizes.fixPadding,
+              paddingVertical: Sizes.fixPadding * 0.5,
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={
+                creatorSearchKey === item
+                  ? {
+                      ...Fonts.whiteColor16Regular,
+                      color: Colors.buttonTextColor,
+                    }
+                  : { ...Fonts.primaryColor16Regular }
               }
-              key={`${index}`}
-              style={{
-                marginRight:
-                  index === list.length - 1 ? 0.0 : Sizes.fixPadding * 2.0,
-                backgroundColor:
-                  creatorSearchKey === item
-                    ? Colors.primaryColor
-                    : Colors.bodyBackColor,
-                borderWidth: creatorSearchKey === item ? 0 : 1,
-                ...styles.optionStyle,
-              }}
             >
-              <Text
-                style={
-                  creatorSearchKey === item
-                    ? {
-                        ...Fonts.whiteColor16Regular,
-                        color: Colors.buttonTextColor,
-                      }
-                    : { ...Fonts.primaryColor16Regular }
-                }
-              >
-                {item}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
+              {item}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </Dialog>
     );
   }
 
@@ -453,7 +453,7 @@ const SearchScreen = ({ navigation }) => {
               })
             }
             placeholder="Min"
-            placeholderTextColor={Colors.whiteColor}
+            placeholderTextColor={Colors.inputTextColor}
             style={styles.minMaxPriceTextFieldStyle}
             selectionColor={Colors.primaryColor}
             keyboardType="numeric"
@@ -474,7 +474,7 @@ const SearchScreen = ({ navigation }) => {
               })
             }
             placeholder="Max"
-            placeholderTextColor={Colors.whiteColor}
+            placeholderTextColor={Colors.inputTextColor}
             style={styles.minMaxPriceTextFieldStyle}
             selectionColor={Colors.primaryColor}
             keyboardType="numeric"
@@ -509,9 +509,9 @@ const SearchScreen = ({ navigation }) => {
               })
             }
             placeholder="Min Day"
-            placeholderTextColor={Colors.whiteColor}
+            placeholderTextColor={Colors.inputTextColor}
             style={styles.minMaxPriceTextFieldStyle}
-            selectionColor={Colors.primaryColor}
+            selectionColor={Colors.inputTextColor}
             keyboardType="numeric"
           />
           <Text
@@ -530,9 +530,9 @@ const SearchScreen = ({ navigation }) => {
               })
             }
             placeholder="Max Day"
-            placeholderTextColor={Colors.whiteColor}
+            placeholderTextColor={Colors.inputTextColor}
             style={styles.minMaxPriceTextFieldStyle}
-            selectionColor={Colors.primaryColor}
+            selectionColor={Colors.inputTextColor}
             keyboardType="numeric"
           />
         </View>
@@ -685,8 +685,12 @@ const SearchScreen = ({ navigation }) => {
             placeholder={`Search for ${selectedSearchType} ${
               selectedSearchType === "Creator" ? `by ${creatorSearchKey}` : ``
             }`}
-            placeholderTextColor={Colors.grayColor}
-            style={{ ...Fonts.whiteColor16Regular, flex: 1 }}
+            placeholderTextColor={Colors.inputTextColor}
+            style={{
+              ...Fonts.whiteColor16Regular,
+              color: Colors.inputTextColor,
+              flex: 1,
+            }}
             selectionColor={Colors.primaryColor}
           />
           <TouchableOpacity
@@ -699,7 +703,7 @@ const SearchScreen = ({ navigation }) => {
                 width: 20.0,
                 height: 20.0,
                 resizeMode: "contain",
-                tintColor: Colors.grayColor,
+                tintColor: Colors.inputTextColor,
               }}
             />
           </TouchableOpacity>
@@ -714,7 +718,7 @@ const SearchScreen = ({ navigation }) => {
           <MaterialIcons
             name="filter-list"
             size={24}
-            color={Colors.whiteColor}
+            color={Colors.inputTextColor}
           />
         </TouchableOpacity>
       </View>

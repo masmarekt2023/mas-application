@@ -7,12 +7,20 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+    Dimensions
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { createRef, useLayoutEffect, useState } from "react";
 import Creator from "./Creator";
-import useGetAllUsersData from "../../Data/useGetAllUsersData";
 import useLocalData from "../../Data/localData/useLocalData";
+import axios from "axios";
+import Apiconfigs from "../../Data/Apiconfigs";
+import useGetAllUsersData from "../../Data/useGetAllUsersData";
+import useProfileData from "../../Data/useProfileData";
+
+const {width, height} = Dimensions.get('screen');
+
+const screenWidth = width < height ? width : height
 
 const AllCreators = ({ navigation }) => {
   // Get Colors from the Global state
@@ -41,28 +49,43 @@ const AllCreators = ({ navigation }) => {
     },
   });
 
-  const renderItem = ({ item }) => (
-    <Creator item={item} style={{ marginBottom: 20 }} navigation={navigation} />
-  );
-  const allUserList = useGetAllUsersData((state) => state.allUsersList);
-  const [creatorsList, setCreatorsList] = useState(allUserList);
+  const {userId} = useProfileData(state => state.userData);
 
+  const [creatorsList, setCreatorsList] = useState([]);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const setLoading = useGetAllUsersData(state => state.setLoading);
+  const getAllUsers = async () => {
+    setLoading(true);
+    try {
+      const res = await axios({
+        method: "GET",
+        url: Apiconfigs.allUserList,
+        params: {
+          search: search === "" ? null : search,
+          limit: 10 * page,
+        },
+      });
+      if (res.data.statusCode === 200) {
+        setCreatorsList(res.data.result.docs.filter(i => i._id !== userId));
+      }
+    } catch (error) {
+      console.log("Error in screens/home/AllCreators => getAllUsers");
+    }
+    setLoading(false);
+  }
+
+  const renderItem = ({ item }) => (
+    <Creator item={item} style={{ marginBottom: 20, width: screenWidth * 0.45 }} navigation={navigation} />
+  );
 
   useLayoutEffect(() => {
-    if (search === "") {
-      setCreatorsList(allUserList);
-    }
     const searchingTime = setTimeout(() => {
-      if (search !== "") {
-        setCreatorsList(
-          allUserList.filter((i) => i?.name.includes(search))
-        );
-      }
-    }, 1000);
+      getAllUsers();
+    }, 300);
 
     return () => clearTimeout(searchingTime);
-  }, [search]);
+  }, [search, page]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bodyBackColor }}>
@@ -75,8 +98,9 @@ const AllCreators = ({ navigation }) => {
           renderItem={renderItem}
           numColumns={2}
           style={{ marginLeft: 5 }}
-          columnWrapperStyle={{ justifyContent: "space-between" }}
+          columnWrapperStyle={{ width: width }}
         />
+        {seeMore()}
       </View>
     </SafeAreaView>
   );
@@ -140,6 +164,17 @@ const AllCreators = ({ navigation }) => {
           />
         </TouchableOpacity>
       </View>
+    );
+  }
+
+  function seeMore() {
+    return (
+        <TouchableOpacity
+            onPress={() => setPage((prevState) => ++prevState)}
+            style={{ marginVertical: Sizes.fixPadding * 2, alignItems: "center" }}
+        >
+          <Text style={Fonts.primaryColor16Regular}>See More</Text>
+        </TouchableOpacity>
     );
   }
 };

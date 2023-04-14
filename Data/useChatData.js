@@ -76,7 +76,6 @@ const useChatData = create((set, get) => ({
   // Get user Chat
   userChat: [],
   getUserChat: async (token, chatId) => {
-    set({ isLoading: true });
     try {
       const res = await axios({
         method: "GET",
@@ -94,7 +93,6 @@ const useChatData = create((set, get) => ({
     } catch (error) {
       console.log("Error in useChatData / getUserChat");
     }
-    set({ isLoading: false });
   },
 
   // Read messages

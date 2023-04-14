@@ -40,6 +40,8 @@ import WalletSuccessScreen from "./screens/wallet/WalletSuccessScreen/WalletSucc
 import EditBundle from "./screens/liveAuctionsDetail/EditBundle/EditBundle";
 import WithdrawSuccessScreen from "./screens/wallet/Withdraw/WithdrawSuccessScreen";
 import Story from "./screens/home/Story";
+import profileScreen from "./screens/profile/profileScreen";
+import LoadingAfterLogin from "./components/LodingAfterLogin";
 
 LogBox.ignoreAllLogs();
 
@@ -90,6 +92,7 @@ const App = () => {
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Verification" component={VerificationScreen} />
         <Stack.Screen name="SignUpSuccess" component={SignUpSuccess} />
+        <Stack.Screen name="LoadingAfterLogin" component={LoadingAfterLogin} options={{ ...TransitionPresets.DefaultTransition }} />
         <Stack.Screen
           name="BottomTabBar"
           component={BottomTabBarScreen}
@@ -115,10 +118,14 @@ const App = () => {
         />
         <Stack.Screen name="Setting" component={SettingScreen} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+        <Stack.Screen name="ProfileScreen" component={profileScreen} />
         <Stack.Screen name="Wallet" component={WalletScreen} />
         <Stack.Screen name="ConnectWallet" component={ConnectWalletScreen} />
         <Stack.Screen name="withdraw" component={WithdrawScreen} />
-        <Stack.Screen name="WithdrawSuccess" component={WithdrawSuccessScreen} />
+        <Stack.Screen
+          name="WithdrawSuccess"
+          component={WithdrawSuccessScreen}
+        />
         <Stack.Screen name="TransferFunds" component={TransferFunds} />
         <Stack.Screen name="donate" component={DonateScreen} />
         <Stack.Screen name="WalletSuccess" component={WalletSuccessScreen} />
@@ -129,7 +136,11 @@ const App = () => {
           component={TermsAndConditionsScreen}
         />
         <Stack.Screen name="LocalCamera" component={LocalCamera} />
-        <Stack.Screen name="Story" component={Story}  options={{ ...TransitionPresets.DefaultTransition }} />
+        <Stack.Screen
+          name="Story"
+          component={Story}
+          options={{ ...TransitionPresets.DefaultTransition }}
+        />
       </Stack.Navigator>
       <FlashMessage position="top" />
       {isCopied ? (

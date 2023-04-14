@@ -245,27 +245,30 @@ const RegisterScreen = ({ navigation }) => {
             <MaterialIcons
               name="lock-open"
               size={20}
-              color={Colors.whiteColor}
+              color={Colors.inputTextColor}
             />
             <TextInput
               value={field.value}
               onChangeText={field.onChange}
               placeholder="Enter Password"
               secureTextEntry={securePassword}
-              placeholderTextColor={Colors.grayColor}
+              placeholderTextColor={Colors.inputTextColor}
               style={{
                 ...Fonts.whiteColor14Medium,
+                color: Colors.inputTextColor,
+                flex: 1,
                 marginLeft: Sizes.fixPadding + 2.0,
+                marginRight: Sizes.fixPadding
               }}
               selectionColor={Colors.primaryColor}
             />
+            <MaterialCommunityIcons
+                name={securePassword ? "eye" : "eye-off"}
+                size={20}
+                color={Colors.inputTextColor}
+                onPress={() => updateState({ securePassword: !securePassword })}
+            />
           </View>
-          <MaterialCommunityIcons
-            name={securePassword ? "eye" : "eye-off"}
-            size={20}
-            color={Colors.whiteColor}
-            onPress={() => updateState({ securePassword: !securePassword })}
-          />
         </View>
         {errors?.password ? (
           <Text
@@ -300,10 +303,11 @@ const RegisterScreen = ({ navigation }) => {
           }}
           phoneInputStyle={{
             ...Fonts.whiteColor14Medium,
+            color: Colors.inputTextColor,
             flex: 1,
             marginLeft: Sizes.fixPadding + 2.0,
           }}
-          dialCodeTextStyle={{ ...Fonts.whiteColor14Medium, marginLeft: 10 }}
+          dialCodeTextStyle={{ ...Fonts.whiteColor14Medium, color: Colors.inputTextColor, marginLeft: 10 }}
           modalContainer={{ ...Fonts.whiteColor14Medium }}
           defaultCountry="TR"
           placeholderTextColor={"#949494"}
@@ -350,14 +354,15 @@ const RegisterScreen = ({ navigation }) => {
             borderColor: Colors.errorColor,
           }}
         >
-          <MaterialIcons name="email" size={20} color={Colors.whiteColor} />
+          <MaterialIcons name="email" size={20} color={Colors.inputTextColor} />
           <TextInput
             value={field.value}
             onChangeText={field.onChange}
             placeholder="Enter Email"
-            placeholderTextColor={Colors.grayColor}
+            placeholderTextColor={Colors.inputTextColor}
             style={{
               ...Fonts.whiteColor14Medium,
+              color: Colors.inputTextColor,
               flex: 1,
               marginLeft: Sizes.fixPadding + 2.0,
             }}
@@ -397,14 +402,15 @@ const RegisterScreen = ({ navigation }) => {
             borderColor: Colors.errorColor,
           }}
         >
-          <AntDesign name="user" size={20} color={Colors.whiteColor} />
+          <AntDesign name="user" size={20} color={Colors.inputTextColor} />
           <TextInput
             value={field.value}
             onChangeText={field.onChange}
             placeholder="Enter Username"
-            placeholderTextColor={Colors.grayColor}
+            placeholderTextColor={Colors.inputTextColor}
             style={{
               ...Fonts.whiteColor14Medium,
+              color: Colors.inputTextColor,
               flex: 1,
               marginLeft: Sizes.fixPadding + 2.0,
             }}

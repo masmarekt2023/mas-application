@@ -14,6 +14,8 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { FontAwesome5 } from "@expo/vector-icons";
 import useLocalData from "../../../Data/localData/useLocalData";
+import useProfileData from "../../../Data/useProfileData";
+import useLoginData from "../../../Data/useLoginData";
 
 const { width, height } = Dimensions.get("window");
 
@@ -22,8 +24,6 @@ const WalletSuccessScreen = ({ navigation, route }) => {
   const { Colors, Fonts, Sizes, darkMode } = useLocalData(
     (state) => state.styles
   );
-
-  // The style Object
 
   const backAction = () => {
     navigation.push("BottomTabBar");
@@ -46,44 +46,97 @@ const WalletSuccessScreen = ({ navigation, route }) => {
     creatorName,
     creatorWallet,
     certificateID,
+    certDate,
   } = route.params;
+
+  const token = useLoginData((state) => state.userInfo.token);
+  const getProfile = useProfileData((state) => state.getProfile);
+  const getTransactionHistoryList = useProfileData(
+    (state) => state.getTransactionHistoryList
+  );
+  const getDonationTransactionList = useProfileData(
+    (state) => state.getDonationTransactionList
+  );
   const html = `<!DOCTYPE html>
-                    <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <title>Title</title>
-                        </head>
-                        <body>
-                            <div style="height: 100vh">
-                                <div style="height: 10%; margin-left: auto; margin-right: auto; background-color: #581726; display: flex; justify-content: center; align-items: center; padding: 20px; gap: 15px; font-family: sans-serif; color: white">
-                                    <img src="https://www.masplatform.net/images/icon.png" style="width: 50px">
-                                    <h3>C E R T I F I C A T E O F D O N A T I O N</h3>
-                                    <img src="https://www.masplatform.net/images/icon.png" style="width: 50px">
-                                </div>
-                                <div style="height: 60%; display: flex; justify-content: center; align-items: center">
-                                    <div style="text-align: center; font-family: sans-serif;">
-                                        <p style="color: #000000">This is to certify that</p>
-                                        <h3>${userName}</h3>
-                                        <p>(${userWallet})</p>
-                                        <p>Has donated <span style="font-weight: bold; font-size: 20px;">${coinAmount} ${coinName}</span> to</p>
-                                        <h3>${creatorName}</h3>
-                                        <p>(${creatorWallet})</p>
-                                    </div>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; font-family: sans-serif; padding: 0 10px 0 10px ">
-                                    <div>
-                                        <p style="color: #b94945">MAS MANGER<p>
-                                        <p style="font-size: 10px; margin-top: 0px; text-align: center">MAS founder & CEO</p>
-                                    </div>
-                                    <span style="font-size: 12px; color: #ccc">This certificate is published one time and can't be accessed again</span>
-                                    <div>
-                                        <p style="font-weight: 600">certificate Id:</p>
-                                        <p style="font-size: 10px; color: #777; text-align: end">${certificateID}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </body>
-                    </html>`;
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+  </head>
+  <body>
+    <div style="height: 95vh; font-family: sans-serif">
+      <div
+        style="
+          height: 7%;
+          margin-left: auto;
+          margin-right: auto;
+          background-color: #581726;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 20px;
+          gap: 15px;
+          font-family: sans-serif;
+          color: white;
+        "
+      >
+        <img
+          src="https://www.masplatform.net/images/icon.png"
+          style="width: 50px"
+        />
+        <h3>C E R T I F I C A T E O F D O N A T I O N</h3>
+        <img
+          src="https://www.masplatform.net/images/icon.png"
+          style="width: 50px"
+        />
+      </div>
+      <div
+        style="
+          height: 40%;
+          width: 95%;
+          margin: 40px auto;
+          padding: 15px;
+          border: 1px black solid;
+          border-radius: 10px;
+        "
+      >
+        <div style="display: flex; align-items: center; width: 100%; gap: 10px;">
+          <h3 style="font-size: 16px;">Sender Name:</h3>
+          <p style="font-weight: 800; font-size: 20px;">${userName}</p>
+        </div>
+        <div style="display: flex; align-items: center; width: 100%; gap: 10px">
+          <h3 style="font-size: 16px;">Sender Wallet Address':</h3>
+          <p style="font-weight: 800; font-size: 20px;">${userWallet}</p>
+        </div>
+        <div style="display: flex; align-items: center; width: 100%; gap: 10px">
+          <h3 style="font-size: 16px;">Amount:</h3>
+          <p style="font-weight: 800; font-size: 20px;">${coinAmount} ${coinName}</p>
+        </div>
+        <div style="display: flex; align-items: center; width: 100%; gap: 10px">
+          <h3 style="font-size: 16px;">Receiver Name:</h3>
+          <p style="font-weight: 800; font-size: 20px;">${creatorName}</p>
+        </div>
+        <div style="display: flex; align-items: center; width: 100%; gap: 10px">
+          <h3 style="font-size: 16px;">Receiver Wallet Address':</h3>
+          <p style="font-weight: 800; font-size: 20px;">${creatorWallet}</p>
+        </div>
+        <div style="display: flex; align-items: center; width: 100%; gap: 10px">
+          <h3 style="font-size: 16px;">Date: </h3>
+          <p style="font-weight: 800; font-size: 20px;">${certDate}</p>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; width: 100%; gap: 10px; justify-content: center;">
+          <h3 style="font-size: 16px;">Certificate Id: </h3>
+          <p style="font-size: 16px;">${certificateID}</p>
+      </div>
+      <div style="color: red; width: 100%; text-align: center;"><span
+            style="font-size: large; color: black;">Note: </span>This certificate is published one time and can't be
+        accessed again
+    </div>
+    </div>
+  </body>
+</html>
+`;
 
   const printToFile = async () => {
     // On iOS/android prints the given html. On web prints the HTML from the current page.
@@ -91,14 +144,14 @@ const WalletSuccessScreen = ({ navigation, route }) => {
     await Sharing.shareAsync(uri, { UTI: ".pdf", mimeType: "application/pdf" });
   };
 
-  const downloadFile = async () => {
+  /*const downloadFile = async () => {
     // On iOS/android prints the given html. On web prints the HTML from the current page.
     const { uri } = await Print.printToFileAsync({ html });
     await Sharing.shareAsync(uri, {
       UTI: "public.item",
       mimeType: "application/pdf",
     });
-  };
+  };*/
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bodyBackColor }}>
@@ -114,7 +167,12 @@ const WalletSuccessScreen = ({ navigation, route }) => {
   function backToHomeText() {
     return (
       <Text
-        onPress={() => navigation.push("BottomTabBar")}
+        onPress={() => {
+          getProfile(token);
+          getTransactionHistoryList(token);
+          getDonationTransactionList(token);
+          navigation.push("BottomTabBar");
+        }}
         style={{
           margin: Sizes.fixPadding * 2.0,
           textAlign: "center",
@@ -169,7 +227,7 @@ const WalletSuccessScreen = ({ navigation, route }) => {
         <Text
           style={{
             ...Fonts.primaryColor16SemiBold,
-            color: Colors.errorColor,
+            color: Colors.primaryColor,
             textAlign: "center",
             marginTop: Sizes.fixPadding,
           }}

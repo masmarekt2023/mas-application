@@ -1,6 +1,7 @@
 import {
   Image,
   SafeAreaView,
+  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
@@ -38,7 +39,7 @@ const DonateScreen = ({ navigation, route }) => {
       marginVertical: Sizes.fixPadding * 2.0,
     },
     addRemoveIconWrapStyle: {
-      borderColor: Colors.whiteColor,
+      borderColor: Colors.inputTextColor,
       borderWidth: 1.0,
       width: 35.0,
       height: 35.0,
@@ -80,6 +81,8 @@ const DonateScreen = ({ navigation, route }) => {
   const creatorsWalletAddress = useGetAllUsersData(
     (state) => state.creatorsWalletAddress
   );
+
+  const date = new Date();
 
   // handle variables
   const [state, setState] = useState({
@@ -128,11 +131,13 @@ const DonateScreen = ({ navigation, route }) => {
         backgroundColor: Colors.bodyBackColor,
         padding: Sizes.fixPadding,
         flex: 1,
-        justifyContent: "space-between",
       }}
     >
       <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
-      <View style={{ marginTop: Sizes.fixPadding * 2 }}>
+      <ScrollView
+        style={{ marginTop: Sizes.fixPadding * 2 }}
+        showsVerticalScrollIndicator={false}
+      >
         {header({ title: route.params?.title })}
         <View style={styles.coinInfoWrapStyle}>
           <TouchableOpacity
@@ -146,7 +151,7 @@ const DonateScreen = ({ navigation, route }) => {
           >
             <MaterialIcons
               name="remove"
-              color={Colors.whiteColor}
+              color={Colors.inputTextColor}
               size={24.0}
             />
           </TouchableOpacity>
@@ -162,7 +167,7 @@ const DonateScreen = ({ navigation, route }) => {
             <View
               style={{
                 borderWidth: 2,
-                borderColor: Colors.primaryColor,
+                borderColor: Colors.inputTextColor,
                 padding: Sizes.fixPadding,
                 borderRadius: Sizes.fixPadding * 0.5,
                 marginHorizontal: Sizes.fixPadding,
@@ -174,14 +179,16 @@ const DonateScreen = ({ navigation, route }) => {
                 value={coinAmount}
                 style={{
                   ...Fonts.primaryColor22SemiBold,
+                  color: Colors.inputTextColor,
                 }}
-                selectionColor={Colors.primaryColor}
+                selectionColor={Colors.inputTextColor}
                 keyboardType={"number-pad"}
               />
             </View>
             <Text
               style={{
                 ...Fonts.whiteColor16SemiBold,
+                color: Colors.inputTextColor,
                 marginLeft: Sizes.fixPadding * 0.5,
               }}
             >
@@ -197,7 +204,11 @@ const DonateScreen = ({ navigation, route }) => {
             }
             style={styles.addRemoveIconWrapStyle}
           >
-            <MaterialIcons name="add" color={Colors.whiteColor} size={24.0} />
+            <MaterialIcons
+              name="add"
+              color={Colors.inputTextColor}
+              size={24.0}
+            />
           </TouchableOpacity>
         </View>
 
@@ -212,7 +223,12 @@ const DonateScreen = ({ navigation, route }) => {
               opacity: 0.8,
             }}
           >
-            <Text style={Fonts.whiteColor14Medium}>
+            <Text
+              style={{
+                ...Fonts.whiteColor14Medium,
+                color: Colors.inputTextColor,
+              }}
+            >
               {receiverCreator.creatorName}
             </Text>
           </View>
@@ -227,6 +243,7 @@ const DonateScreen = ({ navigation, route }) => {
             placeholderTextColor={Colors.grayColor}
             style={{
               ...Fonts.whiteColor14Medium,
+              color: Colors.inputTextColor,
               marginTop: Sizes.fixPadding,
               padding: Sizes.fixPadding,
               borderColor: Colors.whiteColor,
@@ -235,11 +252,9 @@ const DonateScreen = ({ navigation, route }) => {
             selectionColor={Colors.primaryColor}
           />
         </View>
-      </View>
-      <View>
         <DashedLine
           dashLength={5}
-          dashColor={Colors.inputBgColor}
+          dashColor={Colors.primaryColor}
           dashGap={5}
           style={{ marginVertical: Sizes.fixPadding * 2.0 }}
         />
@@ -315,17 +330,11 @@ const DonateScreen = ({ navigation, route }) => {
                 coinName: selectedCoin,
                 creatorName: receiverCreator.creatorName,
                 creatorWallet: walletAddress,
+                certDate: date.toUTCString(),
               }
             )
           }
-          style={{
-            ...styles.placeBidButtonStyle,
-            opacity:
-              receiverCreator.creatorName === "" ||
-              +coinAmount > selectedCoinAmount
-                ? 0.7
-                : 1,
-          }}
+          style={styles.placeBidButtonStyle}
         >
           <Text
             style={{
@@ -336,7 +345,7 @@ const DonateScreen = ({ navigation, route }) => {
             Transfer
           </Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 

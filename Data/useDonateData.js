@@ -2,8 +2,11 @@ import { create } from "zustand";
 import Apiconfigs from "./Apiconfigs";
 import axios from "axios";
 
-const useDonateData = create(() => ({
+const useDonateData = create((set) => ({
+  isLoading: false,
+
   donation: async (token, data, navigation, navData) => {
+    set({isLoading: true});
     try {
       const res = await axios({
         method: "POST",
@@ -23,8 +26,8 @@ const useDonateData = create(() => ({
       }
     } catch (e) {
       console.log("Error in useWithdrawData / withdraw");
-      console.log(e);
     }
+    set({isLoading: false});
   },
 }));
 

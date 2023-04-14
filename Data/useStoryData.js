@@ -28,7 +28,6 @@ const useStoryData = create((set, get) => ({
 
   // Get Story for user
   storyArr: [],
-  userLikedStories: [],
   getAllStories: async (token, userId) => {
     set({ isLoading: true });
     try {
@@ -75,6 +74,7 @@ const useStoryData = create((set, get) => ({
   },
 
   // Like story
+  userLikedStories: [],
   likeDislikeStory: async (token, storyId, userId) => {
     try {
       const res = await axios({

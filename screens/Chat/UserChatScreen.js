@@ -25,12 +25,13 @@ import useProfileData from "../../Data/useProfileData";
 import useLoginData from "../../Data/useLoginData";
 import io from "socket.io-client";
 import { baseURL } from "../../Data/Apiconfigs";
-import { showMessage } from "react-native-flash-message";
 import useLocalData from "../../Data/localData/useLocalData";
 import * as ImagePicker from "expo-image-picker";
 
-const screenWidth = Dimensions.get("screen").width;
-const screenHeight = Dimensions.get("screen").height;
+const { width, height } = Dimensions.get("screen");
+
+const screenWidth = width < height ? width : height;
+const screenHeight = height > width ? height : width;
 
 const UserChatScreen = ({ navigation, route }) => {
   // Get Colors from the Global state
@@ -69,10 +70,7 @@ const UserChatScreen = ({ navigation, route }) => {
       marginLeft: 5,
     },
     messageHandleContainerStyle: {
-      position: "absolute",
-      bottom: 5,
       flexDirection: "row",
-      width: screenWidth,
       paddingHorizontal: Sizes.fixPadding / 2,
     },
     inputContainerStyle: {
@@ -209,11 +207,11 @@ const UserChatScreen = ({ navigation, route }) => {
 
   // Send the message to the listener
   const sendMessage = () => {
-    socket.emit("sendMsg", {
+    let data = {
       chat_id: chatId,
       message: message,
-    });
-    updateState({ message: "" });
+    };
+    socket.emit("sendMsg", data);
   };
 
   // Send image to the listener
@@ -233,9 +231,11 @@ const UserChatScreen = ({ navigation, route }) => {
 
   // listen to the new messages and handle its
   useEffect(() => {
+    socket.emit("ping");
     socket.on(chatId, (data) => {
       addMessage(data);
       readUserChat(chatId);
+      updateState({ message: "" });
     });
 
     return () => {
@@ -248,9 +248,7 @@ const UserChatScreen = ({ navigation, route }) => {
     try {
       let res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
+        allowsEditing: true
       });
       const type = res.uri.split(".")[res.uri.split(".").length - 1];
       uploadImage(token, {
@@ -260,11 +258,6 @@ const UserChatScreen = ({ navigation, route }) => {
       });
       updateState({ openFileSender: true });
     } catch (err) {
-      showMessage({
-        message: "Something Wrong",
-        type: "warning",
-        titleStyle: { fontWeight: "bold", fontSize: 16 },
-      });
       console.log("Error in upload file : addScreen.js");
     }
   };
@@ -297,7 +290,7 @@ const UserChatScreen = ({ navigation, route }) => {
       <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
       <View style={{ flex: 1 }}>
         {header()}
-        <View style={{ flex: 1, position: "relative" }}>
+        <View style={{ flex: 1, paddingBottom: Sizes.fixPadding }}>
           {chatListInfo()}
           {messageHandleInfo()}
         </View>
@@ -434,13 +427,15 @@ const UserChatScreen = ({ navigation, route }) => {
             paddingVertical: Sizes.fixPadding * 0.5,
             borderRadius: Sizes.fixPadding * 0.5,
             marginLeft: 5,
-            backgroundColor: isUserMessage ? "#005d4b" : "#212e36",
+            // backgroundColor: isUserMessage ? "#005d4b" : "#212e36",
+            backgroundColor: Colors.primaryColor,
           }}
         >
           <Text
             style={{
               marginRight: isUserMessage ? 50 : 35,
-              color: Colors.buttonTextColor,
+              color: "#fff",
+              fontSize: 16,
             }}
           >
             {item.text}
@@ -463,9 +458,7 @@ const UserChatScreen = ({ navigation, route }) => {
                 name="checkmark-done"
                 size={18}
                 color={
-                  item.status === "Read"
-                    ? Colors.telegram
-                    : Colors.buttonTextColor
+                  item.status === "Read" ? Colors.bodyBackColor : "#ffffff"
                 }
               />
             ) : null}
@@ -517,7 +510,7 @@ const UserChatScreen = ({ navigation, route }) => {
     const MessageListRef = useRef();
 
     return (
-      <View style={{ marginBottom: 50 }}>
+      <View style={{ marginBottom: Sizes.fixPadding, flex: 1 }}>
         <FlatList
           data={result}
           keyExtractor={(item, index) => `${index}`}
@@ -573,9 +566,10 @@ const UserChatScreen = ({ navigation, route }) => {
         value={message}
         onChangeText={(data) => updateState({ message: data })}
         placeholder="Message"
-        placeholderTextColor={Colors.grayColor}
+        placeholderTextColor={Colors.inputTextColor}
         style={{
           ...Fonts.whiteColor14Medium,
+          color: Colors.inputTextColor,
           flex: 1,
           marginLeft: Sizes.fixPadding + 2.0,
           fontSize: 20,
@@ -591,7 +585,7 @@ const UserChatScreen = ({ navigation, route }) => {
     return (
       <View
         style={{
-          backgroundColor: Colors.blackColor,
+          backgroundColor: Colors.inputTextColor,
           width: screenWidth,
           height: screenHeight,
           position: "relative",
@@ -670,11 +664,7 @@ function handleDate(text) {
     return "Today";
   } else if (date.getTime() >= yesterday.getTime()) {
     return "Yesterday";
-  } else if (date.getTime() >= week.getTime()) {
-    const dayName = moment(text);
-    return dayName.format("dddd");
   } else {
-    const dayName = moment(text);
-    return dayName.format("DD MMMM YYYY");
+    return date.toDateString();
   }
 }

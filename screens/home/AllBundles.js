@@ -10,10 +10,13 @@ import {
   Image,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import React, { createRef, useLayoutEffect, useState } from "react";
+import React, { createRef, useEffect, useState } from "react";
 import Bundle from "./Bundle";
 import useBundlesData from "../../Data/useBundlesData";
 import useLocalData from "../../Data/localData/useLocalData";
+import axios from "axios";
+import Apiconfigs from "../../Data/Apiconfigs";
+import useProfileData from "../../Data/useProfileData";
 
 const screenWidth = Dimensions.get("window").width;
 const AllBundles = ({ navigation }) => {
@@ -43,28 +46,42 @@ const AllBundles = ({ navigation }) => {
     },
   });
 
-  const bundlesList = useBundlesData((state) => state.bundlesList);
-  const [bundlesFilteredList, setBundlesFilteredList] = useState(bundlesList);
+  const setLoading = useBundlesData(state => state.setLoading);
 
+  const [bundlesFilteredList, setBundlesFilteredList] = useState([]);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const {userId} = useProfileData(state => state.userData);
 
-  useLayoutEffect(() => {
-    if (search === "") {
-      setBundlesFilteredList(bundlesList);
-    }
-
-    const searchingTime = setTimeout(() => {
-      if (search !== "") {
+  const getBundles = async () => {
+    setLoading(true);
+    try {
+      const res = await axios({
+        method: "GET",
+        url: Apiconfigs.listAllNft,
+        params: {
+          search: search === "" ? null : search,
+          limit: 10 * page,
+        },
+      });
+      if (res.data.statusCode === 200) {
         setBundlesFilteredList(
-          bundlesList.filter((i) =>
-            i?.bundleTitle.toLowerCase().includes(search.toLowerCase())
-          )
+          res.data.result.docs.filter((i) => i.userId._id !== userId)
         );
       }
-    }, 1000);
+    } catch (e) {
+      console.log("Error in screens/home/AllBundles => getBundles");
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    const searchingTime = setTimeout(() => {
+      getBundles();
+    }, 300);
 
     return () => clearTimeout(searchingTime);
-  }, [search]);
+  }, [search, page]);
 
   const renderItem = ({ item }) => (
     <Bundle
@@ -87,6 +104,7 @@ const AllBundles = ({ navigation }) => {
           style={{ marginLeft: 5 }}
           columnWrapperStyle={{ justifyContent: "space-between" }}
         />
+        {seeMore()}
       </View>
     </SafeAreaView>
   );
@@ -150,6 +168,17 @@ const AllBundles = ({ navigation }) => {
           />
         </TouchableOpacity>
       </View>
+    );
+  }
+
+  function seeMore() {
+    return (
+      <TouchableOpacity
+        onPress={() => setPage((prevState) => ++prevState)}
+        style={{ marginVertical: Sizes.fixPadding * 2, alignItems: "center" }}
+      >
+        <Text style={Fonts.primaryColor16Regular}>See More</Text>
+      </TouchableOpacity>
     );
   }
 };

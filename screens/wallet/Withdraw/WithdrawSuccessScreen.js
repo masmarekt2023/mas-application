@@ -13,19 +13,22 @@ import React, { useCallback } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import moment from "moment";
 import { useFocusEffect } from "@react-navigation/native";
+import useLoginData from "../../../Data/useLoginData";
+import useProfileData from "../../../Data/useProfileData";
 
-const { width } = Dimensions.get("screen");
+const { width, height } = Dimensions.get("screen");
+
+const screenWidth = width < height ? width : height;
 
 const WithdrawSuccessScreen = ({ navigation, route }) => {
   // Get Colors from the Global state
-  const { Colors, Fonts, Sizes } = useLocalData(
-    (state) => state.styles
-  );
+  const { Colors, Fonts, Sizes } = useLocalData((state) => state.styles);
 
   // The style Object
   const styles = StyleSheet.create({
     info: {
       ...Fonts.grayColor14Regular,
+      color: Colors.primaryColor,
       fontWeight: "700",
       fontSize: 16,
       textAlign: "right",
@@ -38,7 +41,7 @@ const WithdrawSuccessScreen = ({ navigation, route }) => {
     },
   });
 
-  const {amount, address, txid, coinName, network, feed} = route.params;
+  const { amount, address, txid, coinName, network, feed } = route.params;
 
   const backAction = () => {
     navigation.push("BottomTabBar");
@@ -53,14 +56,22 @@ const WithdrawSuccessScreen = ({ navigation, route }) => {
     }, [backAction])
   );
 
+  const token = useLoginData((state) => state.userInfo.token);
+  const getProfile = useProfileData((state) => state.getProfile);
+  const getTransactionHistoryList = useProfileData(
+    (state) => state.getTransactionHistoryList
+  );
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bodyBackColor }}>
       <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
-      <View style={{ flex: 1, alignItems: "center", marginTop: width * 0.1 }}>
+      <View
+        style={{ flex: 1, alignItems: "center", marginTop: screenWidth * 0.1 }}
+      >
         {header()}
         <View
           style={{
-            width: width,
+            width: screenWidth,
             borderBottomWidth: 1,
             borderColor: Colors.inputBgColor,
             marginVertical: Sizes.fixPadding * 2,
@@ -70,7 +81,11 @@ const WithdrawSuccessScreen = ({ navigation, route }) => {
         <TouchableOpacity
           activeOpacity={0.9}
           style={{ position: "absolute", bottom: Sizes.fixPadding * 3 }}
-          onPress={() => navigation.push("BottomTabBar")}
+          onPress={() => {
+            getProfile(token);
+            getTransactionHistoryList(token);
+            navigation.push("BottomTabBar");
+          }}
         >
           <Text style={Fonts.primaryColor16SemiBold}>Back To Home Page</Text>
         </TouchableOpacity>
@@ -117,20 +132,28 @@ const WithdrawSuccessScreen = ({ navigation, route }) => {
       <View
         style={{
           paddingVertical: Sizes.fixPadding * 2,
-          width: width,
+          width: screenWidth,
           paddingHorizontal: Sizes.fixPadding * 2,
         }}
       >
         <View style={styles.infoContainer}>
           <Text style={styles.info}>Network</Text>
-          <Text style={Fonts.whiteColor16Medium}>{network}</Text>
+          <Text
+            style={{
+              ...Fonts.whiteColor16Medium,
+              color: Colors.inputTextColor,
+            }}
+          >
+            {network}
+          </Text>
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.info}>Address</Text>
           <Text
             style={{
               ...Fonts.whiteColor16Medium,
-              width: width * 0.5,
+              color: Colors.inputTextColor,
+              width: screenWidth * 0.5,
               textAlign: "right",
             }}
             numberOfLines={2}
@@ -140,17 +163,34 @@ const WithdrawSuccessScreen = ({ navigation, route }) => {
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.info}>Txid</Text>
-          <Text style={Fonts.whiteColor16Medium}>{txid}</Text>
+          <Text
+            style={{
+              ...Fonts.whiteColor16Medium,
+              color: Colors.inputTextColor,
+            }}
+          >
+            {txid}
+          </Text>
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.info}>Network fee</Text>
-          <Text style={Fonts.whiteColor16Medium}>
+          <Text
+            style={{
+              ...Fonts.whiteColor16Medium,
+              color: Colors.inputTextColor,
+            }}
+          >
             {feed} {coinName}
           </Text>
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.info}>Date</Text>
-          <Text style={Fonts.whiteColor16Medium}>
+          <Text
+            style={{
+              ...Fonts.whiteColor16Medium,
+              color: Colors.inputTextColor,
+            }}
+          >
             {date.format("YYYY-MM-DD HH:mm:ss")}
           </Text>
         </View>

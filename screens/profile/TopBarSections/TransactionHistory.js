@@ -24,6 +24,7 @@ const Action = ({ item, navigation }) => {
       marginBottom: Sizes.fixPadding * 2.0,
       flexDirection: "row",
       alignItems: "center",
+      justifyContent: 'space-between'
     },
   });
 
@@ -39,12 +40,10 @@ const Action = ({ item, navigation }) => {
   const creatorPic = creator?.profilePic;
 
   // set the creator data in global state and show it in creator screen
-  const setCreatorName = useGetUser((state) => state.setUsername);
   const getCreator = useGetUser((state) => state.getUser);
 
   const navToUser = () => {
-    setCreatorName(creator?.userName);
-    getCreator(token, navigation, userId);
+    getCreator(token, navigation, creator?.userName);
   };
 
   // Formatting date
@@ -63,43 +62,44 @@ const Action = ({ item, navigation }) => {
               : require("../../../assets/images/icon.png")
           }
           style={{
-            width: 120.0,
-            height: 120.0,
+            width: 60.0,
+            height: 60.0,
             borderRadius: Sizes.fixPadding - 5.0,
           }}
+          animated={true}
         />
       </TouchableOpacity>
       <View style={{ flex: 1, marginLeft: Sizes.fixPadding + 5.0 }}>
         <Text numberOfLines={1}>
-          <Text onPress={navToUser} style={Fonts.whiteColor14Medium}>
-            {isDonation ? `@${creator.userName}` : ``}
+          <Text onPress={navToUser} style={Fonts.whiteColor16Medium}>
+            {isDonation ? `${creator?.userName ? `@${creator?.userName}` : "Unknown"}` : ``}
           </Text>
-          <Text style={Fonts.grayColor14Regular}>
+          <Text style={{...Fonts.grayColor14Regular, fontSize: 16}}>
             {isDonation ? ` sent ` : `you sent `}{" "}
           </Text>
-          <Text style={Fonts.whiteColor14Medium}>
+          <Text style={{...Fonts.grayColor14Regular, fontSize: 16}}>
             {item.amount} {item.coinName}
           </Text>
-          <Text style={Fonts.grayColor14Regular}>
+          <Text style={{...Fonts.grayColor14Regular, fontSize: 16}}>
             {isDonation ? ` to you` : ` to `}
           </Text>
-          <Text onPress={navToUser} style={Fonts.whiteColor14Medium}>
+          <Text onPress={navToUser} style={Fonts.whiteColor16Medium}>
             {isDonation ? `` : `@${creator?.userName}`}
           </Text>
         </Text>
         <Text numberOfLines={1} onPress={() => copyToClipboard(item._id)}>
-          <Text style={Fonts.whiteColor12Medium}>Receipt Id: </Text>
-          <Text style={Fonts.grayColor12Regular}>{item._id}</Text>
+          <Text style={Fonts.whiteColor14Medium}>Receipt Id: </Text>
+          <Text style={Fonts.grayColor14Regular}>{item._id}</Text>
         </Text>
         <Text numberOfLines={1}>
-          <Text style={Fonts.whiteColor12Medium}>Status: </Text>
-          <Text style={Fonts.grayColor12Regular}>{item.transactionStatus}</Text>
+          <Text style={Fonts.whiteColor14Medium}>Status: </Text>
+          <Text style={Fonts.grayColor14Regular}>{item.transactionStatus}</Text>
         </Text>
         <Text numberOfLines={1}>
-          <Text style={Fonts.whiteColor12Medium}>Type: </Text>
-          <Text style={Fonts.grayColor12Regular}>{item.transactionType}</Text>
+          <Text style={Fonts.whiteColor14Medium}>Type: </Text>
+          <Text style={Fonts.grayColor14Regular}>{item.transactionType}</Text>
         </Text>
-        <Text style={Fonts.grayColor12Regular}>
+        <Text style={Fonts.grayColor14Regular}>
           {date.toLocaleDateString()} at {date.toLocaleTimeString().slice(0, 5)}
         </Text>
       </View>

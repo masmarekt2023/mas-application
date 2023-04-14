@@ -17,7 +17,9 @@ import useLocalData from "../../../Data/localData/useLocalData";
 
 const Feed = ({ item, style, navigation }) => {
   // Get Colors from the Global state
-  const { Colors, Fonts, Sizes, darkMode } = useLocalData((state) => state.styles);
+  const { Colors, Fonts, Sizes } = useLocalData(
+    (state) => state.styles
+  );
 
   // The style Object
   const styles = StyleSheet.create({
@@ -78,7 +80,6 @@ const Feed = ({ item, style, navigation }) => {
   const creatorPic = creator?.profilePic;
 
   // set the creator data in global state and show it in creator screen
-  const setCreatorName = useGetUser((state) => state.setUsername);
   const getCreator = useGetUser((state) => state.getUser);
 
   // handle variables
@@ -122,15 +123,13 @@ const Feed = ({ item, style, navigation }) => {
             <MaterialIcons
               name={like ? "favorite" : "favorite-border"}
               size={18}
-              color={like ? Colors.errorColor : Colors.grayColor}
+              color={like ? Colors.errorColor : Colors.primaryColor}
             />
           </TouchableOpacity>
         </View>
       </ImageBackground>
       <View
         style={{
-          borderWidth: darkMode ? 0 : 1,
-          borderColor: Colors.primaryColor,
           borderBottomLeftRadius: Sizes.fixPadding - 3,
           borderBottomRightRadius: Sizes.fixPadding - 3,
         }}
@@ -145,8 +144,7 @@ const Feed = ({ item, style, navigation }) => {
           <TouchableOpacity
             activeOpacity={0.9}
             onPress={() => {
-              setCreatorName(creator.userName);
-              getCreator(token, navigation, userId);
+              getCreator(token, navigation, creator.userName);
             }}
           >
             <Image

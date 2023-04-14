@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   SafeAreaView,
   View,
@@ -28,7 +28,7 @@ import useChatData from "../../Data/useChatData";
 
 const screenWidth = Dimensions.get("window").width;
 
-const CreatorProfileScreen = ({ navigation }) => {
+const CreatorProfileScreen = ({ navigation, route }) => {
   // Get Colors from the Global state
   const { Colors, Fonts, Sizes } = useLocalData((state) => state.styles);
 
@@ -143,6 +143,14 @@ const CreatorProfileScreen = ({ navigation }) => {
       justifyContent: "center",
       alignItems: "center",
     },
+    headerIconWrapStyle: {
+      width: 40.0,
+      height: 40.0,
+      backgroundColor: 'rgba(255,255,255,0.05)',
+      borderRadius: 10,
+      alignItems: "center",
+      justifyContent: "center",
+    }
   });
 
   // get user data from the Get User Data
@@ -163,7 +171,7 @@ const CreatorProfileScreen = ({ navigation }) => {
     facebook,
     telegram,
     youtube,
-  } = useGetUser((state) => state.userData);
+  } = route.params.userData;
   const isLoading = useGetUser((state) => state.isLoading);
 
   // get user token from the login data
@@ -177,9 +185,6 @@ const CreatorProfileScreen = ({ navigation }) => {
   const [isSubscribe, setIsSubscribe] = useState(
     subscribesUser.includes(creatorId)
   );
-  useLayoutEffect(() => {
-    setIsSubscribe(subscribesUser.includes(creatorId));
-  }, [subscribesUser]);
 
   // Handle like data
   const updateLikeData = useGetAllUsersData(
@@ -187,11 +192,10 @@ const CreatorProfileScreen = ({ navigation }) => {
   );
   const likesUser = useGetAllUsersData((state) => state.likesUser);
   const [like, setLike] = useState(likesUser.includes(creatorId));
-  useLayoutEffect(() => {
-    if (creatorId) {
-      setLike(likesUser.includes(creatorId));
-    }
-  }, [likesUser]);
+
+  useEffect(() => {
+    setLike(likesUser.includes(creatorId));
+  },[likesUser])
 
   // copy the wallet address
   const copyToClipboard = useLocalData((state) => state.copyToClipboard);
@@ -390,7 +394,7 @@ const CreatorProfileScreen = ({ navigation }) => {
       <View style={{ marginBottom: Sizes.fixPadding * 2.0 }}>
         <ImageBackground
           source={
-            imageCover !== ""
+            imageCover
               ? { uri: imageCover }
               : require("../../assets/images/icon.png")
           }
@@ -435,11 +439,12 @@ const CreatorProfileScreen = ({ navigation }) => {
             <TouchableOpacity
               activeOpacity={0.9}
               onPress={() => {
+                setLike(prevState => !prevState);
                 updateLikeData(token, creatorId);
               }}
               style={{
-                marginLeft: Sizes.fixPadding + 5.0,
                 ...styles.headerIconWrapStyle,
+                marginLeft: Sizes.fixPadding + 5.0,
               }}
             >
               <MaterialIcons
@@ -476,6 +481,7 @@ const CreatorProfileScreen = ({ navigation }) => {
                 opacity: isSubscribe ? 0.7 : 1,
               }}
               onPress={() => {
+                setIsSubscribe(prevState => !prevState);
                 updateSubscribeData(token, creatorId);
               }}
             >

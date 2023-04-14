@@ -2,7 +2,7 @@ import { create } from "zustand";
 import Apiconfigs from "./Apiconfigs";
 import axios from "axios";
 
-import { showMessage } from "react-native-flash-message";
+import { localAlert } from "../components/localAlert";
 
 const useSignUpData = create((set) => ({
   isLoading: false,
@@ -22,18 +22,10 @@ const useSignUpData = create((set) => ({
         },
       });
       if (res.data.statusCode === 200) {
-        showMessage({
-          message: res.data.responseMessage,
-          type: "success",
-          titleStyle: { fontWeight: "bold", fontSize: 16 },
-        });
+        localAlert(res.data.responseMessage);
         navigation.push("SignUpSuccess");
       } else {
-        showMessage({
-          message: res.data.responseMessage,
-          type: "danger",
-          titleStyle: { fontWeight: "bold", fontSize: 16 },
-        });
+        localAlert(res.data.responseMessage);
       }
     } catch (error) {
       console.log("Error in sign up");
@@ -51,11 +43,7 @@ const useSignUpData = create((set) => ({
         },
       });
       if (res.data.statusCode === 200) {
-        showMessage({
-          message: "Send otp code successfully",
-          type: "success",
-          titleStyle: { fontWeight: "bold", fontSize: 16 },
-        });
+        localAlert("Send otp code successfully");
         navigation.push("Verification", {
           channel: "email",
           context: "register",

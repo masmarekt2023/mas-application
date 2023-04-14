@@ -17,13 +17,13 @@
       "**/*"
     ],
     "ios": {
-      "bundleIdentifier": "com.render.rnnftmarketplace",
-      "buildNumber": "3.0.0",
+      "bundleIdentifier": "com.masmarketplace.masmarketplace",
+      "buildNumber": "1.0.0",
       "supportsTablet": true
     },
     "android": {
-      "package": "com.render.rnnftmarketplace",
-      "versionCode": 3,
+      "package": "com.masmarketplace.masmarketplace",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#FFFFFF"
@@ -39,6 +39,12 @@
           "iCloudContainerEnvironment": "Production"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "c6ce5734-5cec-4f14-860d-76d59f9227d3"
+      }
+    },
+    "owner": "mas2023"
   }
 }

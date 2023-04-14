@@ -2,7 +2,7 @@ import { create } from "zustand";
 import Apiconfigs from "./Apiconfigs";
 import axios from "axios";
 
-import { showMessage } from "react-native-flash-message";
+import { localAlert } from "../components/localAlert";
 
 const useVerificationData = create((set) => ({
   isLoading: false,
@@ -20,17 +20,9 @@ const useVerificationData = create((set) => ({
         },
       });
       if (res.data.statusCode === 200) {
-        showMessage({
-          message: res.data.responseMessage,
-          type: "success",
-          titleStyle: { fontWeight: "bold", fontSize: 16 },
-        });
+        localAlert(res.data.responseMessage);
       } else {
-        showMessage({
-          message: res.data.responseMessage,
-          type: "danger",
-          titleStyle: { fontWeight: "bold", fontSize: 16 },
-        });
+        localAlert(res.data.responseMessage);
       }
     } catch (error) {
       console.log("Error in useVerificationData / sendOpt");
@@ -55,11 +47,7 @@ const useVerificationData = create((set) => ({
       if (res.data.result.verified) {
         navigation.push("BottomTabBar");
       } else {
-        showMessage({
-          message: res.data.responseMessage,
-          type: "danger",
-          titleStyle: { fontWeight: "bold", fontSize: 16 },
-        });
+        localAlert(res.data.responseMessage);
       }
     } catch (err) {
       console.log("Error in useVerificationData / verificationOtp");

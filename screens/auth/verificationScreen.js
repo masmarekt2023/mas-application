@@ -367,10 +367,10 @@ const VerificationScreen = ({ navigation, route }) => {
           />
         </View>
         <Text style={{ ...Fonts.whiteColor26SemiBold }}>Verification</Text>
-        <Text style={{ textAlign: "center", ...Fonts.whiteColor14Medium }}>
-          {`We have sent the verification code to your ${
+        <Text style={{ textAlign: "center", ...Fonts.whiteColor14Medium, lineHeight: 26 }}>
+          {`We have sent otp code to your ${
             channel === "email" ? "email" : "phone"
-          }`}
+          } copy the code and paste it here to confirm`}
         </Text>
       </View>
     );

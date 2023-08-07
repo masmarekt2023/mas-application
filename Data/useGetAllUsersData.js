@@ -122,7 +122,7 @@ const useGetAllUsersData = create((set) => ({
         },
       });
       if (res.data.statusCode === 200) {
-        set({ topUser: res.data.result });
+        set({ topUser: res.data.result.filter((i) => i.userType !== "Admin") });
       }
     } catch (e) {
       console.log("Error in useGetAllUsersData / getTopUser");

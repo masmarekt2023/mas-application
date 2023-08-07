@@ -480,7 +480,7 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
 
   function auctionImage() {
     return (
-      <Image source={{ uri: item.mediaUrl }} style={styles.auctionImageStyle} />
+      <Image source={{ uri: item.mediaUrl }} style={styles.auctionImageStyle} resizeMode={"stretch"}/>
     );
   }
 

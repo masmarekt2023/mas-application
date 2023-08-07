@@ -24,9 +24,7 @@ const useBundlesData = create((set) => ({
       });
       if (res.data.statusCode === 200) {
         set({
-          bundlesList: res.data.result.docs.filter(
-            (i) => i.userId._id !== userId
-          ),
+          bundlesList: res.data.result.docs
         });
         set({
           myBundlesList: res.data.result.docs.filter(

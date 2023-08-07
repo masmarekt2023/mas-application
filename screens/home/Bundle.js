@@ -148,6 +148,7 @@ const Bundle = ({ item, style, navigation }) => {
         source={{ uri: item.mediaUrl }}
         style={{ height: 160.0 }}
         borderRadius={Sizes.fixPadding}
+        resizeMode={"stretch"}
       >
       </ImageBackground>
       <View>

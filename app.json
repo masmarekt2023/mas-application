@@ -11,7 +11,8 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/c6ce5734-5cec-4f14-860d-76d59f9227d3"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -19,7 +20,10 @@
     "ios": {
       "bundleIdentifier": "com.masmarketplace.masmarketplace",
       "buildNumber": "1.0.0",
-      "supportsTablet": true
+      "supportsTablet": true,
+      "runtimeVersion": {
+        "policy": "sdkVersion"
+      }
     },
     "android": {
       "package": "com.masmarketplace.masmarketplace",
@@ -27,7 +31,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "runtimeVersion": "1.0.0"
     },
     "web": {
       "favicon": "./assets/favicon.png"

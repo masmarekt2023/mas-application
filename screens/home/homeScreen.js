@@ -264,7 +264,6 @@ const HomeScreen = ({ navigation }) => {
 
   // upload story
   const addStory = () => {
-    //setValue("openFileSender", false);
     uploadStory(token, watch("file"), userId);
     setValue("file", { uri: "" });
   };

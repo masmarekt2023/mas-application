@@ -24,7 +24,9 @@ const useBundlesData = create((set) => ({
       });
       if (res.data.statusCode === 200) {
         set({
-          bundlesList: res.data.result.docs
+          bundlesList: res.data.result.docs.filter(
+            (i) => i.userId._id !== userId
+          ),
         });
         set({
           myBundlesList: res.data.result.docs.filter(
@@ -224,26 +226,26 @@ const useBundlesData = create((set) => ({
 
   // unSubscribe Bundle
   /*unSubscribeToBundle: async (token, id) => {
-    try {
-      const res = await axios({
-        method: "DELETE",
-        url: Apiconfigs.unSubscription + id,
-        headers: {
-          token: token,
-        },
-      });
-      if (res.data.statusCode === 200) {
-        set((state) => ({
-          subscribesUser: state.subscribesUser.filter((i) => i !== id),
-        }));
-        localAlert("You have unsubscribed successfully.");
-      } else {
-        localAlert("Something went wrong");
+      try {
+        const res = await axios({
+          method: "DELETE",
+          url: Apiconfigs.unSubscription + id,
+          headers: {
+            token: token,
+          },
+        });
+        if (res.data.statusCode === 200) {
+          set((state) => ({
+            subscribesUser: state.subscribesUser.filter((i) => i !== id),
+          }));
+          localAlert("You have unsubscribed successfully.");
+        } else {
+          localAlert("Something went wrong");
+        }
+      } catch (e) {
+        console.log("Error in useSubscribeData/subscribeToBundle");
       }
-    } catch (e) {
-      console.log("Error in useSubscribeData/subscribeToBundle");
-    }
-  },*/
+    },*/
 }));
 
 export default useBundlesData;

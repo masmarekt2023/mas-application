@@ -26,7 +26,8 @@ import useLocalData from "../../Data/localData/useLocalData";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
 import { BottomSheet } from "@rneui/themed";
-import {localAlert} from "../../components/localAlert";
+import { localAlert } from "../../components/localAlert";
+import { Video } from "expo-av";
 
 const convertToFileType = (uri, name) => {
   if (uri !== "") {
@@ -173,7 +174,7 @@ const AddScreen = ({ navigation }) => {
     try {
       let res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true
+        allowsEditing: true,
       });
       const type = res.uri.split(".")[res.uri.split(".").length - 1];
       setValue("file", {
@@ -582,11 +583,15 @@ const AddScreen = ({ navigation }) => {
         }}
       >
         <View style={{ position: "relative" }}>
-          <Image
-            style={{ height: 250, width: 250 }}
-            resizeMode={"stretch"}
-            source={{ uri: watch("file").uri }}
-          />
+          {isVideo(watch("file").uri) ? (
+            BundleVideo(watch("file").uri)
+          ) : (
+            <Image
+              style={{ height: 250, width: 250 }}
+              resizeMode={"stretch"}
+              source={{ uri: watch("file").uri }}
+            />
+          )}
           <TouchableOpacity
             activeOpacity={0.9}
             onPress={() => setValue("file", { uri: "" })}
@@ -617,7 +622,9 @@ const AddScreen = ({ navigation }) => {
           onPress={() => updateState({ showBottomSheet: true })}
           style={{
             ...styles.uploadFileInfoWrapStyle,
-            borderColor: errors?.file ? Colors.errorColor : Colors.buttonTextColor,
+            borderColor: errors?.file
+              ? Colors.errorColor
+              : Colors.buttonTextColor,
           }}
         >
           <View
@@ -633,7 +640,14 @@ const AddScreen = ({ navigation }) => {
               color={Colors.buttonTextColor}
             />
           </View>
-          <Text style={{ ...Fonts.whiteColor14Regular, color: Colors.buttonTextColor }}>Upload your file</Text>
+          <Text
+            style={{
+              ...Fonts.whiteColor14Regular,
+              color: Colors.buttonTextColor,
+            }}
+          >
+            Upload your file
+          </Text>
           <Text
             style={{
               marginTop: Sizes.fixPadding - 7.0,
@@ -703,7 +717,7 @@ const AddScreen = ({ navigation }) => {
       if (days > 0) {
         setValue("duration", `${days} Days`);
       } else {
-        localAlert("duration should be in the present days.")
+        localAlert("duration should be in the present days.");
       }
       hideDatePicker();
       //updateState({ endDate: `${date.getUTCDate()} ${monthsList[date.getUTCMonth()]}, ${date.getUTCFullYear()}` })
@@ -717,6 +731,24 @@ const AddScreen = ({ navigation }) => {
         onCancel={hideDatePicker}
       />
     );
+  }
+
+  function BundleVideo(uri) {
+    return (
+      <Video
+        source={{ uri }}
+        style={{ height: 250, width: 250 }}
+        shouldPlay
+        useNativeControls
+        resizeMode={"stretch"}
+      />
+    );
+  }
+
+  function isVideo(uri) {
+    const videoFormats = ["mp4", "avi", "mkv", "mov", "wmv", "flv", "webm"];
+    const urlFormat = uri.split(".")[uri.split(".").length - 1];
+    return videoFormats.includes(urlFormat);
   }
 };
 export default AddScreen;

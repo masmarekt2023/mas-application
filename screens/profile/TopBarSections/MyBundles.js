@@ -69,7 +69,7 @@ const MyBundles = ({ navigation }) => {
         renderItem={({ item }) => (
           <Bundle
             item={item}
-            style={{ marginBottom: 20, width: screenWidth * 0.9 }}
+            style={{ marginBottom: 20, width: screenWidth * 0.9}}
             navigation={navigation}
           />
         )}

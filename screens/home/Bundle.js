@@ -1,16 +1,11 @@
-import {
-  ImageBackground,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import React, {useEffect, useLayoutEffect, useState} from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import useLoginData from "../../Data/useLoginData";
 import useProfileData from "../../Data/useProfileData";
 import useBundlesData from "../../Data/useBundlesData";
 import useLocalData from "../../Data/localData/useLocalData";
+import { Video } from "expo-av";
 
 const Bundle = ({ item, style, navigation }) => {
   // Get Colors from the Global state
@@ -23,10 +18,10 @@ const Bundle = ({ item, style, navigation }) => {
       borderRadius: Sizes.fixPadding * 2,
       backgroundColor: "rgba(255,255,255,0.1)",
       marginBottom: style.marginBottom,
-      width:  style.width,
+      width: style.width,
       padding: Sizes.fixPadding,
       borderWidth: 1,
-      borderColor: Colors.primaryColor
+      borderColor: Colors.primaryColor,
     },
     auctionDetailWrapStyle: {
       marginTop: Sizes.fixPadding - 18.0,
@@ -81,10 +76,12 @@ const Bundle = ({ item, style, navigation }) => {
     (state) => state.getBundleContentList
   );
 
+  const videoRef = useRef();
+
   // Handle subscribe data
   /*const unSubscribeToBundle = useBundlesData(
-    (state) => state.unSubscribeToBundle
-  );*/
+              (state) => state.unSubscribeToBundle
+            );*/
   const subscribesUser = useBundlesData((state) => state.subscribesUser);
   const [subscribed, setSubscribed] = useState(
     subscribesUser.includes(item._id)
@@ -115,50 +112,55 @@ const Bundle = ({ item, style, navigation }) => {
 
   useEffect(() => {
     setLike(likesUser.includes(item._id));
-  },[likesUser])
+  }, [likesUser]);
 
   const onClickLike = () => {
-    setLike(prevState => !prevState);
+    setLike((prevState) => !prevState);
     updateLikeData(token, item._id);
   };
 
   // set the data of the Creator in the global state and navigate to Creator Screen
   /*const getUser = useGetUser((state) => state.getUser);
-  const navToCreatorScreen = () => {
-    if (isUserBundle) {
-      navigation.navigate("Profile");
-    } else {
-      getUser(token, navigation, item.userId.userName);
+            const navToCreatorScreen = () => {
+              if (isUserBundle) {
+                navigation.navigate("Profile");
+              } else {
+                getUser(token, navigation, item.userId.userName);
+              }
+            };*/
+
+  const onPress = () => {
+    if (!isUserBundle) {
+      getBundleContentList(token, item._id);
+      navigation.push("LiveAuctionsDetail", {
+        item: item,
+        showPayDialog: false,
+      });
     }
-  };*/
+  };
 
   return (
     <TouchableOpacity
       activeOpacity={0.9}
-      onPress={() => {
-        getBundleContentList(token, item._id);
-        navigation.push("LiveAuctionsDetail", {
-          item: item,
-          showPayDialog: false,
-        });
-      }}
+      onPress={onPress}
       style={styles.cardContainer}
     >
-      <ImageBackground
-        source={{ uri: item.mediaUrl }}
-        style={{ height: 160.0 }}
-        borderRadius={Sizes.fixPadding}
-        resizeMode={"stretch"}
-      >
-      </ImageBackground>
-      <View>
+      {isVideo(item.mediaUrl) ? (
+        BundleVideo(item.mediaUrl)
+      ) : (
+        <Image
+          source={{ uri: item.mediaUrl }}
+          style={{ height: 160.0 }}
+          borderRadius={Sizes.fixPadding}
+          resizeMode={"stretch"}
+        />
+      )}
+      <View style={{ marginTop: Sizes.fixPadding }}>
         <View>
           <Text style={{ ...Fonts.whiteColor16SemiBold }}>
             {item.bundleTitle}
           </Text>
-          <Text
-              style={{...Fonts.grayColor14Regular}}
-          >
+          <Text style={{ ...Fonts.grayColor14Regular }}>
             @{item.userId.userName}
           </Text>
         </View>
@@ -203,14 +205,14 @@ const Bundle = ({ item, style, navigation }) => {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-                activeOpacity={0.9}
-                style={{marginTop: Sizes.fixPadding}}
-                onPress={onClickLike}
+              activeOpacity={0.9}
+              style={{ marginTop: Sizes.fixPadding, display: isUserBundle ? 'none' : 'flex' }}
+              onPress={onClickLike}
             >
               <MaterialIcons
-                  name={like ? "favorite" : "favorite-border"}
-                  size={18}
-                  color={like ? Colors.errorColor : Colors.primaryColor}
+                name={like ? "favorite" : "favorite-border"}
+                size={18}
+                color={like ? Colors.errorColor : Colors.primaryColor}
               />
             </TouchableOpacity>
           </View>
@@ -218,6 +220,38 @@ const Bundle = ({ item, style, navigation }) => {
       </View>
     </TouchableOpacity>
   );
+
+  function BundleVideo(uri) {
+    const handlePlaybackStatusUpdate = (playbackStatus) => {
+      // Restart the video when it finishes playing
+      if (playbackStatus.didJustFinish) {
+        videoRef.current?.replayAsync();
+      }
+    };
+
+    return (
+      <Video
+        ref={videoRef}
+        source={{ uri }}
+        style={{
+          height: 160,
+          borderRadius: Sizes.fixPadding,
+          pointerEvents: "none",
+        }}
+        resizeMode={"stretch"}
+        shouldPlay
+        useNativeControls
+        isMuted
+        onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
+      />
+    );
+  }
+
+  function isVideo(uri) {
+    const videoFormats = ["mp4", "avi", "mkv", "mov", "wmv", "flv", "webm"];
+    const urlFormat = uri.split(".")[uri.split(".").length - 1];
+    return videoFormats.includes(urlFormat);
+  }
 };
 
 export default Bundle;

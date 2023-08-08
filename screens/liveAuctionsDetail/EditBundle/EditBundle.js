@@ -24,6 +24,7 @@ import useLoginData from "../../../Data/useLoginData";
 import useLocalData from "../../../Data/localData/useLocalData";
 import * as ImagePicker from "expo-image-picker";
 import { localAlert } from "../../../components/localAlert";
+import { Video } from "expo-av";
 
 const EditBundle = ({ navigation, route }) => {
   // Get Colors from the Global state
@@ -432,11 +433,15 @@ const EditBundle = ({ navigation, route }) => {
         }}
       >
         <View style={{ position: "relative" }}>
-          <Image
-            style={{ height: 250, width: 250 }}
-            resizeMode={"stretch"}
-            source={{ uri: watch("file").uri }}
-          />
+          {isVideo(watch("file").uri) ? (
+            BundleVideo(watch("file").uri)
+          ) : (
+            <Image
+              style={{ height: 250, width: 250 }}
+              resizeMode={"stretch"}
+              source={{ uri: watch("file").uri }}
+            />
+          )}
           <TouchableOpacity
             activeOpacity={0.9}
             onPress={() => setValue("file", { uri: "" })}
@@ -571,6 +576,24 @@ const EditBundle = ({ navigation, route }) => {
         onCancel={hideDatePicker}
       />
     );
+  }
+
+  function BundleVideo(uri) {
+    return (
+      <Video
+        source={{ uri }}
+        style={{ height: 250, width: 250 }}
+        shouldPlay
+        useNativeControls
+        resizeMode={"stretch"}
+      />
+    );
+  }
+
+  function isVideo(uri) {
+    const videoFormats = ["mp4", "avi", "mkv", "mov", "wmv", "flv", "webm"];
+    const urlFormat = uri.split(".")[uri.split(".").length - 1];
+    return videoFormats.includes(urlFormat);
   }
 };
 

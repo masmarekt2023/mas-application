@@ -10,7 +10,7 @@ const useLoginData = create((set) => ({
     isEmailVerified: false,
     isNewUser: false,
     isPhoneVerified: false,
-    name: "mo619",
+    name: "",
     token: "",
     userName: "",
   },

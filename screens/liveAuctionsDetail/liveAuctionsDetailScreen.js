@@ -19,8 +19,9 @@ import moment from "moment";
 import useGetUser from "../../Data/useGetUser";
 import useProfileData from "../../Data/useProfileData";
 import useLocalData from "../../Data/localData/useLocalData";
+import { Video } from "expo-av";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const LiveAuctionsDetailScreen = ({ navigation, route }) => {
   // Get Colors from the Global state
@@ -51,10 +52,10 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
       paddingVertical: Sizes.fixPadding - 7.0,
     },
     auctionImageStyle: {
-      height: height / 3.5,
+      height: width - Sizes.fixPadding * 6,
       borderRadius: Sizes.fixPadding,
-      marginHorizontal: Sizes.fixPadding * 2.0,
-      width: width - 40.0,
+      marginHorizontal: Sizes.fixPadding * 3.0,
+      width: width - Sizes.fixPadding * 6,
       marginTop: Sizes.fixPadding,
       marginBottom: Sizes.fixPadding + 5.0,
     },
@@ -183,8 +184,8 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
 
   // Handle Subscribe Data
   /*const unSubscribeToBundle = useBundlesData(
-    (state) => state.unSubscribeToBundle
-  );*/
+      (state) => state.unSubscribeToBundle
+    );*/
   const subscribeToBundle = useBundlesData((state) => state.subscribeToBundle);
   const subscribesUser = useBundlesData((state) => state.subscribesUser);
   const [subscribed, setSubscribed] = useState(
@@ -194,10 +195,10 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
     setSubscribed(subscribesUser.includes(item._id));
   }, [subscribesUser]);
   /*const onUnsubscribe = () => {
-    if (subscribed) {
-      unSubscribeToBundle(token, item._id);
-    }
-  };*/
+      if (subscribed) {
+        unSubscribeToBundle(token, item._id);
+      }
+    };*/
   const onTransfer = () => {
     if (!subscribed) {
       subscribeToBundle(token, item._id);
@@ -226,7 +227,7 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
     }
   };
 
-  const [showDialog, setShowDialog]  = useState(route.params.showPayDialog);
+  const [showDialog, setShowDialog] = useState(route.params.showPayDialog);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bodyBackColor }}>
@@ -276,29 +277,31 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
             </Text>
           </Text>
           <DashedLine
-              dashLength={5}
-              dashColor={"rgba(255,255,255,0.2)"}
-              dashGap={5}
-              style={{ marginVertical: Sizes.fixPadding * 2.0 }}
+            dashLength={5}
+            dashColor={"rgba(255,255,255,0.2)"}
+            dashGap={5}
+            style={{ marginVertical: Sizes.fixPadding * 2.0 }}
           />
           <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
           >
-            <Text style={{ ...Fonts.grayColor14Regular }}>Your Total Coins</Text>
+            <Text style={{ ...Fonts.grayColor14Regular }}>
+              Your Total Coins
+            </Text>
             <Text style={{ ...Fonts.whiteColor14SemiBold }}>
               {currentCoin.toFixed(2)}
             </Text>
           </View>
           <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
           >
             <Text style={{ ...Fonts.grayColor14Regular }}>You will pay</Text>
             <Text style={{ ...Fonts.whiteColor14SemiBold }}>
@@ -306,12 +309,12 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
             </Text>
           </View>
           <View
-              style={{
-                marginVertical: Sizes.fixPadding - 6.0,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
+            style={{
+              marginVertical: Sizes.fixPadding - 6.0,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
           >
             <Text style={{ ...Fonts.grayColor14Regular }}>Service fees</Text>
             <Text style={{ ...Fonts.whiteColor14SemiBold }}>
@@ -319,11 +322,11 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
             </Text>
           </View>
           <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
           >
             <Text style={{ ...Fonts.grayColor14Regular }}>Total payment</Text>
             <Text style={{ ...Fonts.primaryColor14SemiBold }}>
@@ -331,18 +334,18 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
             </Text>
           </View>
           <TouchableOpacity
-              activeOpacity={0.9}
-              onPress={onTransfer}
-              style={{
-                ...styles.placeBidButtonStyle,
-                opacity: currentCoin < item.donationAmount ? 0.7 : 1,
-              }}
+            activeOpacity={0.9}
+            onPress={onTransfer}
+            style={{
+              ...styles.placeBidButtonStyle,
+              opacity: currentCoin < item.donationAmount ? 0.7 : 1,
+            }}
           >
             <Text
-                style={{
-                  ...Fonts.whiteColor20SemiBold,
-                  color: Colors.buttonTextColor,
-                }}
+              style={{
+                ...Fonts.whiteColor20SemiBold,
+                color: Colors.buttonTextColor,
+              }}
             >
               Transfer
             </Text>
@@ -361,7 +364,7 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
         style={{
           marginHorizontal: Sizes.fixPadding * 2.0,
           ...styles.placeBidButtonStyle,
-          opacity: subscribed ? 0.7 : 1
+          opacity: subscribed ? 0.7 : 1,
         }}
       >
         <Text
@@ -479,16 +482,18 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
   }
 
   function auctionImage() {
-    return (
-      <Image source={{ uri: item.mediaUrl }} style={styles.auctionImageStyle} resizeMode={"stretch"}/>
-    );
+    return isVideo(item.mediaUrl) ? BundleVideo(item.mediaUrl) : <Image
+        source={{ uri: item.mediaUrl }}
+        style={styles.auctionImageStyle}
+        resizeMode={"stretch"}
+    />
   }
 
   function auctionInfo() {
     return (
       <View
         style={{
-          marginHorizontal: Sizes.fixPadding * 2.0,
+          marginHorizontal: Sizes.fixPadding * 3.0,
           marginTop: Sizes.fixPadding,
         }}
       >
@@ -587,6 +592,25 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
         </View>
       </View>
     );
+  }
+
+  function BundleVideo(uri) {
+
+    return (
+      <Video
+        source={{ uri }}
+        style={styles.auctionImageStyle}
+        shouldPlay
+        useNativeControls
+        resizeMode={"stretch"}
+      />
+    );
+  }
+
+  function isVideo(uri) {
+    const videoFormats = ["mp4", "avi", "mkv", "mov", "wmv", "flv", "webm"];
+    const urlFormat = uri.split(".")[uri.split(".").length - 1];
+    return videoFormats.includes(urlFormat);
   }
 };
 

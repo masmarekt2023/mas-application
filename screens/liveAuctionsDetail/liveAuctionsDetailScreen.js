@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, {useState, useLayoutEffect, useEffect} from "react";
 import {
   SafeAreaView,
   View,
@@ -183,9 +183,6 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
       : busdBalance;
 
   // Handle Subscribe Data
-  /*const unSubscribeToBundle = useBundlesData(
-      (state) => state.unSubscribeToBundle
-    );*/
   const subscribeToBundle = useBundlesData((state) => state.subscribeToBundle);
   const subscribesUser = useBundlesData((state) => state.subscribesUser);
   const [subscribed, setSubscribed] = useState(
@@ -194,11 +191,7 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
   useLayoutEffect(() => {
     setSubscribed(subscribesUser.includes(item._id));
   }, [subscribesUser]);
-  /*const onUnsubscribe = () => {
-      if (subscribed) {
-        unSubscribeToBundle(token, item._id);
-      }
-    };*/
+
   const onTransfer = () => {
     if (!subscribed) {
       subscribeToBundle(token, item._id);
@@ -228,6 +221,10 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
   };
 
   const [showDialog, setShowDialog] = useState(route.params.showPayDialog);
+  const [playVideo, setPlayVideo] = useState(true);
+  useEffect(() => {
+    setPlayVideo(true);
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bodyBackColor }}>
@@ -356,11 +353,15 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
   }
 
   function subscribeButton() {
+    const onPress = () =>
+      isUserBundle
+        ? navigation.push("EditBundle", { bundleData: item })
+        : setShowDialog(true);
     return (
       <TouchableOpacity
         activeOpacity={0.9}
         disabled={subscribed}
-        onPress={() => setShowDialog(true)}
+        onPress={onPress}
         style={{
           marginHorizontal: Sizes.fixPadding * 2.0,
           ...styles.placeBidButtonStyle,
@@ -373,7 +374,7 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
             color: Colors.buttonTextColor,
           }}
         >
-          {subscribed ? "Subscribed" : "Subscribe"}
+          {isUserBundle ? "Edit" : subscribed ? "Subscribed" : "Subscribe"}
         </Text>
       </TouchableOpacity>
     );
@@ -385,17 +386,40 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
       const formatDate = `${date.format("MMM DD,YYYY")} at ${date.format(
         "LT"
       )}`;
+      const onPress = () => {
+        if(subscribed || isUserBundle){
+          setPlayVideo(false);
+          navigation.push("AudienceScreen", { item });
+        }else {
+          setShowDialog(true);
+        }
+      }
+
       return (
-        <View style={styles.bidInfoWrapStyle}>
+        <TouchableOpacity
+          activeOpacity={0.9}
+          style={styles.bidInfoWrapStyle}
+          onPress={onPress}
+        >
           <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
-            <Image
-              source={
-                item.mediaUrl
-                  ? { uri: item.mediaUrl }
-                  : require("../../assets/images/icon.png")
-              }
-              style={{ width: 70.0, height: 70.0, borderRadius: 35 }}
-            />
+            {isVideo(item.mediaUrl) ? (
+              <Video
+                source={{ uri: item.mediaUrl }}
+                style={{ width: 70.0, height: 70.0, borderRadius: 35 }}
+                shouldPlay={false}
+                useNativeControls
+                resizeMode={"stretch"}
+              />
+            ) : (
+              <Image
+                source={
+                  item.mediaUrl
+                    ? { uri: item.mediaUrl }
+                    : require("../../assets/images/icon.png")
+                }
+                style={{ width: 70.0, height: 70.0, borderRadius: 35 }}
+              />
+            )}
             <View style={{ flex: 1, marginLeft: Sizes.fixPadding + 5.0 }}>
               <Text style={{ ...Fonts.whiteColor16Medium }}>{item.title}</Text>
               <Text
@@ -412,7 +436,7 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
               </Text>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
       );
     };
     return (
@@ -482,11 +506,15 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
   }
 
   function auctionImage() {
-    return isVideo(item.mediaUrl) ? BundleVideo(item.mediaUrl) : <Image
+    return isVideo(item.mediaUrl) ? (
+      BundleVideo(item.mediaUrl)
+    ) : (
+      <Image
         source={{ uri: item.mediaUrl }}
         style={styles.auctionImageStyle}
         resizeMode={"stretch"}
-    />
+      />
+    );
   }
 
   function auctionInfo() {
@@ -595,12 +623,11 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
   }
 
   function BundleVideo(uri) {
-
     return (
       <Video
         source={{ uri }}
         style={styles.auctionImageStyle}
-        shouldPlay
+        shouldPlay={playVideo}
         useNativeControls
         resizeMode={"stretch"}
       />

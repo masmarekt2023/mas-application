@@ -130,13 +130,11 @@ const Bundle = ({ item, style, navigation }) => {
             };*/
 
   const onPress = () => {
-    if (!isUserBundle) {
-      getBundleContentList(token, item._id);
-      navigation.push("LiveAuctionsDetail", {
-        item: item,
-        showPayDialog: false,
-      });
-    }
+    getBundleContentList(token, item._id);
+    navigation.push("LiveAuctionsDetail", {
+      item: item,
+      showPayDialog: false,
+    });
   };
 
   return (

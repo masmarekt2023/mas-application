@@ -42,6 +42,7 @@ import WithdrawSuccessScreen from "./screens/wallet/Withdraw/WithdrawSuccessScre
 import Story from "./screens/home/Story";
 import profileScreen from "./screens/profile/profileScreen";
 import LoadingAfterLogin from "./components/LodingAfterLogin";
+import AudienceScreen from "./screens/liveAuctionsDetail/AudienceScreen";
 
 LogBox.ignoreAllLogs();
 
@@ -112,6 +113,7 @@ const App = () => {
           component={NFTUploadSuccessScreen}
         />
         <Stack.Screen name="chat" component={UserChatScreen} />
+        <Stack.Screen name="AudienceScreen" component={AudienceScreen} />
         <Stack.Screen
           name="ShareForAudience"
           component={ShareForAudienceScreen}

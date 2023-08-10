@@ -21,6 +21,7 @@ import useLoginData from "../../../Data/useLoginData";
 import moment from "moment/moment";
 import useLocalData from "../../../Data/localData/useLocalData";
 import * as ImagePicker from "expo-image-picker";
+import { Video } from "expo-av";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -443,11 +444,15 @@ const ShareForAudienceScreen = ({ navigation }) => {
         }}
       >
         <View style={{ position: "relative" }}>
-          <Image
-            style={{ height: 250, width: 250 }}
-            resizeMode={"stretch"}
-            source={{ uri: watch("file").uri }}
-          />
+          {isVideo(watch("file").uri) ? (
+            BundleVideo(watch("file").uri)
+          ) : (
+            <Image
+              style={{ height: 250, width: 250 }}
+              resizeMode={"stretch"}
+              source={{ uri: watch("file").uri }}
+            />
+          )}
           <TouchableOpacity
             activeOpacity={0.9}
             onPress={() => setValue("file", { uri: "" })}
@@ -551,6 +556,24 @@ const ShareForAudienceScreen = ({ navigation }) => {
         </Text>
       </View>
     );
+  }
+
+  function BundleVideo(uri) {
+    return (
+      <Video
+        source={{ uri }}
+        style={{ height: 250, width: 250 }}
+        shouldPlay
+        useNativeControls
+        resizeMode={"stretch"}
+      />
+    );
+  }
+
+  function isVideo(uri) {
+    const videoFormats = ["mp4", "avi", "mkv", "mov", "wmv", "flv", "webm"];
+    const urlFormat = uri.split(".")[uri.split(".").length - 1];
+    return videoFormats.includes(urlFormat);
   }
 };
 export default ShareForAudienceScreen;

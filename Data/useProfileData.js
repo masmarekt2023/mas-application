@@ -148,7 +148,7 @@ const useProfileData = create((set, get) => ({
         },
       });
       if (res.data.statusCode === 200) {
-        set({ subscriptionBundles: res.data.result });
+        set({ subscriptionBundles: res.data.result.docs });
       } else {
         console.log("Error in useProfileData / getSubscription");
       }
@@ -164,7 +164,7 @@ const useProfileData = create((set, get) => ({
         },
       });
       if (res.data.statusCode === 200) {
-        set({ subscriptionCreators: res.data.result });
+        set({ subscriptionCreators: res.data.result.docs });
       } else {
         console.log("Error in useProfileData / getSubscription");
       }
@@ -182,13 +182,13 @@ const useProfileData = create((set, get) => ({
     try {
       const res = await axios({
         method: "GET",
-        url: Apiconfigs.myfeed,
+        url: Apiconfigs.getMyfeed,
         headers: {
           token: token,
         },
       });
       if (res.data.statusCode === 200) {
-        set({ feedList: res.data.result.public_Private.result });
+        set({ feedList: res.data.result.docs });
       } else {
         console.log("Error in useProfileData / getSubscription");
       }
@@ -212,7 +212,7 @@ const useProfileData = create((set, get) => ({
         },
       });
       if (res.data.statusCode === 200) {
-        set({ subscribersList: res.data.result });
+        set({ subscribersList: res.data.result.docs });
       } else {
         console.log("Error in useProfileData / getSubscribers");
       }

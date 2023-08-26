@@ -423,13 +423,12 @@ const LiveAuctionsDetailScreen = ({ navigation, route }) => {
             <View style={{ flex: 1, marginLeft: Sizes.fixPadding + 5.0 }}>
               <Text style={{ ...Fonts.whiteColor16Medium }}>{item.title}</Text>
               <Text
-                style={{
-                  ...Fonts.grayColor13Regular,
-                  marginTop: -5,
-                  marginBottom: 5,
-                }}
+                style={{...Fonts.grayColor13Regular}}
               >
                 {item.details}
+              </Text>
+              <Text style={Fonts.grayColor13Regular }>
+                {item.postType}
               </Text>
               <Text style={{ lineHeight: 15.0, ...Fonts.grayColor13Regular }}>
                 {formatDate}

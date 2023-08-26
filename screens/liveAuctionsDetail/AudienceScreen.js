@@ -6,12 +6,14 @@ import {
   Text,
   View,
   Dimensions,
+  TouchableOpacity,
 } from "react-native";
 import React from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import useLocalData from "../../Data/localData/useLocalData";
 import { Video } from "expo-av";
 import moment from "moment/moment";
+import useProfileData from "../../Data/useProfileData";
 
 const { width } = Dimensions.get("window");
 
@@ -41,9 +43,18 @@ const AudienceScreen = ({ navigation, route }) => {
       marginTop: Sizes.fixPadding,
       marginBottom: Sizes.fixPadding + 5.0,
     },
+    placeBidButtonStyle: {
+      backgroundColor: Colors.primaryColor,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: Sizes.fixPadding + 5.0,
+      borderRadius: Sizes.fixPadding - 5.0,
+      marginVertical: Sizes.fixPadding * 2.0,
+    },
   });
 
   const item = route.params.item;
+  const userId = useProfileData((state) => state.userData.userId);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bodyBackColor }}>
@@ -51,14 +62,44 @@ const AudienceScreen = ({ navigation, route }) => {
       {Header()}
       {Media()}
       {AuctionInfo()}
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "flex-end",
+          paddingBottom: Sizes.fixPadding * 3,
+        }}
+      >
+        {item.userId === userId && EditButton()}
+      </View>
     </SafeAreaView>
   );
 
+  function EditButton() {
+    const onPress = () => navigation.push("ShareForAudience", { item: item });
+    return (
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={onPress}
+        style={{
+          marginHorizontal: Sizes.fixPadding * 2.0,
+          ...styles.placeBidButtonStyle,
+        }}
+      >
+        <Text
+          style={{
+            ...Fonts.whiteColor20SemiBold,
+            color: Colors.buttonTextColor,
+          }}
+        >
+          Edit Audience
+        </Text>
+      </TouchableOpacity>
+    );
+  }
+
   function AuctionInfo() {
     const date = moment(item.createdAt);
-    const formatDate = `${date.format("MMM DD,YYYY")} at ${date.format(
-        "LT"
-    )}`;
+    const formatDate = `${date.format("MMM DD,YYYY")} at ${date.format("LT")}`;
     return (
       <View
         style={{
@@ -69,6 +110,10 @@ const AudienceScreen = ({ navigation, route }) => {
         <Text>
           <Text style={Fonts.whiteColor14SemiBold}>Details: </Text>
           <Text style={Fonts.grayColor14Regular}>{item.details}</Text>
+        </Text>
+        <Text>
+          <Text style={Fonts.whiteColor14SemiBold}>Type: </Text>
+          <Text style={Fonts.grayColor14Regular}>{item.postType}</Text>
         </Text>
         <Text>
           <Text style={Fonts.whiteColor14SemiBold}>Date: </Text>

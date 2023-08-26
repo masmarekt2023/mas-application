@@ -174,6 +174,42 @@ const useBundlesData = create((set) => ({
     set({ isLoading: false });
   },
 
+  // Edit Audience
+  editAudience: async (token, data, navigation) => {
+    set({ isLoading: true });
+    const formData = new FormData();
+    if (data.file) {
+      formData.append("mediaUrl", data.file);
+    }
+    formData.append("id", data.id);
+    formData.append("details", data.details);
+    formData.append("postType", data.postType);
+    try {
+      const res = await axios({
+        method: "PUT",
+        url: Apiconfigs.editAudience,
+        data: formData,
+        headers: {
+          token: token,
+          Accept: "application/json",
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(res.data);
+      if (res.data.statusCode === 200) {
+        navigation.push("NFTUploadSuccess", {
+          message: "You have successfully Edited Audience",
+        });
+      } else {
+        console.log("Error in editAudience / shareForAudience");
+      }
+    } catch (e) {
+      console.log(e);
+      console.log("Error in editAudience / shareForAudience");
+    }
+    set({ isLoading: false });
+  },
+
   // Update like dislike Bundles
   updateBundlesLikeData: async (token, id) => {
     try {
@@ -226,26 +262,26 @@ const useBundlesData = create((set) => ({
 
   // unSubscribe Bundle
   /*unSubscribeToBundle: async (token, id) => {
-      try {
-        const res = await axios({
-          method: "DELETE",
-          url: Apiconfigs.unSubscription + id,
-          headers: {
-            token: token,
-          },
-        });
-        if (res.data.statusCode === 200) {
-          set((state) => ({
-            subscribesUser: state.subscribesUser.filter((i) => i !== id),
-          }));
-          localAlert("You have unsubscribed successfully.");
-        } else {
-          localAlert("Something went wrong");
-        }
-      } catch (e) {
-        console.log("Error in useSubscribeData/subscribeToBundle");
-      }
-    },*/
+              try {
+                const res = await axios({
+                  method: "DELETE",
+                  url: Apiconfigs.unSubscription + id,
+                  headers: {
+                    token: token,
+                  },
+                });
+                if (res.data.statusCode === 200) {
+                  set((state) => ({
+                    subscribesUser: state.subscribesUser.filter((i) => i !== id),
+                  }));
+                  localAlert("You have unsubscribed successfully.");
+                } else {
+                  localAlert("Something went wrong");
+                }
+              } catch (e) {
+                console.log("Error in useSubscribeData/subscribeToBundle");
+              }
+            },*/
 }));
 
 export default useBundlesData;

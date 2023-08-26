@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   SafeAreaView,
   View,
@@ -25,7 +25,7 @@ import { Video } from "expo-av";
 
 const screenWidth = Dimensions.get("window").width;
 
-const ShareForAudienceScreen = ({ navigation }) => {
+const ShareForAudienceScreen = ({ navigation, route }) => {
   // Get Colors from the Global state
   const { Colors, Fonts, Sizes } = useLocalData((state) => state.styles);
 
@@ -96,6 +96,9 @@ const ShareForAudienceScreen = ({ navigation }) => {
     },
   });
 
+  const item = route.params?.item;
+  const isEdit = !!item;
+
   // Get user token from the login data
   const token = useLoginData((state) => state.userInfo.token);
 
@@ -105,10 +108,17 @@ const ShareForAudienceScreen = ({ navigation }) => {
   // Upload the data to database
   const shareForAudience = useBundlesData((state) => state.shareForAudience);
 
+  // Edit audience and Upload the data to database
+  const editAudience = useBundlesData((state) => state.editAudience);
+
+  const [mediaUrl, setMediaUrl] = useState(
+    item?.mediaUrl ? item?.mediaUrl : ""
+  );
+
   // Yup inputs validation
   const schema = yup.object({
     file: yup.object({
-      uri: yup.string().required("upload file please"),
+      uri: isEdit ? null : yup.string().required("upload file please"),
     }),
     title: yup.string().min(3, "Enter title please"),
     details: yup.string().min(3, "Enter description please"),
@@ -124,10 +134,10 @@ const ShareForAudienceScreen = ({ navigation }) => {
   } = useForm({
     defaultValues: {
       file: { uri: "" },
-      title: "",
-      details: "",
-      type: "PUBLIC",
-      bundleIds: [userBundles[0]?._id],
+      title: isEdit ? item.title : "",
+      details: isEdit ? item.details : "",
+      type: isEdit ? item.postType : "PUBLIC",
+      bundleIds: isEdit ? item.nftId : [userBundles[0]?._id],
     },
     resolver: yupResolver(schema),
     reValidateMode: "onChange",
@@ -146,6 +156,7 @@ const ShareForAudienceScreen = ({ navigation }) => {
         uri: res.uri,
         type: `application/${type}`,
       });
+      setMediaUrl(res.uri);
     } catch (err) {
       console.log("Error in upload file : addScreen.js");
     }
@@ -170,10 +181,21 @@ const ShareForAudienceScreen = ({ navigation }) => {
 
   function shareButton() {
     const onSubmit = handleSubmit(
-      (data) => shareForAudience(token, data, navigation),
+      (data) =>
+        isEdit
+          ? editAudience(
+              token,
+              {
+                details: data.details,
+                id: item._id,
+                postType: data.type,
+                file: data.file?.type ? data.file : null,
+              },
+              navigation
+            )
+          : shareForAudience(token, data, navigation),
       () => console.log(errors)
     );
-
     return (
       <TouchableOpacity
         activeOpacity={0.9}
@@ -186,7 +208,7 @@ const ShareForAudienceScreen = ({ navigation }) => {
             color: Colors.buttonTextColor,
           }}
         >
-          Share
+          {isEdit ? "Edit" : "Share"}
         </Text>
       </TouchableOpacity>
     );
@@ -216,7 +238,7 @@ const ShareForAudienceScreen = ({ navigation }) => {
         <TouchableOpacity
           activeOpacity={0.9}
           style={{ ...styles.bidInfoWrapStyle, marginTop: Sizes.fixPadding }}
-          onPress={onPress}
+          onPress={isEdit ? null : onPress}
         >
           <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
             <Image
@@ -418,6 +440,7 @@ const ShareForAudienceScreen = ({ navigation }) => {
               borderColor: Colors.errorColor,
             }}
             selectionColor={Colors.primaryColor}
+            editable={!isEdit}
           />
         </View>
         {inputError ? (
@@ -444,18 +467,21 @@ const ShareForAudienceScreen = ({ navigation }) => {
         }}
       >
         <View style={{ position: "relative" }}>
-          {isVideo(watch("file").uri) ? (
-            BundleVideo(watch("file").uri)
+          {isVideo(mediaUrl) ? (
+            BundleVideo(mediaUrl)
           ) : (
             <Image
               style={{ height: 250, width: 250 }}
               resizeMode={"stretch"}
-              source={{ uri: watch("file").uri }}
+              source={{ uri: mediaUrl }}
             />
           )}
           <TouchableOpacity
             activeOpacity={0.9}
-            onPress={() => setValue("file", { uri: "" })}
+            onPress={() => {
+              setValue("file", { uri: "" });
+              setMediaUrl("");
+            }}
             style={{
               width: 35,
               height: 35,
@@ -474,7 +500,7 @@ const ShareForAudienceScreen = ({ navigation }) => {
       </View>
     );
 
-    return watch("file").uri !== "" ? (
+    return mediaUrl !== "" ? (
       imageView
     ) : (
       <>

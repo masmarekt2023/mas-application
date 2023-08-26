@@ -210,7 +210,7 @@ const EditBundle = ({ navigation, route }) => {
             color: Colors.buttonTextColor,
           }}
         >
-          Edit
+          Confirm Editting
         </Text>
       </TouchableOpacity>
     );

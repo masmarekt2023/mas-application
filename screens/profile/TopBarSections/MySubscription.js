@@ -30,7 +30,7 @@ const MyBundles = ({ navigation }) => {
   // Handles variables
   const bundlesItem = ({ item }) => (
     <Bundle
-      item={item.bundleDetails}
+      item={item.nftId}
       style={{ marginBottom: 0, width: 200 }}
       navigation={navigation}
     />

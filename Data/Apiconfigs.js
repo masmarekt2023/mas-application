@@ -1,12 +1,10 @@
-//import Constants from "expo-constants";
-
-//const { manifest } = Constants;
 export let baseURL = "https://node.masplatform.net";
 export let socketURL = "wss://node.masplatform.net";
 
 /*if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
-  baseURL = `http://${manifest.debuggerHost.split(":").shift()}:1865`;
-  //socketURL = "ws://192.168.1.255:1865";
+  const localIp = `192.168.1.115`;
+  baseURL = `http://${localIp}:1865`;
+  socketURL = `ws://${localIp}:1865`;
 }*/
 
 const url = `${baseURL}/api/v1`;
@@ -17,7 +15,7 @@ const Apiconfigs = {
   sendOtp: `${url}/user/send-otp`,
   verifyOtp: `${url}/user/verify-otp`,
   profile: `${url}/user/profile`,
-  myfeed: `${url}/user/myFeed`,
+  getMyfeed: `${url}/user/getMyFeed`,
   myauction: `${url}/nft/listNFT`,
   mynft: `${url}/nft/nft/`,
   bundleList: `${url}/nft/bundleList`,
@@ -33,6 +31,7 @@ const Apiconfigs = {
   ipfsupload: `${url}/nft/ipfsUpload`,
   subscribeNow: `${url}/user/subscribeNow/`,
   share: `${url}/user/shareWithAudience`,
+  editAudience: `${url}/user/editAudience`,
   uploadft: `${url}/nft/uploadNFT`,
   createNft: `${url}/nft/createNft`,
   nftList: `${url}/nft/nftList`,

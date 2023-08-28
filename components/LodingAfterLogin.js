@@ -11,6 +11,8 @@ import useStoryData from "../Data/useStoryData";
 import useWithdrawData from "../Data/useWithdrawData";
 import useDonateData from "../Data/useDonateData";
 import useLocalData from "../Data/localData/useLocalData";
+import useBannerData from "../Data/useBannerData";
+
 const LoadingAfterLogin = ({ navigation }) => {
   // Get Colors from the Global state
   const { Colors } = useLocalData((state) => state.styles);
@@ -23,7 +25,6 @@ const LoadingAfterLogin = ({ navigation }) => {
       flex: 1,
     },
   });
-
 
   const [firstLoad, setFirstLoad] = useState(true);
 
@@ -43,6 +44,7 @@ const LoadingAfterLogin = ({ navigation }) => {
   const getSubscription = useProfileData((state) => state.getSubscription);
   const getStory = useStoryData((state) => state.getStory);
   const getAllStories = useStoryData((state) => state.getAllStories);
+  const getBannerList = useBannerData((state) => state.getBannerList);
 
   // get the Loading state for fetched data
   const profileLoading = useProfileData((state) => state.isLoading);
@@ -54,6 +56,7 @@ const LoadingAfterLogin = ({ navigation }) => {
   const withdrawLoading = useWithdrawData((state) => state.isLoading);
   const storyLoading = useStoryData((state) => state.isLoading);
   const donationLoading = useDonateData((state) => state.isLoading);
+  const bannerLoading = useBannerData((state) => state.isLoading);
   const isLoading =
     profileLoading ||
     creatorsLoading ||
@@ -63,13 +66,15 @@ const LoadingAfterLogin = ({ navigation }) => {
     chatLoading ||
     withdrawLoading ||
     storyLoading ||
-    donationLoading;
+    donationLoading ||
+    bannerLoading;
 
   useEffect(() => {
     getProfile(token);
     getNotifications(token);
     getTotalEarnings(token);
     getSubscription(token);
+    getBannerList(token);
   }, []);
 
   useEffect(() => {
@@ -90,9 +95,12 @@ const LoadingAfterLogin = ({ navigation }) => {
   }, [isLoading, userId, firstLoad]);
 
   return (
-      <SafeAreaView style={styles.containerStyle}>
-        <Image style={{width: 200, height: 200}} source={require("../assets/images/loading.gif")}/>
-      </SafeAreaView>
+    <SafeAreaView style={styles.containerStyle}>
+      <Image
+        style={{ width: 200, height: 200 }}
+        source={require("../assets/images/loading.gif")}
+      />
+    </SafeAreaView>
   );
 };
 export default LoadingAfterLogin;

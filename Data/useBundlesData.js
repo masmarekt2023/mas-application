@@ -51,8 +51,7 @@ const useBundlesData = create((set) => ({
   },
 
   // Creat Bundle
-  createBundle: async (token, data, navigation) => {
-    set({ isLoading: true });
+  createBundle: async (token, data, navigation, setUploadCounter) => {
     const formData = new FormData();
     formData.append("file", data.file);
     formData.append("tokenName", data.bundleName);
@@ -72,8 +71,15 @@ const useBundlesData = create((set) => ({
           "Content-Type": "multipart/form-data",
           token: token,
         },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          setUploadCounter(percentCompleted);
+        },
       });
       if (res.data.statusCode === 200) {
+        setUploadCounter(0);
         navigation.push("NFTUploadSuccess", {
           message: "You have successfully added a bundle for sale",
         });
@@ -84,12 +90,10 @@ const useBundlesData = create((set) => ({
       console.log("Error in useBundlesData/createBundle");
       console.log(e);
     }
-    set({ isLoading: false });
   },
 
   // Edit Bundle
-  editBundle: async (token, data, navigation) => {
-    set({ isLoading: true });
+  editBundle: async (token, data, navigation, setUploadCounter) => {
     const formData = new FormData();
     formData.append("_id", data.bundleId);
     formData.append("mediaUrl", data.file);
@@ -103,8 +107,15 @@ const useBundlesData = create((set) => ({
           "Content-Type": "multipart/form-data",
           token: token,
         },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          setUploadCounter(percentCompleted);
+        },
       });
       if (res.data.statusCode === 200) {
+        setUploadCounter(0);
         navigation.push("NFTUploadSuccess", {
           message: "You have successfully updated your bundle.",
         });
@@ -112,7 +123,6 @@ const useBundlesData = create((set) => ({
     } catch (e) {
       console.log("Error in useBundlesData / editBundle");
     }
-    set({ isLoading: false });
   },
 
   // Bundle Content List
@@ -141,8 +151,7 @@ const useBundlesData = create((set) => ({
   },
 
   // Share for audience
-  shareForAudience: async (token, data, navigation) => {
-    set({ isLoading: true });
+  shareForAudience: async (token, data, navigation, setUploadCounter) => {
     const formData = new FormData();
     formData.append("mediaUrl", data.file);
     formData.append("title", data.title);
@@ -159,9 +168,15 @@ const useBundlesData = create((set) => ({
           Accept: "application/json",
           "Content-Type": "multipart/form-data",
         },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+          );
+          setUploadCounter(percentCompleted);
+        },
       });
-      console.log(res.data);
       if (res.data.statusCode === 200) {
+        setUploadCounter(0);
         navigation.push("NFTUploadSuccess", {
           message: "You have successfully shared a Audience",
         });
@@ -171,12 +186,10 @@ const useBundlesData = create((set) => ({
     } catch (e) {
       console.log("Error in useBundlesData/shareForAudience");
     }
-    set({ isLoading: false });
   },
 
   // Edit Audience
-  editAudience: async (token, data, navigation) => {
-    set({ isLoading: true });
+  editAudience: async (token, data, navigation, setUploadCounter) => {
     const formData = new FormData();
     if (data.file) {
       formData.append("mediaUrl", data.file);
@@ -194,9 +207,16 @@ const useBundlesData = create((set) => ({
           Accept: "application/json",
           "Content-Type": "multipart/form-data",
         },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+          );
+          setUploadCounter(percentCompleted);
+        },
       });
       console.log(res.data);
       if (res.data.statusCode === 200) {
+        setUploadCounter(0);
         navigation.push("NFTUploadSuccess", {
           message: "You have successfully Edited Audience",
         });
@@ -207,7 +227,6 @@ const useBundlesData = create((set) => ({
       console.log(e);
       console.log("Error in editAudience / shareForAudience");
     }
-    set({ isLoading: false });
   },
 
   // Update like dislike Bundles
@@ -262,26 +281,26 @@ const useBundlesData = create((set) => ({
 
   // unSubscribe Bundle
   /*unSubscribeToBundle: async (token, id) => {
-              try {
-                const res = await axios({
-                  method: "DELETE",
-                  url: Apiconfigs.unSubscription + id,
-                  headers: {
-                    token: token,
-                  },
-                });
-                if (res.data.statusCode === 200) {
-                  set((state) => ({
-                    subscribesUser: state.subscribesUser.filter((i) => i !== id),
-                  }));
-                  localAlert("You have unsubscribed successfully.");
-                } else {
-                  localAlert("Something went wrong");
+                try {
+                  const res = await axios({
+                    method: "DELETE",
+                    url: Apiconfigs.unSubscription + id,
+                    headers: {
+                      token: token,
+                    },
+                  });
+                  if (res.data.statusCode === 200) {
+                    set((state) => ({
+                      subscribesUser: state.subscribesUser.filter((i) => i !== id),
+                    }));
+                    localAlert("You have unsubscribed successfully.");
+                  } else {
+                    localAlert("Something went wrong");
+                  }
+                } catch (e) {
+                  console.log("Error in useSubscribeData/subscribeToBundle");
                 }
-              } catch (e) {
-                console.log("Error in useSubscribeData/subscribeToBundle");
-              }
-            },*/
+              },*/
 }));
 
 export default useBundlesData;

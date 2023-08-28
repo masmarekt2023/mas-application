@@ -9,6 +9,7 @@ import {
   Text,
   TouchableOpacity,
   Image,
+  Dimensions,
 } from "react-native";
 import {
   MaterialCommunityIcons,
@@ -28,6 +29,9 @@ import * as ImagePicker from "expo-image-picker";
 import { BottomSheet } from "@rneui/themed";
 import { localAlert } from "../../components/localAlert";
 import { Video } from "expo-av";
+import UploadCounterDialog from "../../components/UploadCounterDialog";
+
+const { width, height } = Dimensions.get("window");
 
 const convertToFileType = (uri, name) => {
   if (uri !== "") {
@@ -125,6 +129,15 @@ const AddScreen = ({ navigation }) => {
       alignItems: "center",
       justifyContent: "center",
     },
+    dialogWrapStyle: {
+      borderRadius: Sizes.fixPadding - 5.0,
+      width: width - 40,
+      height: height * 0.4,
+      padding: 0.0,
+      backgroundColor: "#fff",
+      justifyContent: "center",
+      alignItems: "center",
+    },
   });
 
   // get user token from the login data
@@ -208,11 +221,12 @@ const AddScreen = ({ navigation }) => {
   const [state, setState] = useState({
     showCalender: false,
     showBottomSheet: false,
+    uploadCounter: 0,
   });
 
   const updateState = (data) => setState((state) => ({ ...state, ...data }));
 
-  const { showCalender, showBottomSheet } = state;
+  const { showCalender, showBottomSheet, uploadCounter } = state;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bodyBackColor }}>
@@ -232,6 +246,7 @@ const AddScreen = ({ navigation }) => {
       {createButton()}
       {calender()}
       {changeProfilePicOptionsSheet()}
+      <UploadCounterDialog counter={uploadCounter} />
     </SafeAreaView>
   );
 
@@ -320,8 +335,10 @@ const AddScreen = ({ navigation }) => {
   }
 
   function createButton() {
+    const setUploadCounter = (value) => updateState({ uploadCounter: value });
     const onSubmit = handleSubmit(
-      (data) => createBundle(token, data, navigation),
+      (data) =>
+        createBundle(token, data, navigation, setUploadCounter),
       () => console.log(errors)
     );
     return (

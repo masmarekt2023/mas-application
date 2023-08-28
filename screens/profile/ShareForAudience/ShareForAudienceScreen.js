@@ -22,6 +22,7 @@ import moment from "moment/moment";
 import useLocalData from "../../../Data/localData/useLocalData";
 import * as ImagePicker from "expo-image-picker";
 import { Video } from "expo-av";
+import UploadCounterDialog from "../../../components/UploadCounterDialog";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -115,6 +116,8 @@ const ShareForAudienceScreen = ({ navigation, route }) => {
     item?.mediaUrl ? item?.mediaUrl : ""
   );
 
+  const [uploadCounter, setUploadCounter] = useState(0);
+
   // Yup inputs validation
   const schema = yup.object({
     file: yup.object({
@@ -176,10 +179,12 @@ const ShareForAudienceScreen = ({ navigation, route }) => {
         </ScrollView>
       </View>
       {shareButton()}
+      <UploadCounterDialog counter={uploadCounter} />
     </SafeAreaView>
   );
 
   function shareButton() {
+    const changeUploadCounter = (value) => setUploadCounter(value);
     const onSubmit = handleSubmit(
       (data) =>
         isEdit
@@ -191,9 +196,10 @@ const ShareForAudienceScreen = ({ navigation, route }) => {
                 postType: data.type,
                 file: data.file?.type ? data.file : null,
               },
-              navigation
+              navigation,
+                setUploadCounter
             )
-          : shareForAudience(token, data, navigation),
+          : shareForAudience(token, data, navigation, changeUploadCounter),
       () => console.log(errors)
     );
     return (

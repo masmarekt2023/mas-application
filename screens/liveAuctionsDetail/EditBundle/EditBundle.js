@@ -25,6 +25,7 @@ import useLocalData from "../../../Data/localData/useLocalData";
 import * as ImagePicker from "expo-image-picker";
 import { localAlert } from "../../../components/localAlert";
 import { Video } from "expo-av";
+import UploadCounterDialog from "../../../components/UploadCounterDialog";
 
 const EditBundle = ({ navigation, route }) => {
   // Get Colors from the Global state
@@ -168,11 +169,12 @@ const EditBundle = ({ navigation, route }) => {
 
   const [state, setState] = useState({
     showCalender: false,
+    uploadCounter: 0,
   });
 
   const updateState = (data) => setState((state) => ({ ...state, ...data }));
 
-  const { showCalender } = state;
+  const { showCalender, uploadCounter } = state;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bodyBackColor }}>
@@ -190,12 +192,14 @@ const EditBundle = ({ navigation, route }) => {
       </View>
       {editButton()}
       {calender()}
+      <UploadCounterDialog counter={uploadCounter} />
     </SafeAreaView>
   );
 
   function editButton() {
+    const setUploadCounter = (value) => updateState({ uploadCounter: value });
     const onSubmit = handleSubmit(
-      (data) => editBundle(token, data, navigation),
+      (data) => editBundle(token, data, navigation, setUploadCounter),
       () => console.log(errors)
     );
     return (

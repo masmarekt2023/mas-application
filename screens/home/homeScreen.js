@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Text,
   FlatList,
+  ImageBackground,
 } from "react-native";
 import useCreatorsData from "../../Data/useCreatorsData";
 import Creator from "./Creator";
@@ -30,6 +31,8 @@ import useStoryData from "../../Data/useStoryData";
 import * as ImagePicker from "expo-image-picker";
 import { useForm } from "react-hook-form";
 import { BottomSheet } from "@rneui/themed";
+import Carousel from "react-native-snap-carousel-v4";
+import useBannerData from "../../Data/useBannerData";
 
 const { width, height } = Dimensions.get("window");
 
@@ -68,7 +71,7 @@ const HomeScreen = ({ navigation }) => {
       alignItems: "center",
       justifyContent: "space-between",
       margin: Sizes.fixPadding,
-      marginBottom: 0
+      marginBottom: 0,
     },
     titleWrapStyle: {
       marginBottom: Sizes.fixPadding + 5.0,
@@ -171,6 +174,19 @@ const HomeScreen = ({ navigation }) => {
       justifyContent: "center",
       alignItems: "center",
     },
+    bannerImageStyle: {
+      width: Math.round(widthScreen * 0.8),
+      height: 190,
+      alignItems: "center",
+      justifyContent: "flex-end",
+    },
+    bannerCategoryWrapStyle: {
+      backgroundColor: Colors.primaryColor,
+      paddingHorizontal: Sizes.fixPadding * 2.8,
+      paddingVertical: Sizes.fixPadding - 5.0,
+      borderRadius: Sizes.fixPadding - 5.0,
+      marginBottom: Sizes.fixPadding,
+    },
   });
 
   // get user token from the login data
@@ -179,6 +195,8 @@ const HomeScreen = ({ navigation }) => {
   const { userId, userImage, name, userName } = useProfileData(
     (state) => state.userData
   );
+  // Banner List
+  const bannerList = useBannerData((state) => state.bannerList);
   // Creators list
   const creatorsList = useCreatorsData((state) => state.creatorsList);
   // Top Creators
@@ -273,11 +291,18 @@ const HomeScreen = ({ navigation }) => {
       <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
       <View style={{ flex: 1 }}>
         {userInfo()}
-        <View style={{width: width, height: 1, backgroundColor: Colors.primaryColor}}></View>
+        <View
+          style={{
+            width: width,
+            height: 1,
+            backgroundColor: Colors.primaryColor,
+          }}
+        ></View>
         <FlatList
           ListHeaderComponent={
             <>
               {StoriesInfo()}
+              {banners()}
               {Creators()}
               {topCreatorInfo()}
               {Bundles()}
@@ -290,6 +315,30 @@ const HomeScreen = ({ navigation }) => {
       {watch("openFileSender") && FileSender()}
     </SafeAreaView>
   );
+
+  function banners() {
+    const renderItem = ({ item }) => (
+      <ImageBackground
+        source={{uri: item.background}}
+        style={styles.bannerImageStyle}
+        resizeMode="cover"
+        borderRadius={Sizes.fixPadding - 5.0}
+      />
+    );
+    return (
+      <View style={{ marginVertical: Sizes.fixPadding * 2 }}>
+        <Carousel
+          data={bannerList}
+          sliderWidth={widthScreen}
+          itemWidth={Math.round(widthScreen * 0.8)}
+          renderItem={renderItem}
+          autoplay={true}
+          autoplayInterval={5000}
+          inactiveSlideShift={0}
+        />
+      </View>
+    );
+  }
 
   function StoriesInfo() {
     const renderItem = ({ item }) => {
@@ -322,7 +371,7 @@ const HomeScreen = ({ navigation }) => {
               borderColor: isUser
                 ? userStories?.length
                   ? Colors.primaryColor
-                  : '#949494'
+                  : "#949494"
                 : Colors.primaryColor,
               borderWidth: isUser ? (userStories?.length ? 2 : 1) : 2,
               display:
@@ -367,7 +416,10 @@ const HomeScreen = ({ navigation }) => {
           renderItem={renderItem}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingLeft: Sizes.fixPadding * 2.0, paddingTop: Sizes.fixPadding }}
+          contentContainerStyle={{
+            paddingLeft: Sizes.fixPadding * 2.0,
+            paddingTop: Sizes.fixPadding,
+          }}
         />
       </View>
     );
@@ -498,12 +550,14 @@ const HomeScreen = ({ navigation }) => {
   function userInfo() {
     return (
       <View style={styles.userInfoWrapStyle}>
-        <Text style={{ ...Fonts.whiteColor22Bold, fontSize: 26 }}>MAS Marketplace</Text>
+        <Text style={{ ...Fonts.whiteColor22Bold, fontSize: 26 }}>
+          MAS Marketplace
+        </Text>
         <TouchableOpacity
           activeOpacity={0.9}
           onPress={() => navigation.navigate("Notification")}
           style={{
-            marginRight: Sizes.fixPadding
+            marginRight: Sizes.fixPadding,
           }}
         >
           {isUnreadMessage ? (
@@ -519,9 +573,7 @@ const HomeScreen = ({ navigation }) => {
           <MaterialIcons
             name="notifications"
             size={24}
-            color={
-              isUnreadMessage ? Colors.primaryColor : Colors.primaryColor
-            }
+            color={isUnreadMessage ? Colors.primaryColor : Colors.primaryColor}
           />
         </TouchableOpacity>
       </View>

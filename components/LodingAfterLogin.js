@@ -45,6 +45,7 @@ const LoadingAfterLogin = ({ navigation }) => {
   const getStory = useStoryData((state) => state.getStory);
   const getAllStories = useStoryData((state) => state.getAllStories);
   const getBannerList = useBannerData((state) => state.getBannerList);
+  const getBannerDuration = useBannerData((state) => state.getBannerDuration);
 
   // get the Loading state for fetched data
   const profileLoading = useProfileData((state) => state.isLoading);
@@ -75,6 +76,7 @@ const LoadingAfterLogin = ({ navigation }) => {
     getTotalEarnings(token);
     getSubscription(token);
     getBannerList(token);
+    getBannerDuration(token);
   }, []);
 
   useEffect(() => {

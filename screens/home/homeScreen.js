@@ -197,6 +197,7 @@ const HomeScreen = ({ navigation }) => {
   );
   // Banner List
   const bannerList = useBannerData((state) => state.bannerList);
+  const bannerDuration = useBannerData((state) => state.bannerDuration);
   // Creators list
   const creatorsList = useCreatorsData((state) => state.creatorsList);
   // Top Creators
@@ -319,7 +320,7 @@ const HomeScreen = ({ navigation }) => {
   function banners() {
     const renderItem = ({ item }) => (
       <ImageBackground
-        source={{uri: item.background}}
+        source={{uri: item.media}}
         style={styles.bannerImageStyle}
         resizeMode="cover"
         borderRadius={Sizes.fixPadding - 5.0}
@@ -333,7 +334,7 @@ const HomeScreen = ({ navigation }) => {
           itemWidth={Math.round(widthScreen * 0.8)}
           renderItem={renderItem}
           autoplay={true}
-          autoplayInterval={5000}
+          autoplayInterval={bannerDuration * 1000}
           inactiveSlideShift={0}
         />
       </View>

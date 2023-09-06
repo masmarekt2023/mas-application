@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import React, {useLayoutEffect, useRef} from "react";
 import {
   SafeAreaView,
   View,
@@ -33,6 +33,7 @@ import { useForm } from "react-hook-form";
 import { BottomSheet } from "@rneui/themed";
 import Carousel from "react-native-snap-carousel-v4";
 import useBannerData from "../../Data/useBannerData";
+import { Video } from "expo-av";
 
 const { width, height } = Dimensions.get("window");
 
@@ -176,7 +177,7 @@ const HomeScreen = ({ navigation }) => {
     },
     bannerImageStyle: {
       width: Math.round(widthScreen * 0.8),
-      height: 190,
+      height: Math.round(widthScreen * 0.8) * 0.6,
       alignItems: "center",
       justifyContent: "flex-end",
     },
@@ -287,6 +288,8 @@ const HomeScreen = ({ navigation }) => {
     setValue("file", { uri: "" });
   };
 
+  const videoRef = useRef();
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.bodyBackColor }}>
       <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
@@ -318,14 +321,35 @@ const HomeScreen = ({ navigation }) => {
   );
 
   function banners() {
-    const renderItem = ({ item }) => (
-      <ImageBackground
-        source={{uri: item.media}}
-        style={styles.bannerImageStyle}
-        resizeMode="cover"
-        borderRadius={Sizes.fixPadding - 5.0}
-      />
-    );
+    const handlePlaybackStatusUpdate = (playbackStatus) => {
+      // Restart the video when it finishes playing
+      if (playbackStatus.didJustFinish) {
+        videoRef.current?.replayAsync();
+      }
+    };
+    const renderItem = ({ item }) =>
+      item?.mediaType === "image" ? (
+        <ImageBackground
+          source={{ uri: item.media }}
+          style={styles.bannerImageStyle}
+          resizeMode="cover"
+          borderRadius={Sizes.fixPadding - 5.0}
+        />
+      ) : (
+        <Video
+            ref={videoRef}
+          source={{ uri: item.media }}
+          style={{
+            width: Math.round(widthScreen * 0.8),
+            height: Math.round(widthScreen * 0.8) * 0.6,
+            borderRadius: 5
+          }}
+          resizeMode={"stretch"}
+          shouldPlay
+          isMuted
+          onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
+        />
+      );
     return (
       <View style={{ marginVertical: Sizes.fixPadding * 2 }}>
         <Carousel

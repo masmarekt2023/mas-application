@@ -29,11 +29,6 @@ const useBundlesData = create((set) => ({
           ),
         });
         set({
-          myBundlesList: res.data.result.docs.filter(
-            (i) => i.userId._id === userId
-          ),
-        });
-        set({
           likesUser: res.data.result.docs
             .map((i) => (i.likesUsers.includes(userId) ? i._id : 1))
             .filter((i) => i !== 1),
@@ -48,6 +43,26 @@ const useBundlesData = create((set) => ({
       console.log(error);
     }
     set({ isLoading: false });
+  },
+
+  getBundleListHandler: async (token) => {
+    try {
+      const res = await axios({
+        method: "GET",
+        url: Apiconfigs.myNftList,
+        headers: {
+          token: token,
+        },
+        params: {
+          limit: 100,
+        },
+      });
+      if (res.data.statusCode === 200) {
+        set({ myBundlesList: res.data.result.docs });
+      }
+    } catch (e) {
+      console.log(e);
+    }
   },
 
   // Creat Bundle
@@ -170,7 +185,7 @@ const useBundlesData = create((set) => ({
         },
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
+            (progressEvent.loaded * 100) / progressEvent.total
           );
           setUploadCounter(percentCompleted);
         },
@@ -209,7 +224,7 @@ const useBundlesData = create((set) => ({
         },
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
+            (progressEvent.loaded * 100) / progressEvent.total
           );
           setUploadCounter(percentCompleted);
         },
@@ -281,26 +296,26 @@ const useBundlesData = create((set) => ({
 
   // unSubscribe Bundle
   /*unSubscribeToBundle: async (token, id) => {
-                try {
-                  const res = await axios({
-                    method: "DELETE",
-                    url: Apiconfigs.unSubscription + id,
-                    headers: {
-                      token: token,
-                    },
-                  });
-                  if (res.data.statusCode === 200) {
-                    set((state) => ({
-                      subscribesUser: state.subscribesUser.filter((i) => i !== id),
-                    }));
-                    localAlert("You have unsubscribed successfully.");
-                  } else {
-                    localAlert("Something went wrong");
-                  }
-                } catch (e) {
-                  console.log("Error in useSubscribeData/subscribeToBundle");
-                }
-              },*/
+                                      try {
+                                        const res = await axios({
+                                          method: "DELETE",
+                                          url: Apiconfigs.unSubscription + id,
+                                          headers: {
+                                            token: token,
+                                          },
+                                        });
+                                        if (res.data.statusCode === 200) {
+                                          set((state) => ({
+                                            subscribesUser: state.subscribesUser.filter((i) => i !== id),
+                                          }));
+                                          localAlert("You have unsubscribed successfully.");
+                                        } else {
+                                          localAlert("Something went wrong");
+                                        }
+                                      } catch (e) {
+                                        console.log("Error in useSubscribeData/subscribeToBundle");
+                                      }
+                                    },*/
 }));
 
 export default useBundlesData;

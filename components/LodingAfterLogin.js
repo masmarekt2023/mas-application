@@ -34,6 +34,7 @@ const LoadingAfterLogin = ({ navigation }) => {
   const getProfile = useProfileData((state) => state.getProfile);
   const getCreators = useCreatorsData((state) => state.getCreators);
   const getBundles = useBundlesData((state) => state.getBundles);
+  const getBundleListHandler = useBundlesData((state) => state.getBundleListHandler);
   const getAllUsers = useGetAllUsersData((state) => state.getAllUsers);
   const getTopUser = useGetAllUsersData((state) => state.getTopUser);
   const getNotifications = useNotificationData(
@@ -87,6 +88,7 @@ const LoadingAfterLogin = ({ navigation }) => {
     getChatList(token, userId);
     getStory(token, userId);
     getAllStories(token, userId);
+    getBundleListHandler(token);
   }, [userId]);
 
   useEffect(() => {

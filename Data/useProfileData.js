@@ -100,14 +100,12 @@ const useProfileData = create((set, get) => ({
     data.profilePic.uri !== ""
       ? formData.append("profilePicFile", data.profilePic)
       : null;
-    data.speciality !== ""
-      ? formData.append("speciality", data.speciality)
-      : null;
-    data.bio !== "" ? formData.append("bio", data.bio) : null;
-    data.facebook !== "" ? formData.append("facebook", data.facebook) : null;
-    data.twitter !== "" ? formData.append("twitter", data.twitter) : null;
-    data.youtube !== "" ? formData.append("youtube", data.youtube) : null;
-    data.telegram !== "" ? formData.append("telegram", data.telegram) : null;
+    formData.append("speciality", data.speciality);
+    formData.append("bio", data.bio);
+    formData.append("facebook", data.facebook);
+    formData.append("twitter", data.twitter);
+    formData.append("youtube", data.youtube);
+    formData.append("telegram", data.telegram);
     try {
       const res = await axios({
         method: "PUT",

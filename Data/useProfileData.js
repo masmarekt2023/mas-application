@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import Apiconfigs from "./Apiconfigs";
 import axios from "axios";
-import produce from "immer";
+import {produce} from "immer/src/immer"
 import { localAlert } from "../components/localAlert";
 
 const useProfileData = create((set, get) => ({

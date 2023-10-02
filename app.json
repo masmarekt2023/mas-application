@@ -32,7 +32,7 @@
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "runtimeVersion": "1.0.0"
+      "runtimeVersion": "2.0.0"
     },
     "web": {
       "favicon": "./assets/favicon.png"
